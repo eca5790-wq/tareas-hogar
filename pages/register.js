@@ -36,17 +36,35 @@ export async function loadRegister() {
 
 function groupByCategory(tasks){
 
-    return tasks.reduce((acc, task) => {
+    const grouped = {};
 
-        if(!acc[task.categoria]){
-            acc[task.categoria] = [];
+    tasks.forEach(task => {
+
+        if(!grouped[task.categoria]){
+            grouped[task.categoria] = [];
         }
 
-        acc[task.categoria].push(task);
+        grouped[task.categoria].push(task);
 
-        return acc;
+    });
 
-    }, {});
+    // 🔥 ordenar tareas dentro de categoría
+    Object.keys(grouped).forEach(cat => {
+        grouped[cat].sort((a, b) => b.uso - a.uso);
+    });
+
+    // 🔥 ordenar categorías por uso total
+    const sorted = Object.entries(grouped)
+        .sort((a, b) => {
+
+            const totalA = a[1].reduce((sum, t) => sum + t.uso, 0);
+            const totalB = b[1].reduce((sum, t) => sum + t.uso, 0);
+
+            return totalB - totalA;
+
+        });
+
+    return Object.fromEntries(sorted);
 
 }
 
