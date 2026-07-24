@@ -1,33 +1,51 @@
-export function loadHome(){
+import { APP } from "../js/config.js";
+import { profileButton, initProfile } from "../components/profile.js";
 
-    document.getElementById("header").innerHTML=`
+export function loadHome() {
 
+    document.getElementById("header").innerHTML = `
         <h2>Tareas Hogar</h2>
-
-        <div>👩</div>
-
+        ${profileButton()}
     `;
 
-    document.getElementById("content").innerHTML=`
+    document.getElementById("content").innerHTML = `
 
-        <div class="card">
+        <section class="card">
 
             <h3>📅 Hoy</h3>
 
             <p>No hay tareas programadas.</p>
 
-        </div>
+        </section>
 
-        <div class="card">
+        <section class="card">
 
             <h3>🏆 Esta semana</h3>
 
-            <p>Elena 0 pts</p>
+            <p><strong>${APP.currentUser}</strong>: 0 puntos</p>
 
-            <p>Tomás 0 pts</p>
+            <p><strong>${APP.currentUser === "Elena" ? "Tomás" : "Elena"}</strong>: 0 puntos</p>
 
-        </div>
+        </section>
+
+        <section class="card">
+
+            <h3>🕒 Últimas tareas</h3>
+
+            <p>No hay registros.</p>
+
+        </section>
+
+        <section class="card">
+
+            <h3>🔥 Tareas olvidadas</h3>
+
+            <p>No hay tareas pendientes.</p>
+
+        </section>
 
     `;
+
+    initProfile();
 
 }
