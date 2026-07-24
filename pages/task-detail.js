@@ -1,11 +1,29 @@
 import { renderNavbar } from "../components/navbar.js";
 import { loadTasks } from "./tasks.js";
+import { loadCategorySelector } from "./category-selector.js";
 
-let currentTask = null;
+import {
+    setCurrentTask,
+    getCurrentTask,
+    updateCurrentTask
+} from "../js/editor.js";
 
-export function loadTaskDetail(task) {
+import {
+    getCategories,
+    updateTask
+} from "../js/api.js";
 
-    currentTask = structuredClone(task);
+export async function loadTaskDetail(task){
+
+    setCurrentTask(task);
+
+    render();
+
+}
+
+function render(){
+
+    const task = getCurrentTask();
 
     document.getElementById("header").innerHTML = `
 
@@ -23,51 +41,17 @@ export function loadTaskDetail(task) {
 
     `;
 
-    render();
-
-    renderNavbar("tasks");
-
-    document
-        .getElementById("backButton")
-        .addEventListener("click", loadTasks);
-
-}
-
-function render(){
-
     document.getElementById("content").innerHTML = `
 
         <section class="settings-group">
 
-            ${row("Nombre", currentTask.nombre, "name")}
+            ${row("Nombre",task.nombre,"name")}
 
-            ${row("Categoría", currentTask.categoria, "category")}
+            ${row("Categoría",task.categoria,"category")}
 
-            ${row("Programación", currentTask.programacion || "Sin programación", "schedule")}
+            ${row("Programación",task.programacion || "Sin programación","schedule")}
 
-            ${row("Puntos", currentTask.puntos, "points")}
-
-        </section>
-
-        <section class="settings-group">
-
-            <div class="setting-row">
-
-                <span>Activa</span>
-
-                <label class="switch">
-
-                    <input
-                        id="activeSwitch"
-                        type="checkbox"
-                        ${currentTask.activa ? "checked" : ""}
-                    >
-
-                    <span class="slider"></span>
-
-                </label>
-
-            </div>
+            ${row("Puntos",task.puntos,"points")}
 
         </section>
 
@@ -81,6 +65,8 @@ function render(){
         </button>
 
     `;
+
+    renderNavbar("tasks");
 
     initEvents();
 
@@ -126,14 +112,16 @@ function row(title,value,action){
 function initEvents(){
 
     document
-        .querySelectorAll(".selectable")
+        .getElementById("backButton")
+        .addEventListener("click",loadTasks);
+
+    document
+        .querySelectorAll(".setting-row.selectable")
         .forEach(item=>{
 
             item.addEventListener("click",()=>{
 
-                const action=item.dataset.action;
-
-                switch(action){
+                switch(item.dataset.action){
 
                     case "name":
 
@@ -149,7 +137,7 @@ function initEvents(){
 
                     case "category":
 
-                        alert("Pendiente");
+                        openCategorySelector();
 
                         break;
 
@@ -165,44 +153,57 @@ function initEvents(){
 
         });
 
+    document
+        .getElementById("saveTask")
+        .addEventListener("click",save);
+
 }
 
 function editName(){
 
-    const value=prompt(
-
-        "Nombre de la tarea",
-
-        currentTask.nombre
-
+    const value = prompt(
+        "Nombre",
+        getCurrentTask().nombre
     );
 
-    if(value){
+    if(!value) return;
 
-        currentTask.nombre=value;
+    updateCurrentTask("nombre",value);
 
-        render();
-
-    }
+    render();
 
 }
 
 function editPoints(){
 
-    const value=prompt(
-
+    const value = prompt(
         "Puntos",
-
-        currentTask.puntos
-
+        getCurrentTask().puntos
     );
 
-    if(value!==null){
+    if(value===null) return;
 
-        currentTask.puntos=Number(value);
+    updateCurrentTask(
+        "puntos",
+        Number(value)
+    );
 
-        render();
+    render();
 
-    }
+}
+
+async function openCategorySelector(){
+
+    const categories = await getCategories();
+
+    loadCategorySelector(categories);
+
+}
+
+async function save(){
+
+    await updateTask(getCurrentTask());
+
+    loadTasks();
 
 }

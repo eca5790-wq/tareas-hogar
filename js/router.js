@@ -4,33 +4,38 @@ import { loadTasks } from "../pages/tasks.js";
 import { loadStats } from "../pages/stats.js";
 import { loadSettings } from "../pages/settings.js";
 
-export function navigate(page) {
+const routes = {
 
-    switch(page){
+    home: loadHome,
 
-        case "home":
-            loadHome();
-            break;
+    register: loadRegister,
 
-        case "register":
-            loadRegister();
-            break;
+    tasks: loadTasks,
 
-        case "tasks":
-            loadTasks();
-            break;
+    stats: loadStats,
 
-        case "stats":
-            loadStats();
-            break;
+    settings: loadSettings
 
-        case "settings":
-            loadSettings();
-            break;
+};
 
-        default:
-            loadHome();
+let currentPage = "home";
 
-    }
+export function navigate(page){
+
+    currentPage = page;
+
+    routes[page]();
+
+}
+
+export function getCurrentPage(){
+
+    return currentPage;
+
+}
+
+export function registerRoute(name,handler){
+
+    routes[name] = handler;
 
 }
