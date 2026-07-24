@@ -1,95 +1,208 @@
 import { renderNavbar } from "../components/navbar.js";
+import { loadTasks } from "./tasks.js";
 
-export function loadTaskDetail(task){
+let currentTask = null;
+
+export function loadTaskDetail(task) {
+
+    currentTask = structuredClone(task);
 
     document.getElementById("header").innerHTML = `
+
+        <button id="backButton" class="icon-button">
+
+            <span class="material-symbols-rounded">
+                arrow_back
+            </span>
+
+        </button>
+
         <h2>${task.nombre}</h2>
+
+        <div style="width:40px"></div>
+
     `;
+
+    render();
+
+    renderNavbar("tasks");
+
+    document
+        .getElementById("backButton")
+        .addEventListener("click", loadTasks);
+
+}
+
+function render(){
 
     document.getElementById("content").innerHTML = `
 
-        <section class="card">
+        <section class="settings-group">
 
-            <h3>Nombre</h3>
+            ${row("Nombre", currentTask.nombre, "name")}
 
-            <div class="card-content">
+            ${row("Categoría", currentTask.categoria, "category")}
 
-                <div class="task-item">
+            ${row("Programación", currentTask.programacion || "Sin programación", "schedule")}
 
-                    <div class="task-name">
+            ${row("Puntos", currentTask.puntos, "points")}
 
-                        ${task.nombre}
+        </section>
 
-                    </div>
+        <section class="settings-group">
 
-                </div>
+            <div class="setting-row">
+
+                <span>Activa</span>
+
+                <label class="switch">
+
+                    <input
+                        id="activeSwitch"
+                        type="checkbox"
+                        ${currentTask.activa ? "checked" : ""}
+                    >
+
+                    <span class="slider"></span>
+
+                </label>
 
             </div>
 
         </section>
 
-        <section class="card">
+        <button
+            id="saveTask"
+            class="primary-button"
+        >
 
-            <h3>Categoría</h3>
+            Guardar cambios
 
-            <div class="card-content">
-
-                <div class="task-item">
-
-                    <div class="task-name">
-
-                        ${task.categoria}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <section class="card">
-
-            <h3>Puntos</h3>
-
-            <div class="card-content">
-
-                <div class="task-item">
-
-                    <div class="task-name">
-
-                        ${task.puntos}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <section class="card">
-
-            <h3>Programación</h3>
-
-            <div class="card-content">
-
-                <div class="task-item">
-
-                    <div class="task-name">
-
-                        ${task.programacion || "Sin programación"}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
+        </button>
 
     `;
 
-    renderNavbar("tasks");
+    initEvents();
+
+}
+
+function row(title,value,action){
+
+    return `
+
+        <div
+            class="setting-row selectable"
+            data-action="${action}"
+        >
+
+            <div>
+
+                <div class="setting-title">
+
+                    ${title}
+
+                </div>
+
+                <div class="setting-value">
+
+                    ${value}
+
+                </div>
+
+            </div>
+
+            <span class="material-symbols-rounded">
+
+                chevron_right
+
+            </span>
+
+        </div>
+
+    `;
+
+}
+
+function initEvents(){
+
+    document
+        .querySelectorAll(".selectable")
+        .forEach(item=>{
+
+            item.addEventListener("click",()=>{
+
+                const action=item.dataset.action;
+
+                switch(action){
+
+                    case "name":
+
+                        editName();
+
+                        break;
+
+                    case "points":
+
+                        editPoints();
+
+                        break;
+
+                    case "category":
+
+                        alert("Pendiente");
+
+                        break;
+
+                    case "schedule":
+
+                        alert("Pendiente");
+
+                        break;
+
+                }
+
+            });
+
+        });
+
+}
+
+function editName(){
+
+    const value=prompt(
+
+        "Nombre de la tarea",
+
+        currentTask.nombre
+
+    );
+
+    if(value){
+
+        currentTask.nombre=value;
+
+        render();
+
+    }
+
+}
+
+function editPoints(){
+
+    const value=prompt(
+
+        "Puntos",
+
+        currentTask.puntos
+
+    );
+
+    if(value!==null){
+
+        currentTask.puntos=Number(value);
+
+        render();
+
+    }
 
 }
