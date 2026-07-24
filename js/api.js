@@ -89,3 +89,10 @@ export function updateTask(task) {
         puntos: task.puntos
     });
 }
+export function createTask(task) {
+    return request("createTask", {
+        nombre: task.nombre,
+        categoriaId: task.categoriaId,
+        puntos: task.puntos
+    });
+}

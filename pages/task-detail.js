@@ -10,12 +10,38 @@ import {
 
 import {
     getCategories,
-    updateTask
+    updateTask,
+    createTask
 } from "../js/api.js";
 
 export async function loadTaskDetail(task){
+export async function loadTaskDetail(task = null){
 
-    setCurrentTask(task);
+    if(task){
+
+        setCurrentTask(task);
+
+    }else{
+
+        setCurrentTask({
+
+            id:null,
+
+            nombre:"",
+
+            categoriaId:null,
+
+            categoria:"",
+
+            programacion:"",
+
+            puntos:10,
+
+            activa:true
+
+        });
+
+    }
 
     render();
 
@@ -202,8 +228,44 @@ async function openCategorySelector(){
 
 async function save(){
 
-    await updateTask(getCurrentTask());
+    const task = getCurrentTask();
 
-    loadTasks();
+    if(!task.nombre.trim()){
+
+        alert("La tarea debe tener un nombre.");
+
+        return;
+
+    }
+
+    if(!task.categoriaId){
+
+        alert("Selecciona una categoría.");
+
+        return;
+
+    }
+
+    try{
+
+        if(task.id){
+
+            await updateTask(task);
+
+        }else{
+
+            await createTask(task);
+
+        }
+
+        loadTasks();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert("No se han podido guardar los cambios.");
+
+    }
 
 }
