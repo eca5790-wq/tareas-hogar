@@ -1,6 +1,7 @@
 import { renderNavbar } from "../components/navbar.js";
 import { registerTask, getRegisterScreen } from "../js/api.js";
 import { APP } from "../js/config.js";
+import { showToast } from "../components/toast.js";
 
 let screenData = {};
 
@@ -17,7 +18,9 @@ export async function loadRegister() {
         <div class="search-box">
 
             <span class="material-symbols-rounded">
+
                 search
+
             </span>
 
             <input
@@ -47,6 +50,10 @@ function initEvents() {
         .getElementById("searchTask")
         .addEventListener("input", search);
 
+    document
+        .getElementById("taskContainer")
+        .addEventListener("click", handleTaskClick);
+
 }
 
 function search(e) {
@@ -55,7 +62,7 @@ function search(e) {
         .trim()
         .toLowerCase();
 
-    if (text === "") {
+    if (!text) {
 
         renderScreen(screenData);
 
@@ -63,7 +70,7 @@ function search(e) {
 
     }
 
-    const filtered = {
+    renderScreen({
 
         ...screenData,
 
@@ -81,9 +88,7 @@ function search(e) {
             }))
             .filter(category => category.tareas.length)
 
-    };
-
-    renderScreen(filtered);
+    });
 
 }
 
@@ -91,79 +96,87 @@ function renderScreen(data) {
 
     document.getElementById("taskContainer").innerHTML =
 
-        data.categories.map(category => `
-
-            <section class="card">
-
-                <h3>${category.nombre}</h3>
-
-                <div class="card-content">
-
-                    ${category.tareas.map(task => `
-
-                        <div
-                            class="task-item"
-                            data-id="${task.id}"
-                        >
-
-                            <div>
-
-                                <div class="task-name">
-
-                                    ${task.nombre}
-
-                                </div>
-
-                            </div>
-
-                            <div class="task-points">
-
-                                +${task.puntos}
-
-                            </div>
-
-                        </div>
-
-                    `).join("")}
-
-                </div>
-
-            </section>
-
-        `).join("");
-
-    document.querySelectorAll(".task-item")
-        .forEach(item => {
-
-            item.addEventListener("click", async () => {
-
-                await registerTask(
-                    item.dataset.id,
-                    APP.currentUser
-                );
-
-                showToast("Tarea registrada");
-
-            });
-
-        });
+        data.categories.map(renderCategory).join("");
 
 }
 
-function showToast(message) {
+function renderCategory(category) {
 
-    const toast = document.createElement("div");
+    return `
 
-    toast.className = "toast";
+        <section class="card">
 
-    toast.textContent = message;
+            <h3>${category.nombre}</h3>
 
-    document.body.appendChild(toast);
+            <div class="card-content">
 
-    setTimeout(() => {
+                ${category.tareas.map(renderTask).join("")}
 
-        toast.remove();
+            </div>
 
-    }, 1500);
+        </section>
+
+    `;
+
+}
+
+function renderTask(task) {
+
+    return `
+
+        <div
+            class="task-item"
+            data-id="${task.id}"
+        >
+
+            <div>
+
+                <div class="task-name">
+
+                    ${task.nombre}
+
+                </div>
+
+            </div>
+
+            <div class="task-points">
+
+                +${task.puntos}
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+async function handleTaskClick(e) {
+
+    const item = e.target.closest(".task-item");
+
+    if (!item) return;
+
+    try {
+
+        await registerTask(
+
+            item.dataset.id,
+
+            APP.currentUser
+
+        );
+
+        item.classList.add("completed");
+
+        showToast("Tarea registrada");
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast("No se ha podido registrar la tarea.");
+
+    }
 
 }

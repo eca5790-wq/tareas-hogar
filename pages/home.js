@@ -1,12 +1,26 @@
 import { APP } from "../js/config.js";
+import { getHomeData, registerTask } from "../js/api.js";
+
 import { profileButton, initProfile } from "../components/profile.js";
 import { renderNavbar } from "../components/navbar.js";
 import { card } from "../components/card.js";
-import { getHomeData, registerTask } from "../js/api.js";
+import { showToast } from "../components/toast.js";
+
+let todayTasks = [];
 
 export async function loadHome() {
 
     const data = await getHomeData(APP.currentUser);
+
+    todayTasks = [...data.today];
+
+    render(data);
+
+    initEvents();
+
+}
+
+function render(data) {
 
     document.getElementById("header").innerHTML = `
         <h2>Hoy</h2>
@@ -14,26 +28,78 @@ export async function loadHome() {
     `;
 
     document.getElementById("content").innerHTML = `
-
-        ${todaySection(data.today)}
-
+        ${todaySection(todayTasks)}
         ${weekSection(data.week)}
-
         ${recentSection(data.recent)}
-
         ${forgottenSection(data.forgotten)}
-
     `;
 
     initProfile();
 
     renderNavbar("home");
 
-    initTodayEvents();
+}
+
+function initEvents() {
+
+    document
+        .querySelectorAll(".today-task")
+        .forEach(item => {
+
+            item.onclick = () => completeTask(item);
+
+        });
 
 }
 
-function todaySection(tasks){
+async function completeTask(item) {
+
+    try {
+
+        await registerTask(
+            item.dataset.id,
+            APP.currentUser
+        );
+
+        item
+            .querySelector(".material-symbols-rounded")
+            .textContent = "check_circle";
+
+        item.classList.add("completed");
+
+        showToast("Tarea registrada");
+
+        setTimeout(() => {
+
+            item.remove();
+
+            if (!document.querySelector(".today-task")) {
+
+                const container = document.querySelector(".today-list");
+
+                if (container) {
+
+                    container.innerHTML = `
+                        <p>No hay tareas para hoy.</p>
+                    `;
+
+                }
+
+            }
+
+        }, 350);
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast("No se ha podido registrar la tarea.");
+
+    }
+
+}
+
+function todaySection(tasks) {
 
     return card(
 
@@ -41,44 +107,44 @@ function todaySection(tasks){
 
         tasks.length
 
-            ?
+            ? `
 
-            `<div class="card-content">
+                <div class="card-content today-list">
 
-                ${tasks.map(task=>`
+                    ${tasks.map(task => `
 
-                    <div
-                        class="task-item today-task"
-                        data-id="${task.id}"
-                    >
+                        <div
+                            class="task-item today-task"
+                            data-id="${task.id}"
+                        >
 
-                        <div class="task-name">
+                            <div class="task-name">
 
-                            ${task.nombre}
+                                ${task.nombre}
+
+                            </div>
+
+                            <span class="material-symbols-rounded">
+
+                                circle
+
+                            </span>
 
                         </div>
 
-                        <span class="material-symbols-rounded">
+                    `).join("")}
 
-                            circle
+                </div>
 
-                        </span>
+            `
 
-                    </div>
-
-                `).join("")}
-
-            </div>`
-
-            :
-
-            `<p>No hay tareas para hoy.</p>`
+            : "<p>No hay tareas para hoy.</p>"
 
     );
 
 }
 
-function weekSection(score){
+function weekSection(score) {
 
     return card(
 
@@ -90,17 +156,33 @@ function weekSection(score){
 
             <div class="task-item">
 
-                <div class="task-name">Elena</div>
+                <div class="task-name">
 
-                <div class="task-points">${score.Elena}</div>
+                    Elena
+
+                </div>
+
+                <div class="task-points">
+
+                    ${score.Elena}
+
+                </div>
 
             </div>
 
             <div class="task-item">
 
-                <div class="task-name">Tomás</div>
+                <div class="task-name">
 
-                <div class="task-points">${score["Tomás"]}</div>
+                    Tomás
+
+                </div>
+
+                <div class="task-points">
+
+                    ${score["Tomás"]}
+
+                </div>
 
             </div>
 
@@ -112,7 +194,7 @@ function weekSection(score){
 
 }
 
-function recentSection(tasks){
+function recentSection(tasks) {
 
     return card(
 
@@ -120,45 +202,45 @@ function recentSection(tasks){
 
         tasks.length
 
-            ?
+            ? `
 
-            `<div class="card-content">
+                <div class="card-content">
 
-                ${tasks.map(task=>`
+                    ${tasks.map(task => `
 
-                    <div class="task-item">
+                        <div class="task-item">
 
-                        <div>
+                            <div>
 
-                            <div class="task-name">
+                                <div class="task-name">
 
-                                ${task.nombre}
+                                    ${task.nombre}
 
-                            </div>
+                                </div>
 
-                            <div class="task-subtitle">
+                                <div class="task-subtitle">
 
-                                ${task.usuario}
+                                    ${task.usuario}
+
+                                </div>
 
                             </div>
 
                         </div>
 
-                    </div>
+                    `).join("")}
 
-                `).join("")}
+                </div>
 
-            </div>`
+            `
 
-            :
-
-            "<p>No hay registros.</p>"
+            : "<p>No hay registros.</p>"
 
     );
 
 }
 
-function forgottenSection(tasks){
+function forgottenSection(tasks) {
 
     return card(
 
@@ -166,86 +248,40 @@ function forgottenSection(tasks){
 
         tasks.length
 
-            ?
+            ? `
 
-            `<div class="card-content">
+                <div class="card-content">
 
-                ${tasks.map(task=>`
+                    ${tasks.map(task => `
 
-                    <div class="task-item">
+                        <div class="task-item">
 
-                        <div>
+                            <div>
 
-                            <div class="task-name">
+                                <div class="task-name">
 
-                                ${task.nombre}
+                                    ${task.nombre}
+
+                                </div>
+
+                            </div>
+
+                            <div class="task-points">
+
+                                +${task.puntos}
 
                             </div>
 
                         </div>
 
-                        <div class="task-points">
+                    `).join("")}
 
-                            +${task.puntos}
+                </div>
 
-                        </div>
+            `
 
-                    </div>
-
-                `).join("")}
-
-            </div>`
-
-            :
-
-            "<p>No hay tareas olvidadas.</p>"
+            : "<p>No hay tareas olvidadas.</p>"
 
     );
-
-}
-
-function initTodayEvents(){
-
-    document.querySelectorAll(".today-task").forEach(item=>{
-
-        item.addEventListener("click",async()=>{
-
-            await registerTask(
-
-                item.dataset.id,
-
-                APP.currentUser
-
-            );
-
-item.querySelector(".material-symbols-rounded").textContent = "check_circle";
-
-item.classList.add("completed");
-
-showToast("Tarea registrada");
-
-setTimeout(() => {
-
-    item.remove();
-
-}, 350);
-
-        });
-
-    });
-
-}
-
-function showToast(message){
-
-    const toast=document.createElement("div");
-
-    toast.className="toast";
-
-    toast.textContent=message;
-
-    document.body.appendChild(toast);
-
-    setTimeout(()=>toast.remove(),1500);
 
 }

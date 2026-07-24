@@ -1,14 +1,14 @@
-export function card(title, content) {
+export function card(title, content = "") {
 
     return `
 
         <section class="card">
 
-            <div class="card-header">
+            <h3 class="card-title">
 
-                <h3>${title}</h3>
+                ${title}
 
-            </div>
+            </h3>
 
             <div class="card-content">
 

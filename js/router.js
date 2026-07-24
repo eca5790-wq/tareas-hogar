@@ -20,21 +20,37 @@ const routes = {
 
 let currentPage = "home";
 
-export function navigate(page){
+export async function navigate(page, force = false) {
+
+    if (!force && page === currentPage) {
+
+        return;
+
+    }
+
+    const handler = routes[page];
+
+    if (!handler) {
+
+        console.error(`Ruta no encontrada: ${page}`);
+
+        return;
+
+    }
 
     currentPage = page;
 
-    routes[page]();
+    await handler();
 
 }
 
-export function getCurrentPage(){
+export function getCurrentPage() {
 
     return currentPage;
 
 }
 
-export function registerRoute(name,handler){
+export function registerRoute(name, handler) {
 
     routes[name] = handler;
 

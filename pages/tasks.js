@@ -1,17 +1,34 @@
+import UI from "../js/ui.js";
+
 import { renderNavbar } from "../components/navbar.js";
 import { taskItem } from "../components/taskItem.js";
+
 import { getTasks } from "../js/api.js";
+
 import { loadTaskDetail } from "./task-detail.js";
+
+let tasks = [];
 
 export async function loadTasks() {
 
-    const tasks = await getTasks();
+    tasks = await getTasks();
 
-    document.getElementById("header").innerHTML = `
+    render();
+
+    initEvents();
+
+}
+
+function render() {
+
+    UI.header.innerHTML = `
 
         <h2>Tareas</h2>
 
-        <button id="newTaskButton" class="icon-button">
+        <button
+            id="newTaskButton"
+            class="icon-button"
+        >
 
             <span class="material-symbols-rounded">
 
@@ -23,48 +40,64 @@ export async function loadTasks() {
 
     `;
 
-    document.getElementById("content").innerHTML = `
+    UI.content.innerHTML = `
 
-        <div id="tasksList"></div>
+        <div id="tasksList">
+
+            ${tasks.map(task =>
+
+                taskItem({
+
+                    id: task.id,
+
+                    title: task.nombre,
+
+                    subtitle: task.categoria,
+
+                    points: task.puntos
+
+                })
+
+            ).join("")}
+
+        </div>
 
     `;
 
-    const list = document.getElementById("tasksList");
-
-    list.innerHTML = tasks.map(task =>
-        taskItem(
-            task.nombre,
-            task.puntos,
-            task.categoria
-        )
-    ).join("");
-
     renderNavbar("tasks");
-
-    initEvents(tasks);
 
 }
 
-function initEvents(tasks) {
+function initEvents() {
 
     document
         .getElementById("newTaskButton")
-        .addEventListener("click", () => {
+        .onclick = () => {
 
             loadTaskDetail();
 
-        });
+        };
 
     document
-        .querySelectorAll(".task-item")
-        .forEach((item, index) => {
+        .getElementById("tasksList")
+        .onclick = handleTaskClick;
 
-            item.addEventListener("click", () => {
+}
 
-                loadTaskDetail(tasks[index]);
+function handleTaskClick(e) {
 
-            });
+    const item = e.target.closest(".task-item");
 
-        });
+    if (!item) return;
+
+    const task = tasks.find(t =>
+
+        String(t.id) === item.dataset.id
+
+    );
+
+    if (!task) return;
+
+    loadTaskDetail(task);
 
 }
