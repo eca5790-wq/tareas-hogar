@@ -14,16 +14,20 @@ export async function loadRegister() {
 
     document.getElementById("content").innerHTML = `
 
-        <section class="card">
+        <div class="search-box">
+
+            <span class="material-symbols-rounded">
+                search
+            </span>
 
             <input
                 id="searchTask"
                 class="search-input"
                 type="text"
-                placeholder="Buscar tarea..."
+                placeholder="Buscar una tarea..."
             >
 
-        </section>
+        </div>
 
         <div id="taskContainer"></div>
 
@@ -37,7 +41,7 @@ export async function loadRegister() {
 
 }
 
-function initEvents(){
+function initEvents() {
 
     document
         .getElementById("searchTask")
@@ -45,13 +49,13 @@ function initEvents(){
 
 }
 
-function search(e){
+function search(e) {
 
     const text = e.target.value
         .trim()
         .toLowerCase();
 
-    if(text === ""){
+    if (text === "") {
 
         renderScreen(screenData);
 
@@ -83,7 +87,7 @@ function search(e){
 
 }
 
-function renderScreen(data){
+function renderScreen(data) {
 
     document.getElementById("taskContainer").innerHTML =
 
@@ -93,28 +97,36 @@ function renderScreen(data){
 
                 <h3>${category.nombre}</h3>
 
-                ${category.tareas.map(task => `
+                <div class="card-content">
 
-                    <div
-                        class="task-item"
-                        data-id="${task.id}"
-                    >
+                    ${category.tareas.map(task => `
 
-                        <div class="task-name">
+                        <div
+                            class="task-item"
+                            data-id="${task.id}"
+                        >
 
-                            ${task.nombre}
+                            <div>
+
+                                <div class="task-name">
+
+                                    ${task.nombre}
+
+                                </div>
+
+                            </div>
+
+                            <div class="task-points">
+
+                                +${task.puntos}
+
+                            </div>
 
                         </div>
 
-                        <div class="task-points">
+                    `).join("")}
 
-                            ${task.puntos}
-
-                        </div>
-
-                    </div>
-
-                `).join("")}
+                </div>
 
             </section>
 
@@ -138,7 +150,7 @@ function renderScreen(data){
 
 }
 
-function showToast(message){
+function showToast(message) {
 
     const toast = document.createElement("div");
 

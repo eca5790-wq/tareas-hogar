@@ -1,13 +1,23 @@
 export function card(title, content) {
 
     return `
+
         <section class="card">
 
-            <h3>${title}</h3>
+            <div class="card-header">
 
-            ${content}
+                <h3>${title}</h3>
+
+            </div>
+
+            <div class="card-content">
+
+                ${content}
+
+            </div>
 
         </section>
+
     `;
 
 }

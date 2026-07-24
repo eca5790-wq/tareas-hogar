@@ -4,36 +4,50 @@ export function renderNavbar(activePage) {
 
     document.getElementById("navbar").innerHTML = `
 
-        <div class="nav-item ${activePage === "home" ? "active" : ""}" data-page="home">
-            🏠
-        </div>
+        ${item("home","home","Inicio",activePage)}
 
-        <div class="nav-item ${activePage === "tasks" ? "active" : ""}" data-page="tasks">
-            📋
-        </div>
+        ${item("tasks","checklist","Tareas",activePage)}
 
-        <div class="nav-item ${activePage === "register" ? "active" : ""}" data-page="register">
-            ➕
-        </div>
+        ${item("register","add_circle","Registrar",activePage)}
 
-        <div class="nav-item ${activePage === "stats" ? "active" : ""}" data-page="stats">
-            📊
-        </div>
+        ${item("stats","bar_chart","Estadísticas",activePage)}
 
-        <div class="nav-item ${activePage === "settings" ? "active" : ""}" data-page="settings">
-            ⚙️
-        </div>
+        ${item("settings","settings","Ajustes",activePage)}
 
     `;
 
-    document.querySelectorAll(".nav-item").forEach(item => {
+    document.querySelectorAll(".nav-item")
+        .forEach(item=>{
 
-        item.addEventListener("click", () => {
+            item.addEventListener("click",()=>{
 
-            navigate(item.dataset.page);
+                navigate(item.dataset.page);
+
+            });
 
         });
 
-    });
+}
+
+function item(page,icon,label,active){
+
+    return `
+
+        <button
+            class="nav-item ${page===active?"active":""}"
+            data-page="${page}"
+        >
+
+            <span class="material-symbols-rounded">
+
+                ${icon}
+
+            </span>
+
+            <small>${label}</small>
+
+        </button>
+
+    `;
 
 }
