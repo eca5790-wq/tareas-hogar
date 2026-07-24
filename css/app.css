@@ -50,9 +50,11 @@ header h2 {
     font-weight: 600;
 }
 
-main {
-    flex: 1;
-    padding: 16px;
+main{
+    flex:1;
+    padding:16px;
+
+    padding-bottom:80px; /* MUY IMPORTANTE */
 }
 
 nav{
