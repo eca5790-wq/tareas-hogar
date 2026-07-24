@@ -1,6 +1,7 @@
 import { renderNavbar } from "../components/navbar.js";
 import { card } from "../components/card.js";
 import { taskItem } from "../components/taskItem.js";
+import { APP } from "../js/config.js";
 
 export function loadRegister() {
 
@@ -41,7 +42,15 @@ function initRegisterEvents(){
 
         item.addEventListener("click", () => {
 
-            console.log("Tarea registrada");
+            const name = item.querySelector(".task-name").innerText;
+
+            const task = {
+                nombre: name,
+                usuario: APP.currentUser,
+                fecha: new Date().toISOString()
+            };
+
+            APP.addTask(task);
 
             showToast("Tarea registrada");
 
