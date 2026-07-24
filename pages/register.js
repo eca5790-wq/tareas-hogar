@@ -49,8 +49,8 @@ function initRegisterEvents(){
                 usuario: APP.currentUser,
                 fecha: new Date().toISOString()
             };
-
-            APP.addTask(task);
+import { registerTask } from "../js/api.js";
+            registerTask(name, APP.currentUser);
 
             showToast("Tarea registrada");
 

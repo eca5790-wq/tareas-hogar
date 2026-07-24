@@ -1,10 +1,6 @@
-const API_URL = "";
+const API_URL = "https://script.google.com/macros/s/AKfycbwlc0_mddzrLtEwm_KqA30SJhkBE15_Evdbshgs3_QtQeCO_-Y-kgBrtp0Rq8P8DjhU/exec";
 
 async function request(action, data = {}) {
-
-    if (!API_URL) {
-        return mock(action);
-    }
 
     const response = await fetch(API_URL, {
         method: "POST",
@@ -21,80 +17,10 @@ async function request(action, data = {}) {
 
 }
 
-function mock(action) {
-
-    switch (action) {
-
-        case "home":
-
-            return {
-
-                today: [
-                    // {
-                    //     nombre: "Fregar",
-                    //     puntos: 20
-                    // }
-                ],
-
-                week: {
-                    Elena: 0,
-                    "Tomás": 0
-                },
-
-                recent: [
-                    // {
-                    //     nombre: "Tender ropa",
-                    //     usuario: "Elena"
-                    // }
-                ],
-
-                forgotten: [
-                    // {
-                    //     nombre: "Limpiar horno",
-                    //     puntos: 45,
-                    //     dias: 28
-                    // }
-                ]
-
-            };
-
-        default:
-
-            return {};
-
-    }
-
-}
-
 export function getHomeData(user) {
-
     return request("home", { user });
-
-}
-
-export function getTasks() {
-
-    return request("tasks");
-
 }
 
 export function registerTask(taskId, user) {
-
-    return request("registerTask", {
-        taskId,
-        user
-    });
-
-}
-
-export function getStats() {
-
-    return request("stats");
-
-}
-
-export function getSettings() {
-
-    return request("settings");
-
+    return request("registerTask", { taskId, user });
 }
