@@ -54,6 +54,11 @@ function initRegisterEvents(){
 
             showToast("Tarea registrada");
 
+// Volver a inicio automáticamente
+setTimeout(() => {
+    location.reload();
+}, 500);
+
         });
 
     });
