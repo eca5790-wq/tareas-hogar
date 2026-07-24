@@ -26,7 +26,7 @@ export function loadHome() {
             "🕒 Últimas tareas",
             history.length
                 ? history.map(task =>
-                    taskItem(task.nombre, null, task.usuario)
+                    taskItem(task.nombre, null, task.usuario + " - " + new Date().toLocaleTimeString())
                   ).join("")
                 : "<p>No hay registros.</p>"
         );

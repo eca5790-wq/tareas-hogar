@@ -4,7 +4,6 @@ async function request(action, data = {}) {
 
     const response = await fetch(API_URL, {
         method: "POST",
-        mode: "no-cors", // 🔥 CLAVE
         headers: {
             "Content-Type": "application/json"
         },
@@ -14,13 +13,12 @@ async function request(action, data = {}) {
         })
     });
 
-    // ⚠️ no-cors no permite leer respuesta
-    return {};
+    return await response.json();
 
 }
 
 export function getHomeData(user) {
-    return {};
+    return request("home", { user });
 }
 
 export function registerTask(taskId, user) {
