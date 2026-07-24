@@ -1,10 +1,7 @@
 import { loadNavbar } from "../components/navbar.js";
-import { loadHome } from "../pages/home.js";
+import { navigate } from "./router.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-
     loadNavbar();
-
-    loadHome();
-
+    navigate("home");
 });
