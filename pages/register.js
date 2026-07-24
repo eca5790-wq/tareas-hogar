@@ -2,9 +2,11 @@ import { renderNavbar } from "../components/navbar.js";
 import { card } from "../components/card.js";
 import { taskItem } from "../components/taskItem.js";
 import { APP } from "../js/config.js";
-import { registerTask } from "../js/api.js";
+import { registerTask, getTasks } from "../js/api.js";
 
-export function loadRegister() {
+export async function loadRegister() {
+
+    const tasks = await getTasks();
 
     document.getElementById("header").innerHTML = `
         <h2>Registrar</h2>
@@ -13,22 +15,13 @@ export function loadRegister() {
     document.getElementById("content").innerHTML =
 
         card(
-            "⭐ Más habituales",
-            `
-                ${taskItem("Sacar basura", 10)}
-                ${taskItem("Fregar", 15)}
-                ${taskItem("Tender ropa", 12)}
-            `
-        )
-
-        +
-
-        card(
-            "📅 Hoy",
-            `
-                ${taskItem("Limpiar cocina", 20)}
-                ${taskItem("Hacer la compra", 30)}
-            `
+            "📋 Todas las tareas",
+            tasks.map(t =>
+                `<div class="task-item" data-id="${t.id}">
+                    <div class="task-name">${t.nombre}</div>
+                    <div class="task-points">${t.puntos}</div>
+                </div>`
+            ).join("")
         );
 
     renderNavbar("register");
@@ -43,9 +36,9 @@ function initRegisterEvents(){
 
         item.addEventListener("click", () => {
 
-            const name = item.querySelector(".task-name").innerText;
+            const id = item.dataset.id;
 
-            registerTask(name, APP.currentUser);
+            registerTask(id, APP.currentUser);
 
             showToast("Tarea registrada");
 

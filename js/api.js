@@ -5,7 +5,7 @@ async function request(action, data = {}) {
     const params = new URLSearchParams({
         action,
         ...data,
-        t: Date.now() // rompe caché
+        t: Date.now()
     });
 
     const response = await fetch(`${API_URL}?${params}`, {
@@ -22,4 +22,8 @@ export function getHomeData(user) {
 
 export function registerTask(taskId, user) {
     return request("registerTask", { taskId, user });
+}
+
+export function getTasks() {
+    return request("tasks");
 }
