@@ -1,5 +1,5 @@
 import { renderNavbar } from "../components/navbar.js";
-import { renderTaskItem } from "../components/taskItem.js";
+import { taskItem } from "../components/taskItem.js";
 import { getTasks } from "../js/api.js";
 import { loadTaskDetail } from "./task-detail.js";
 
@@ -31,11 +31,13 @@ export async function loadTasks() {
 
     const list = document.getElementById("tasksList");
 
-    tasks.forEach(task => {
-
-        list.innerHTML += renderTaskItem(task);
-
-    });
+    list.innerHTML = tasks.map(task =>
+        taskItem(
+            task.nombre,
+            task.puntos,
+            task.categoria
+        )
+    ).join("");
 
     renderNavbar("tasks");
 
