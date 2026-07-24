@@ -14,7 +14,7 @@ import {
     createTask
 } from "../js/api.js";
 
-export async function loadTaskDetail(task){
+
 export async function loadTaskDetail(task = null){
 
     if(task){
