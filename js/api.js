@@ -2,16 +2,12 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwlc0_mddzrLtEwm_KqA30S
 
 async function request(action, data = {}) {
 
-    const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            action,
-            ...data
-        })
+    const params = new URLSearchParams({
+        action,
+        ...data
     });
+
+    const response = await fetch(`${API_URL}?${params}`);
 
     return await response.json();
 
