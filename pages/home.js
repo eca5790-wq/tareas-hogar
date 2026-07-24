@@ -2,57 +2,250 @@ import { APP } from "../js/config.js";
 import { profileButton, initProfile } from "../components/profile.js";
 import { renderNavbar } from "../components/navbar.js";
 import { card } from "../components/card.js";
-import { taskItem } from "../components/taskItem.js";
-import { getHomeData } from "../js/api.js";
+import { getHomeData, registerTask } from "../js/api.js";
 
 export async function loadHome() {
 
     const data = await getHomeData(APP.currentUser);
 
     document.getElementById("header").innerHTML = `
-        <h2>Tareas Hogar</h2>
+        <h2>Hoy</h2>
         ${profileButton()}
     `;
 
-    document.getElementById("content").innerHTML =
+    document.getElementById("content").innerHTML = `
 
-card(
-    "📅 Hoy",
-    data.today.length
-        ? data.today.map(task =>
-            taskItem(task.nombre)
-          ).join("")
-        : "<p>No hay tareas programadas.</p>"
-)
+        ${todaySection(data.today)}
 
-        +
+        ${weekSection(data.week)}
 
-        card(
-            "🕒 Últimas tareas",
-            data.recent.length
-                ? data.recent.map(task =>
-                    taskItem(
-                        task.nombre,
-                        null,
-                        `${task.usuario} - ${formatDate(task.fecha)}`
-                    )
-                  ).join("")
-                : "<p>No hay registros.</p>"
-        );
+        ${recentSection(data.recent)}
+
+        ${forgottenSection(data.forgotten)}
+
+    `;
 
     initProfile();
 
     renderNavbar("home");
 
+    initTodayEvents();
+
 }
 
-function formatDate(date){
+function todaySection(tasks){
 
-    const d = new Date(date);
+    return card(
 
-    const dias = [
-        "domingo","lunes","martes","miércoles","jueves","viernes","sábado"
-    ];
+        "Hoy",
 
-    return `${dias[d.getDay()]} ${d.getDate()}`;
+        tasks.length
+
+            ?
+
+            `<div class="card-content">
+
+                ${tasks.map(task=>`
+
+                    <div
+                        class="task-item today-task"
+                        data-id="${task.id}"
+                    >
+
+                        <div class="task-name">
+
+                            ${task.nombre}
+
+                        </div>
+
+                        <span class="material-symbols-rounded">
+
+                            circle
+
+                        </span>
+
+                    </div>
+
+                `).join("")}
+
+            </div>`
+
+            :
+
+            `<p>No hay tareas para hoy.</p>`
+
+    );
+
+}
+
+function weekSection(score){
+
+    return card(
+
+        "Esta semana",
+
+        `
+
+        <div class="card-content">
+
+            <div class="task-item">
+
+                <div class="task-name">Elena</div>
+
+                <div class="task-points">${score.Elena}</div>
+
+            </div>
+
+            <div class="task-item">
+
+                <div class="task-name">Tomás</div>
+
+                <div class="task-points">${score["Tomás"]}</div>
+
+            </div>
+
+        </div>
+
+        `
+
+    );
+
+}
+
+function recentSection(tasks){
+
+    return card(
+
+        "Últimas tareas",
+
+        tasks.length
+
+            ?
+
+            `<div class="card-content">
+
+                ${tasks.map(task=>`
+
+                    <div class="task-item">
+
+                        <div>
+
+                            <div class="task-name">
+
+                                ${task.nombre}
+
+                            </div>
+
+                            <div class="task-subtitle">
+
+                                ${task.usuario}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `).join("")}
+
+            </div>`
+
+            :
+
+            "<p>No hay registros.</p>"
+
+    );
+
+}
+
+function forgottenSection(tasks){
+
+    return card(
+
+        "Tareas olvidadas",
+
+        tasks.length
+
+            ?
+
+            `<div class="card-content">
+
+                ${tasks.map(task=>`
+
+                    <div class="task-item">
+
+                        <div>
+
+                            <div class="task-name">
+
+                                ${task.nombre}
+
+                            </div>
+
+                        </div>
+
+                        <div class="task-points">
+
+                            +${task.puntos}
+
+                        </div>
+
+                    </div>
+
+                `).join("")}
+
+            </div>`
+
+            :
+
+            "<p>No hay tareas olvidadas.</p>"
+
+    );
+
+}
+
+function initTodayEvents(){
+
+    document.querySelectorAll(".today-task").forEach(item=>{
+
+        item.addEventListener("click",async()=>{
+
+            await registerTask(
+
+                item.dataset.id,
+
+                APP.currentUser
+
+            );
+
+item.querySelector(".material-symbols-rounded").textContent = "check_circle";
+
+item.classList.add("completed");
+
+showToast("Tarea registrada");
+
+setTimeout(() => {
+
+    item.remove();
+
+}, 350);
+
+        });
+
+    });
+
+}
+
+function showToast(message){
+
+    const toast=document.createElement("div");
+
+    toast.className="toast";
+
+    toast.textContent=message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(()=>toast.remove(),1500);
+
 }
