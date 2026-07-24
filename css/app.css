@@ -70,3 +70,21 @@ nav{
     margin-bottom:16px;
     box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
+#profileButton{
+
+    width:40px;
+    height:40px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#4F6D7A;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+}
