@@ -2,7 +2,7 @@ export const APP = {
 
     currentUser: localStorage.getItem("currentUser") || "Elena",
 
-    setUser(user){
+    setCurrentUser(user){
 
         this.currentUser = user;
 
@@ -10,4 +10,4 @@ export const APP = {
 
     }
 
-}
+};

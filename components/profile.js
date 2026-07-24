@@ -1,36 +1,30 @@
 import { APP } from "../js/config.js";
+import { navigate } from "../js/router.js";
 
-export function profileButton(){
+export function profileButton() {
 
     return `
-
-        <button id="profileButton">
-
-            ${APP.currentUser==="Elena" ? "👩" : "👨"}
-
+        <button id="profileButton" class="profile-button">
+            ${APP.currentUser === "Elena" ? "👩" : "👨"}
         </button>
-
     `;
 
 }
 
-export function initProfile(){
+export function initProfile() {
 
     document
         .getElementById("profileButton")
-        .addEventListener("click",()=>{
+        .addEventListener("click", () => {
 
-            const user=
+            const newUser =
+                APP.currentUser === "Elena"
+                    ? "Tomás"
+                    : "Elena";
 
-                APP.currentUser==="Elena"
+            APP.setCurrentUser(newUser);
 
-                ? "Tomás"
-
-                : "Elena";
-
-            APP.setUser(user);
-
-            location.reload();
+            navigate("home");
 
         });
 
