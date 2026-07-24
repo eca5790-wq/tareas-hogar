@@ -14,30 +14,26 @@ import {
     createTask
 } from "../js/api.js";
 
+import { openDialog } from "../components/dialog.js";
+import { showToast } from "../components/toast.js";
 
-export async function loadTaskDetail(task = null){
+export async function loadTaskDetail(task = null) {
 
-    if(task){
+    if (task) {
 
         setCurrentTask(task);
 
-    }else{
+    } else {
 
         setCurrentTask({
 
-            id:null,
-
-            nombre:"",
-
-            categoriaId:null,
-
-            categoria:"",
-
-            programacion:"",
-
-            puntos:10,
-
-            activa:true
+            id: null,
+            nombre: "",
+            categoriaId: null,
+            categoria: "",
+            programacion: "",
+            puntos: 10,
+            activa: true
 
         });
 
@@ -47,7 +43,7 @@ export async function loadTaskDetail(task = null){
 
 }
 
-function render(){
+function render() {
 
     const task = getCurrentTask();
 
@@ -61,7 +57,7 @@ function render(){
 
         </button>
 
-        <h2>${task.nombre}</h2>
+        <h2>${task.id ? task.nombre : "Nueva tarea"}</h2>
 
         <div style="width:40px"></div>
 
@@ -71,13 +67,29 @@ function render(){
 
         <section class="settings-group">
 
-            ${row("Nombre",task.nombre,"name")}
+            ${row(
+                "Nombre",
+                task.nombre || "Sin nombre",
+                "name"
+            )}
 
-            ${row("Categoría",task.categoria,"category")}
+            ${row(
+                "Categoría",
+                task.categoria || "Seleccionar",
+                "category"
+            )}
 
-            ${row("Programación",task.programacion || "Sin programación","schedule")}
+            ${row(
+                "Programación",
+                task.programacion || "Sin programación",
+                "schedule"
+            )}
 
-            ${row("Puntos",task.puntos,"points")}
+            ${row(
+                "Puntos",
+                task.puntos,
+                "points"
+            )}
 
         </section>
 
@@ -98,7 +110,7 @@ function render(){
 
 }
 
-function row(title,value,action){
+function row(title, value, action) {
 
     return `
 
@@ -135,29 +147,23 @@ function row(title,value,action){
 
 }
 
-function initEvents(){
+function initEvents() {
 
     document
         .getElementById("backButton")
-        .addEventListener("click",loadTasks);
+        .addEventListener("click", loadTasks);
 
     document
-        .querySelectorAll(".setting-row.selectable")
-        .forEach(item=>{
+        .querySelectorAll(".setting-row")
+        .forEach(item => {
 
-            item.addEventListener("click",()=>{
+            item.onclick = () => {
 
-                switch(item.dataset.action){
+                switch (item.dataset.action) {
 
                     case "name":
 
                         editName();
-
-                        break;
-
-                    case "points":
-
-                        editPoints();
 
                         break;
 
@@ -167,58 +173,95 @@ function initEvents(){
 
                         break;
 
+                    case "points":
+
+                        editPoints();
+
+                        break;
+
                     case "schedule":
 
-                        alert("Pendiente");
+                        showToast("Editor de programación pendiente.");
 
                         break;
 
                 }
 
-            });
+            };
 
         });
 
     document
         .getElementById("saveTask")
-        .addEventListener("click",save);
+        .addEventListener("click", save);
 
 }
 
-function editName(){
+function editName() {
 
-    const value = prompt(
-        "Nombre",
-        getCurrentTask().nombre
-    );
+    openDialog({
 
-    if(!value) return;
+        title: "Nombre",
 
-    updateCurrentTask("nombre",value);
+        value: getCurrentTask().nombre,
 
-    render();
+        placeholder: "Nombre de la tarea",
+
+        onAccept: value => {
+
+            value = value.trim();
+
+            if (!value) {
+
+                showToast("Introduce un nombre.");
+
+                return;
+
+            }
+
+            updateCurrentTask("nombre", value);
+
+            render();
+
+        }
+
+    });
 
 }
 
-function editPoints(){
+function editPoints() {
 
-    const value = prompt(
-        "Puntos",
-        getCurrentTask().puntos
-    );
+    openDialog({
 
-    if(value===null) return;
+        title: "Puntos",
 
-    updateCurrentTask(
-        "puntos",
-        Number(value)
-    );
+        type: "number",
 
-    render();
+        value: getCurrentTask().puntos,
+
+        onAccept: value => {
+
+            const points = Number(value);
+
+            if (Number.isNaN(points) || points < 0) {
+
+                showToast("Introduce un número válido.");
+
+                return;
+
+            }
+
+            updateCurrentTask("puntos", points);
+
+            render();
+
+        }
+
+    });
 
 }
 
-async function openCategorySelector(){
+async function openCategorySelector() {
 
     const categories = await getCategories();
 
@@ -226,45 +269,47 @@ async function openCategorySelector(){
 
 }
 
-async function save(){
+async function save() {
 
     const task = getCurrentTask();
 
-    if(!task.nombre.trim()){
+    if (!task.nombre.trim()) {
 
-        alert("La tarea debe tener un nombre.");
-
-        return;
-
-    }
-
-    if(!task.categoriaId){
-
-        alert("Selecciona una categoría.");
+        showToast("La tarea debe tener un nombre.");
 
         return;
 
     }
 
-    try{
+    if (!task.categoriaId) {
 
-        if(task.id){
+        showToast("Selecciona una categoría.");
+
+        return;
+
+    }
+
+    try {
+
+        if (task.id) {
 
             await updateTask(task);
 
-        }else{
+        } else {
 
             await createTask(task);
 
         }
 
-        loadTasks();
+        showToast("Tarea guardada.");
 
-    }catch(error){
+        await loadTasks();
+
+    } catch (error) {
 
         console.error(error);
 
-        alert("No se han podido guardar los cambios.");
+        showToast("No se han podido guardar los cambios.");
 
     }
 

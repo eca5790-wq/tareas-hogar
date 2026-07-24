@@ -758,3 +758,100 @@ p{
     background:#F9FAFB;
 
 }
+.dialog-overlay{
+
+    position:fixed;
+    inset:0;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(0,0,0,.25);
+
+    z-index:1000;
+
+}
+
+.dialog{
+
+    width:min(420px,90vw);
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:24px;
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+
+    box-shadow:0 20px 60px rgba(0,0,0,.18);
+
+}
+
+.dialog h3{
+
+    margin:0;
+
+    font-size:20px;
+
+}
+
+.dialog input{
+
+    width:100%;
+
+    font-size:18px;
+
+    padding:14px 16px;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    outline:none;
+
+}
+
+.dialog-buttons{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:12px;
+
+}
+.toast{
+
+    position:fixed;
+
+    left:50%;
+    bottom:32px;
+
+    transform:translateX(-50%) translateY(30px);
+
+    background:#222;
+    color:#fff;
+
+    padding:14px 22px;
+
+    border-radius:14px;
+
+    opacity:0;
+
+    transition:.25s;
+
+    z-index:2000;
+
+}
+
+.toast.show{
+
+    opacity:1;
+
+    transform:translateX(-50%) translateY(0);
+
+}
