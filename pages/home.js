@@ -16,10 +16,14 @@ export async function loadHome() {
 
     document.getElementById("content").innerHTML =
 
-        card(
-            "📅 Hoy",
-            `<p>No hay tareas programadas.</p>`
-        )
+card(
+    "📅 Hoy",
+    data.today.length
+        ? data.today.map(task =>
+            taskItem(task.nombre)
+          ).join("")
+        : "<p>No hay tareas programadas.</p>"
+)
 
         +
 
