@@ -27,6 +27,10 @@ export function navigate(page) {
         case "settings":
             loadSettings();
             break;
+
+        default:
+            loadHome();
+
     }
 
 }
