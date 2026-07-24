@@ -20,6 +20,10 @@ export function getHomeData(user) {
     return request("home", { user });
 }
 
+export function getRegisterScreen(user) {
+    return request("registerScreen", { user });
+}
+
 export function registerTask(taskId, user) {
     return request("registerTask", { taskId, user });
 }
