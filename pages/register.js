@@ -1,4 +1,6 @@
 import { renderNavbar } from "../components/navbar.js";
+import { card } from "../components/card.js";
+import { taskItem } from "../components/taskItem.js";
 
 export function loadRegister() {
 
@@ -6,18 +8,60 @@ export function loadRegister() {
         <h2>Registrar</h2>
     `;
 
-    document.getElementById("content").innerHTML = `
+    document.getElementById("content").innerHTML =
 
-        <section class="card">
+        card(
+            "⭐ Más habituales",
+            `
+                ${taskItem("Sacar basura", 10)}
+                ${taskItem("Fregar", 15)}
+                ${taskItem("Tender ropa", 12)}
+            `
+        )
 
-            <h3>Registrar tarea</h3>
+        +
 
-            <p>Próximamente aparecerán aquí el buscador, las tareas habituales y las tareas de hoy.</p>
-
-        </section>
-
-    `;
+        card(
+            "📅 Hoy",
+            `
+                ${taskItem("Limpiar cocina", 20)}
+                ${taskItem("Hacer la compra", 30)}
+            `
+        );
 
     renderNavbar("register");
+
+    initRegisterEvents();
+
+}
+
+function initRegisterEvents(){
+
+    document.querySelectorAll(".task-item").forEach(item => {
+
+        item.addEventListener("click", () => {
+
+            console.log("Tarea registrada");
+
+            showToast("Tarea registrada");
+
+        });
+
+    });
+
+}
+
+function showToast(message){
+
+    const toast = document.createElement("div");
+
+    toast.className = "toast";
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(()=>{
+        toast.remove();
+    },1500);
 
 }
