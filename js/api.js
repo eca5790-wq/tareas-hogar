@@ -4,10 +4,13 @@ async function request(action, data = {}) {
 
     const params = new URLSearchParams({
         action,
-        ...data
+        ...data,
+        t: Date.now() // rompe caché
     });
 
-    const response = await fetch(`${API_URL}?${params}`);
+    const response = await fetch(`${API_URL}?${params}`, {
+        cache: "no-store"
+    });
 
     return await response.json();
 

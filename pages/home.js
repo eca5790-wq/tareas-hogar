@@ -3,10 +3,11 @@ import { profileButton, initProfile } from "../components/profile.js";
 import { renderNavbar } from "../components/navbar.js";
 import { card } from "../components/card.js";
 import { taskItem } from "../components/taskItem.js";
+import { getHomeData } from "../js/api.js";
 
-export function loadHome() {
+export async function loadHome() {
 
-    const history = APP.history.slice(-5).reverse();
+    const data = await getHomeData(APP.currentUser);
 
     document.getElementById("header").innerHTML = `
         <h2>Tareas Hogar</h2>
@@ -24,9 +25,13 @@ export function loadHome() {
 
         card(
             "🕒 Últimas tareas",
-            history.length
-                ? history.map(task =>
-                    taskItem(task.nombre, null, task.usuario + " - " + new Date().toLocaleTimeString())
+            data.recent.length
+                ? data.recent.map(task =>
+                    taskItem(
+                        task.nombre,
+                        null,
+                        `${task.usuario} - ${formatDate(task.fecha)}`
+                    )
                   ).join("")
                 : "<p>No hay registros.</p>"
         );
@@ -35,4 +40,15 @@ export function loadHome() {
 
     renderNavbar("home");
 
+}
+
+function formatDate(date){
+
+    const d = new Date(date);
+
+    const dias = [
+        "domingo","lunes","martes","miércoles","jueves","viernes","sábado"
+    ];
+
+    return `${dias[d.getDay()]} ${d.getDate()}`;
 }
