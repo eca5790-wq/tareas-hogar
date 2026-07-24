@@ -507,3 +507,53 @@ p{
     }
 
 }
+.primary-button{
+
+    width:100%;
+
+    height:52px;
+
+    border:none;
+
+    border-radius:16px;
+
+    margin-top:16px;
+
+    background:var(--primary);
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:8px;
+
+    cursor:pointer;
+
+}
+.new-task-row{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    color:var(--primary);
+
+    font-weight:600;
+
+    padding:20px;
+
+    cursor:pointer;
+
+}
