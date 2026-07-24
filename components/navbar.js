@@ -1,20 +1,34 @@
 import { navigate } from "../js/router.js";
 
-export function loadNavbar(){
+export function renderNavbar(activePage) {
 
-    document.getElementById("navbar").innerHTML=`
+    document.getElementById("navbar").innerHTML = `
 
-        <div class="nav-item" data-page="home">🏠</div>
-        <div class="nav-item" data-page="tasks">📋</div>
-        <div class="nav-item" data-page="register">➕</div>
-        <div class="nav-item" data-page="stats">📊</div>
-        <div class="nav-item" data-page="settings">⚙️</div>
+        <div class="nav-item ${activePage === "home" ? "active" : ""}" data-page="home">
+            🏠
+        </div>
+
+        <div class="nav-item ${activePage === "tasks" ? "active" : ""}" data-page="tasks">
+            📋
+        </div>
+
+        <div class="nav-item ${activePage === "register" ? "active" : ""}" data-page="register">
+            ➕
+        </div>
+
+        <div class="nav-item ${activePage === "stats" ? "active" : ""}" data-page="stats">
+            📊
+        </div>
+
+        <div class="nav-item ${activePage === "settings" ? "active" : ""}" data-page="settings">
+            ⚙️
+        </div>
 
     `;
 
-    document.querySelectorAll(".nav-item").forEach(item=>{
+    document.querySelectorAll(".nav-item").forEach(item => {
 
-        item.addEventListener("click",()=>{
+        item.addEventListener("click", () => {
 
             navigate(item.dataset.page);
 

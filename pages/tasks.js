@@ -1,17 +1,23 @@
-export function loadTasks(){
+import { renderNavbar } from "../components/navbar.js";
 
-    document.getElementById("header").innerHTML=`
+export function loadTasks() {
+
+    document.getElementById("header").innerHTML = `
         <h2>Tareas</h2>
-        <div>👩</div>
     `;
 
-    document.getElementById("content").innerHTML=`
+    document.getElementById("content").innerHTML = `
 
-        <div class="card">
-            <h3>Listado de tareas</h3>
-            <p>Pantalla en construcción.</p>
-        </div>
+        <section class="card">
+
+            <h3>Administración de tareas</h3>
+
+            <p>Aquí podrás crear, editar y desactivar tareas.</p>
+
+        </section>
 
     `;
+
+    renderNavbar("tasks");
 
 }

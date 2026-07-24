@@ -1,17 +1,23 @@
-export function loadStats(){
+import { renderNavbar } from "../components/navbar.js";
 
-    document.getElementById("header").innerHTML=`
+export function loadStats() {
+
+    document.getElementById("header").innerHTML = `
         <h2>Estadísticas</h2>
-        <div>👩</div>
     `;
 
-    document.getElementById("content").innerHTML=`
+    document.getElementById("content").innerHTML = `
 
-        <div class="card">
+        <section class="card">
+
             <h3>Estadísticas</h3>
-            <p>Pantalla en construcción.</p>
-        </div>
+
+            <p>Las estadísticas estarán disponibles cuando exista histórico de tareas.</p>
+
+        </section>
 
     `;
+
+    renderNavbar("stats");
 
 }

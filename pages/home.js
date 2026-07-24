@@ -1,5 +1,8 @@
 import { APP } from "../js/config.js";
 import { profileButton, initProfile } from "../components/profile.js";
+import { renderNavbar } from "../components/navbar.js";
+import { card } from "../components/card.js";
+import { taskItem } from "../components/taskItem.js";
 import { getHomeData } from "../js/api.js";
 
 export async function loadHome() {
@@ -11,33 +14,51 @@ export async function loadHome() {
         ${profileButton()}
     `;
 
-    document.getElementById("content").innerHTML = `
+    document.getElementById("content").innerHTML =
 
-        <section class="card">
-            <h3>📅 Hoy</h3>
-            <p>${data.today.length ? data.today.join("<br>") : "No hay tareas programadas."}</p>
-        </section>
+        card(
+            "📅 Hoy",
+            data.today.length
+                ? data.today.map(task =>
+                    taskItem(task.nombre, task.puntos)
+                  ).join("")
+                : "<p>No hay tareas programadas.</p>"
+        )
 
-        <section class="card">
-            <h3>🏆 Esta semana</h3>
+        +
 
-            <p><strong>Elena</strong>: ${data.week.Elena} puntos</p>
+        card(
+            "🏆 Esta semana",
+            `
+                <p><strong>Elena</strong>: ${data.week.Elena} puntos</p>
+                <p><strong>Tomás</strong>: ${data.week["Tomás"]} puntos</p>
+            `
+        )
 
-            <p><strong>Tomás</strong>: ${data.week["Tomás"]} puntos</p>
-        </section>
+        +
 
-        <section class="card">
-            <h3>🕒 Últimas tareas</h3>
-            <p>${data.recent.length ? data.recent.join("<br>") : "No hay registros."}</p>
-        </section>
+        card(
+            "🕒 Últimas tareas",
+            data.recent.length
+                ? data.recent.map(task =>
+                    taskItem(task.nombre, null, task.usuario)
+                  ).join("")
+                : "<p>No hay registros.</p>"
+        )
 
-        <section class="card">
-            <h3>🔥 Tareas olvidadas</h3>
-            <p>${data.forgotten.length ? data.forgotten.join("<br>") : "No hay tareas pendientes."}</p>
-        </section>
+        +
 
-    `;
+        card(
+            "🔥 Tareas olvidadas",
+            data.forgotten.length
+                ? data.forgotten.map(task =>
+                    taskItem(task.nombre, task.puntos, task.dias + " días")
+                  ).join("")
+                : "<p>No hay tareas pendientes.</p>"
+        );
 
     initProfile();
+
+    renderNavbar("home");
 
 }

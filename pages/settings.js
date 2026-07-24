@@ -1,17 +1,23 @@
-export function loadSettings(){
+import { renderNavbar } from "../components/navbar.js";
 
-    document.getElementById("header").innerHTML=`
+export function loadSettings() {
+
+    document.getElementById("header").innerHTML = `
         <h2>Ajustes</h2>
-        <div>👩</div>
     `;
 
-    document.getElementById("content").innerHTML=`
+    document.getElementById("content").innerHTML = `
 
-        <div class="card">
+        <section class="card">
+
             <h3>Ajustes</h3>
-            <p>Pantalla en construcción.</p>
-        </div>
+
+            <p>Aquí podrás gestionar categorías, puntos y configuración general.</p>
+
+        </section>
 
     `;
+
+    renderNavbar("settings");
 
 }
