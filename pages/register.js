@@ -2,6 +2,7 @@ import { renderNavbar } from "../components/navbar.js";
 import { card } from "../components/card.js";
 import { taskItem } from "../components/taskItem.js";
 import { APP } from "../js/config.js";
+import { registerTask } from "../js/api.js";
 
 export function loadRegister() {
 
@@ -44,20 +45,13 @@ function initRegisterEvents(){
 
             const name = item.querySelector(".task-name").innerText;
 
-            const task = {
-                nombre: name,
-                usuario: APP.currentUser,
-                fecha: new Date().toISOString()
-            };
-import { registerTask } from "../js/api.js";
             registerTask(name, APP.currentUser);
 
             showToast("Tarea registrada");
 
-// Volver a inicio automáticamente
-setTimeout(() => {
-    location.reload();
-}, 500);
+            setTimeout(() => {
+                location.reload();
+            }, 500);
 
         });
 
