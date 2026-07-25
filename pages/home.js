@@ -48,7 +48,16 @@ function initEvents() {
     document
         .getElementById("profileButton")
         .onclick = () => {
-            // futuro selector de perfil
+
+            const next =
+                APP.currentUser === "Tomás"
+                    ? "Elena"
+                    : "Tomás";
+
+            APP.currentUser = next;
+
+            loadHome();
+
         };
 
 }

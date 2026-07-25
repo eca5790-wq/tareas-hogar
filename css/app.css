@@ -862,18 +862,22 @@ p{
 .home-header{
 
     display:flex;
-    align-items:flex-end;
+    align-items:center;
+    justify-content:space-between;
 
-    padding:20px 20px 10px;
+    padding:20px 20px 12px;
 
-    gap:12px;
+    width:100%;
 
 }
 
+/* IMPORTANTE */
 .home-title{
 
     font-size:22px;
     font-weight:700;
+
+    margin:0; /* ← esto corrige el desplazamiento */
 
 }
 
@@ -881,20 +885,26 @@ p{
 
     margin-left:auto;
 
-    border:none;
-    background:none;
-
     display:flex;
     align-items:center;
-    gap:4px;
+    gap:6px;
+
+    border:none;
+    background:none;
 
     font-size:15px;
     color:var(--text-secondary);
 
     cursor:pointer;
 
-}
+    padding:6px 4px; /* aire táctil */
 
+}
+.profile-selector:active{
+
+    transform:scale(.96);
+
+}
 /* SECCIONES */
 
 .home-section{
