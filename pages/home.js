@@ -1,89 +1,84 @@
 import { APP } from "../js/config.js";
 import { getHomeData, registerTask } from "../js/api.js";
-
-import { profileButton, initProfile } from "../components/profile.js";
 import { renderNavbar } from "../components/navbar.js";
-import { card } from "../components/card.js";
 import { showToast } from "../components/toast.js";
 
-let todayTasks = [];
+let home = {};
 
 export async function loadHome() {
-
-    const data = await getHomeData(APP.currentUser);
-
-    todayTasks = [...data.today];
-
-    render(data);
-
+    home = await getHomeData(APP.currentUser);
+    render();
     initEvents();
-
 }
 
-function render(data) {
+function render() {
 
     document.getElementById("header").innerHTML = `
-        <h2>Hoy</h2>
-        ${profileButton()}
+        <div class="home-header">
+
+            <div class="home-title">
+                Tareas del hogar
+            </div>
+
+            <button id="profileButton" class="profile-selector">
+                ${APP.currentUser}
+                <span class="material-symbols-rounded">
+                    expand_more
+                </span>
+            </button>
+
+        </div>
     `;
 
     document.getElementById("content").innerHTML = `
-        ${todaySection(todayTasks)}
-        ${weekSection(data.week)}
-        ${recentSection(data.recent)}
-        ${forgottenSection(data.forgotten)}
+        ${todaySection()}
+        ${weekSection()}
+        ${recentSection()}
     `;
 
-    initProfile();
-
     renderNavbar("home");
-
 }
 
 function initEvents() {
 
     document
-        .querySelectorAll(".today-task")
-        .forEach(item => {
+        .querySelector(".today-list")
+        ?.addEventListener("click", handleTodayClick);
 
-            item.onclick = () => completeTask(item);
-
-        });
+    document
+        .getElementById("profileButton")
+        .onclick = () => {
+            // futuro selector de perfil
+        };
 
 }
 
-async function completeTask(item) {
+async function handleTodayClick(e) {
+
+    const card = e.target.closest(".today-task");
+
+    if (!card) return;
 
     try {
 
         await registerTask(
-            item.dataset.id,
+            card.dataset.id,
             APP.currentUser
         );
 
-        item
-            .querySelector(".material-symbols-rounded")
-            .textContent = "check_circle";
-
-        item.classList.add("completed");
+        card.classList.add("completed");
 
         showToast("Tarea registrada");
 
         setTimeout(() => {
 
-            item.remove();
+            card.remove();
 
             if (!document.querySelector(".today-task")) {
 
-                const container = document.querySelector(".today-list");
-
-                if (container) {
-
-                    container.innerHTML = `
-                        <p>No hay tareas para hoy.</p>
-                    `;
-
-                }
+                document.querySelector(".today-list").innerHTML = `
+                    <p>No hay tareas para hoy.</p>
+                `;
 
             }
 
@@ -99,189 +94,159 @@ async function completeTask(item) {
 
 }
 
-function todaySection(tasks) {
+function todaySection() {
 
-    return card(
+    return `
+        <section class="home-section">
 
-        "Hoy",
+            <div class="section-title">
+                Hoy
+            </div>
 
-        tasks.length
+            <div class="today-list">
 
-            ? `
+                ${home.today.length
+                    ? home.today.map(task => `
 
-                <div class="card-content today-list">
-
-                    ${tasks.map(task => `
-
-                        <div
-                            class="task-item today-task"
+                        <article
+                            class="today-task"
                             data-id="${task.id}"
                         >
 
                             <div class="task-name">
-
                                 ${task.nombre}
-
                             </div>
 
-                            <span class="material-symbols-rounded">
+                            <div class="today-points">
+                                ${task.puntos} pts
+                            </div>
 
-                                circle
+                        </article>
 
-                            </span>
-
-                        </div>
-
-                    `).join("")}
-
-                </div>
-
-            `
-
-            : "<p>No hay tareas para hoy.</p>"
-
-    );
-
-}
-
-function weekSection(score) {
-
-    return card(
-
-        "Esta semana",
-
-        `
-
-        <div class="card-content">
-
-            <div class="task-item">
-
-                <div class="task-name">
-
-                    Elena
-
-                </div>
-
-                <div class="task-points">
-
-                    ${score.Elena}
-
-                </div>
+                    `).join("")
+                    : `
+                        <p>No hay tareas para hoy.</p>
+                    `
+                }
 
             </div>
 
-            <div class="task-item">
+        </section>
+    `;
+}
 
-                <div class="task-name">
+function weekSection() {
 
-                    Tomás
+    const score = home.week;
 
-                </div>
+    const max = Math.max(
+        score.Elena,
+        score["Tomás"],
+        1
+    );
 
-                <div class="task-points">
+    return `
+        <section class="home-section">
 
-                    ${score["Tomás"]}
+            <div class="section-title">
+                Esta semana
+            </div>
 
-                </div>
+            ${weekRow("Elena", score.Elena, max)}
+            ${weekRow("Tomás", score["Tomás"], max)}
 
+        </section>
+    `;
+}
+
+function weekRow(name, points, max) {
+
+    const width = Math.max(8, Math.round((points / max) * 100));
+
+    return `
+        <div class="week-row">
+
+            <div class="week-name">
+                ${name}
+            </div>
+
+            <div class="week-progress">
+                <div
+                    class="week-bar"
+                    style="width:${width}%"
+                ></div>
+            </div>
+
+            <div class="week-points">
+                ${points}
             </div>
 
         </div>
-
-        `
-
-    );
-
+    `;
 }
 
-function recentSection(tasks) {
+function recentSection() {
 
-    return card(
+    return `
+        <section class="home-section">
 
-        "Últimas tareas",
+            <div class="section-title">
+                Última actividad
+            </div>
 
-        tasks.length
+            <div class="recent-list">
 
-            ? `
+                ${home.recent.length
+                    ? home.recent.map(item => `
 
-                <div class="card-content">
-
-                    ${tasks.map(task => `
-
-                        <div class="task-item">
+                        <div class="recent-item">
 
                             <div>
 
                                 <div class="task-name">
-
-                                    ${task.nombre}
-
+                                    ${item.nombre}
                                 </div>
 
                                 <div class="task-subtitle">
-
-                                    ${task.usuario}
-
+                                    ${item.usuario} · ${relativeDate(item.fecha)}
                                 </div>
 
                             </div>
 
+                            <div class="today-points">
+                                ${item.puntos} pts
+                            </div>
+
                         </div>
 
-                    `).join("")}
+                    `).join("")
+                    : `
+                        <p>No hay actividad reciente.</p>
+                    `
+                }
 
-                </div>
+            </div>
 
-            `
-
-            : "<p>No hay registros.</p>"
-
-    );
-
+        </section>
+    `;
 }
 
-function forgottenSection(tasks) {
+function relativeDate(value) {
 
-    return card(
+    const date = new Date(value);
+    const today = new Date();
 
-        "Tareas olvidadas",
+    const diff = Math.floor((today - date) / 86400000);
 
-        tasks.length
+    if (diff === 0) return "Hoy";
+    if (diff === 1) return "Ayer";
 
-            ? `
+    if (diff < 7) {
+        return ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"][date.getDay()];
+    }
 
-                <div class="card-content">
-
-                    ${tasks.map(task => `
-
-                        <div class="task-item">
-
-                            <div>
-
-                                <div class="task-name">
-
-                                    ${task.nombre}
-
-                                </div>
-
-                            </div>
-
-                            <div class="task-points">
-
-                                +${task.puntos}
-
-                            </div>
-
-                        </div>
-
-                    `).join("")}
-
-                </div>
-
-            `
-
-            : "<p>No hay tareas olvidadas.</p>"
-
-    );
-
+    return date.toLocaleDateString("es-ES", {
+        day: "numeric",
+        month: "short"
+    });
 }
