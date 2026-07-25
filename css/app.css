@@ -862,10 +862,11 @@ p{
 .home-header{
 
     display:flex;
-    justify-content:space-between;
     align-items:flex-end;
 
     padding:20px 20px 10px;
+
+    gap:12px;
 
 }
 
@@ -877,6 +878,8 @@ p{
 }
 
 .profile-selector{
+
+    margin-left:auto;
 
     border:none;
     background:none;
