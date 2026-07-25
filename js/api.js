@@ -50,6 +50,11 @@ export function registerTask(taskId, user) {
     });
 
 }
+export function deleteHistory(id) {
+
+    return request("deleteHistory", { id });
+
+}
 
 export function getTasks() {
 

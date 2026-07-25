@@ -1,5 +1,6 @@
 import { APP } from "../js/config.js";
-import { getHomeData, registerTask } from "../js/api.js";
+import { getHomeData, registerTask, deleteHistory } from "../js/api.js";
+
 import { renderNavbar } from "../components/navbar.js";
 import { showToast } from "../components/toast.js";
 
@@ -46,6 +47,10 @@ function initEvents() {
         ?.addEventListener("click", handleTodayClick);
 
     document
+        .querySelector(".recent-list")
+        ?.addEventListener("click", handleRecentClick);
+
+    document
         .getElementById("profileButton")
         .onclick = () => {
 
@@ -61,7 +66,6 @@ function initEvents() {
         };
 
 }
-
 async function handleTodayClick(e) {
 
     const card = e.target.closest(".today-task");
@@ -98,6 +102,32 @@ async function handleTodayClick(e) {
         console.error(error);
 
         showToast("No se ha podido registrar la tarea.");
+
+    }
+
+}
+
+async function handleRecentClick(e) {
+
+    const item = e.target.closest(".recent-item");
+
+    if (!item) return;
+
+    if (!confirm("¿Seguro que quieres eliminar este registro?")) return;
+
+    try {
+
+        await deleteHistory(item.dataset.id);
+
+        item.remove();
+
+        showToast("Registro eliminado");
+
+    } catch (e) {
+
+        console.error(e);
+
+        showToast("Error al eliminar");
 
     }
 
@@ -143,7 +173,6 @@ function todaySection() {
         </section>
     `;
 }
-
 function weekSection() {
 
     const score = home.week;
@@ -208,7 +237,10 @@ function recentSection() {
                 ${home.recent.length
                     ? home.recent.map(item => `
 
-                        <div class="recent-item">
+                        <div
+                            class="recent-item"
+                            data-id="${item.id}"
+                        >
 
                             <div>
 
