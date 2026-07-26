@@ -1115,18 +1115,17 @@ p{
 
 .delete-btn{
 
+    width:24px;
+    height:24px;
+
     border:none;
-    background:#FEE2E2;
-
-    color:#DC2626;
-
-    width:28px;
-    height:28px;
-
     border-radius:50%;
 
-    font-size:14px;
-    font-weight:700;
+    background:transparent;   /* 👈 clave */
+    color:#9CA3AF;            /* gris suave */
+
+    font-size:16px;
+    font-weight:600;
 
     cursor:pointer;
 
@@ -1138,10 +1137,47 @@ p{
 
 }
 
+/* Hover suave */
+
 .delete-btn:hover{
-    background:#FCA5A5;
+
+    background:#F3F4F6;
+    color:#6B7280;
+
 }
 
+/* Click */
+
 .delete-btn:active{
-    transform:scale(.9);
+
+    transform:scale(.85);
+
+}
+.record-box{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:14px 16px;
+
+    background:#F9FAFB;
+
+    border-radius:14px;
+
+    font-size:14px;
+
+}
+
+.record-points{
+
+    font-weight:700;
+    color:var(--primary);
+
+}
+
+.record-user{
+
+    color:var(--text-secondary);
+
 }

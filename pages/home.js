@@ -34,6 +34,7 @@ function render() {
     document.getElementById("content").innerHTML = `
         ${todaySection()}
         ${weekSection()}
+        ${recordSection()} 
         ${recentSection()}
     `;
 
@@ -201,10 +202,15 @@ function weekSection() {
     `;
 }
 
-function weekRow(name, points, max) {
+const MAX_POINTS = 100;
 
-    const width = Math.max(8, Math.round((points / max) * 100));
-
+const width = Math.max(
+    8,
+    Math.min(
+        100,
+        Math.round((points / MAX_POINTS) * 100)
+    )
+);
     return `
         <div class="week-row">
 
@@ -226,7 +232,35 @@ function weekRow(name, points, max) {
         </div>
     `;
 }
+function recordSection() {
 
+    if (!home.record) return "";
+
+    return `
+
+        <section class="home-section">
+
+            <div class="section-title">
+                Récord reciente
+            </div>
+
+            <div class="record-box">
+
+                <div class="record-points">
+                    ${home.record.points} pts
+                </div>
+
+                <div class="record-user">
+                    ${home.record.user}
+                </div>
+
+            </div>
+
+        </section>
+
+    `;
+
+}
 function recentSection() {
 
     return `
