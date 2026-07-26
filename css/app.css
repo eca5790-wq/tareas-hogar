@@ -340,6 +340,9 @@ nav{
 
     font-size:15px;
     line-height:1.35;
+    display:flex;
+    align-items:center;
+    gap:10px;
     font-weight:500;
 
 }
@@ -355,6 +358,11 @@ nav{
 
 }
 
+
+.task-icon{
+    font-size:18px;
+    color:#9CA3AF;
+}
 .task-points{
 
     min-width:50px;

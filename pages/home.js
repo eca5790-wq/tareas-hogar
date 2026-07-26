@@ -1,8 +1,17 @@
 import { APP } from "../js/config.js";
 import { getHomeData, registerTask, deleteHistory } from "../js/api.js";
-
 import { renderNavbar } from "../components/navbar.js";
 import { showToast } from "../components/toast.js";
+
+/* ICONOS POR CATEGORÍA */
+const CATEGORY_ICONS = {
+    "Limpieza": "cleaning_services",
+    "Cocina": "restaurant",
+    "Baño": "bathtub",
+    "Lavadora": "local_laundry_service",
+    "Jardín": "yard",
+    "Reparaciones": "home_repair_service"
+};
 
 let home = {};
 
@@ -34,7 +43,7 @@ function render() {
     document.getElementById("content").innerHTML = `
         ${todaySection()}
         ${weekSection()}
-        ${recordSection()} 
+        ${recordSection()}
         ${recentSection()}
     `;
 
@@ -65,8 +74,12 @@ function initEvents() {
             loadHome();
 
         };
-
 }
+
+/* ===========================
+   TODAY
+=========================== */
+
 async function handleTodayClick(e) {
 
     const card = e.target.closest(".today-task");
@@ -101,38 +114,7 @@ async function handleTodayClick(e) {
     } catch (error) {
 
         console.error(error);
-
         showToast("No se ha podido registrar la tarea.");
-
-    }
-
-}
-
-async function handleRecentClick(e) {
-
-    const btn = e.target.closest(".delete-btn");
-
-    if (!btn) return;
-
-    const item = e.target.closest(".recent-item");
-
-    if (!item) return;
-
-    if (!confirm("¿Eliminar este registro?")) return;
-
-    try {
-
-        await deleteHistory(item.dataset.id);
-
-        item.remove();
-
-        showToast("Registro eliminado");
-
-    } catch (e) {
-
-        console.error(e);
-
-        showToast("Error al eliminar");
 
     }
 
@@ -150,27 +132,32 @@ function todaySection() {
             <div class="today-list">
 
                 ${home.today.length
-                    ? home.today.map(task => `
+                    ? home.today.map(task => {
 
-                        <article
-                            class="today-task"
-                            data-id="${task.id}"
-                        >
+                        const icon = CATEGORY_ICONS[task.categoria] || "task";
 
-                            <div class="task-name">
-                                ${task.nombre}
-                            </div>
+                        return `
+                            <article class="today-task" data-id="${task.id}">
 
-                            <div class="today-points">
-                                ${task.puntos} pts
-                            </div>
+                                <div class="task-name">
 
-                        </article>
+                                    <span class="material-symbols-rounded task-icon">
+                                        ${icon}
+                                    </span>
 
-                    `).join("")
-                    : `
-                        <p>No hay tareas para hoy.</p>
-                    `
+                                    ${task.nombre}
+
+                                </div>
+
+                                <div class="today-points">
+                                    ${task.puntos} pts
+                                </div>
+
+                            </article>
+                        `;
+
+                    }).join("")
+                    : `<p>No hay tareas para hoy.</p>`
                 }
 
             </div>
@@ -178,15 +165,14 @@ function todaySection() {
         </section>
     `;
 }
+
+/* ===========================
+   WEEK
+=========================== */
+
 function weekSection() {
 
     const score = home.week;
-
-    const max = Math.max(
-        score.Elena,
-        score["Tomás"],
-        1
-    );
 
     return `
         <section class="home-section">
@@ -195,12 +181,13 @@ function weekSection() {
                 Esta semana
             </div>
 
-${weekRow("Elena", score.Elena)}
-${weekRow("Tomás", score["Tomás"])}
+            ${weekRow("Elena", score.Elena)}
+            ${weekRow("Tomás", score["Tomás"])}
 
         </section>
     `;
 }
+
 function weekRow(name, points) {
 
     const MAX_POINTS = 100;
@@ -221,10 +208,7 @@ function weekRow(name, points) {
             </div>
 
             <div class="week-progress">
-                <div
-                    class="week-bar"
-                    style="width:${width}%"
-                ></div>
+                <div class="week-bar" style="width:${width}%"></div>
             </div>
 
             <div class="week-points">
@@ -234,12 +218,16 @@ function weekRow(name, points) {
         </div>
     `;
 }
+
+/* ===========================
+   RECORD
+=========================== */
+
 function recordSection() {
 
     if (!home.record) return "";
 
     return `
-
         <section class="home-section">
 
             <div class="section-title">
@@ -248,29 +236,59 @@ function recordSection() {
 
             <div class="record-box">
 
-    <div class="record-left">
+                <div class="record-left">
 
-        <span class="material-symbols-rounded record-icon">
-            trophy
-        </span>
+                    <span class="material-symbols-rounded record-icon">
+                        emoji_events
+                    </span>
 
-        <span class="record-points">
-            ${home.record.points} pts
-        </span>
+                    <span class="record-points">
+                        ${home.record.points} pts
+                    </span>
 
-    </div>
+                </div>
 
-    <div class="record-user">
-        ${home.record.user}
-    </div>
+                <div class="record-user">
+                    ${home.record.user}
+                </div>
 
-</div>
+            </div>
 
         </section>
-
     `;
+}
+
+/* ===========================
+   RECENT
+=========================== */
+
+async function handleRecentClick(e) {
+
+    const btn = e.target.closest(".delete-btn");
+    if (!btn) return;
+
+    const item = e.target.closest(".recent-item");
+    if (!item) return;
+
+    if (!confirm("¿Eliminar este registro?")) return;
+
+    try {
+
+        await deleteHistory(item.dataset.id);
+
+        item.remove();
+
+        showToast("Registro eliminado");
+
+    } catch (e) {
+
+        console.error(e);
+        showToast("Error al eliminar");
+
+    }
 
 }
+
 function recentSection() {
 
     return `
@@ -283,40 +301,48 @@ function recentSection() {
             <div class="recent-list">
 
                 ${home.recent.length
-                    ? home.recent.map(item => `
+                    ? home.recent.map(item => {
 
-                       <div class="recent-item" data-id="${item.id}">
+                        const icon = CATEGORY_ICONS[item.categoria] || "task";
 
-    <div>
+                        return `
+                            <div class="recent-item" data-id="${item.id}">
 
-        <div class="task-name">
-            ${item.nombre}
-        </div>
+                                <div class="recent-info">
 
-        <div class="task-subtitle">
-            ${item.usuario} · ${relativeDate(item.fecha)}
-        </div>
+                                    <div class="task-name">
 
-    </div>
+                                        <span class="material-symbols-rounded task-icon">
+                                            ${icon}
+                                        </span>
 
-    <div class="recent-actions">
+                                        ${item.nombre}
 
-        <span class="today-points">
-            ${item.puntos} pts
-        </span>
+                                    </div>
 
-        <button class="delete-btn">
-            ✕
-        </button>
+                                    <div class="task-subtitle">
+                                        ${item.usuario} · ${relativeDate(item.fecha)}
+                                    </div>
 
-    </div>
+                                </div>
 
-</div>
+                                <div class="recent-actions">
 
-                    `).join("")
-                    : `
-                        <p>No hay actividad reciente.</p>
-                    `
+                                    <span class="today-points">
+                                        ${item.puntos} pts
+                                    </span>
+
+                                    <button class="delete-btn">
+                                        ✕
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        `;
+
+                    }).join("")
+                    : `<p>No hay actividad reciente.</p>`
                 }
 
             </div>
@@ -324,6 +350,10 @@ function recentSection() {
         </section>
     `;
 }
+
+/* ===========================
+   UTILS
+=========================== */
 
 function relativeDate(value) {
 
