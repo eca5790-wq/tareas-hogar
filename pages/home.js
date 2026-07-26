@@ -195,22 +195,24 @@ function weekSection() {
                 Esta semana
             </div>
 
-            ${weekRow("Elena", score.Elena, max)}
-            ${weekRow("Tomás", score["Tomás"], max)}
+${weekRow("Elena", score.Elena)}
+${weekRow("Tomás", score["Tomás"])}
 
         </section>
     `;
 }
+function weekRow(name, points) {
 
-const MAX_POINTS = 100;
+    const MAX_POINTS = 100;
 
-const width = Math.max(
-    8,
-    Math.min(
-        100,
-        Math.round((points / MAX_POINTS) * 100)
-    )
-);
+    const width = Math.max(
+        8,
+        Math.min(
+            100,
+            Math.round((points / MAX_POINTS) * 100)
+        )
+    );
+
     return `
         <div class="week-row">
 
