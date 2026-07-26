@@ -7,17 +7,16 @@ import { getTasks } from "../js/api.js";
 
 import { loadTaskDetail } from "./task-detail.js";
 
-
-// 🔥 MAPA DE ICONOS (AQUÍ VA)
+/* ICONOS POR CATEGORÍA (ID) */
 const CATEGORY_ICONS = {
-    1: "restaurant",
-    2: "weekend",
-    3: "bed",
-    4: "bathtub",
-    5: "local_laundry_service",
-    6: "cleaning_services",
-    7: "shopping_cart",
-    8: "pets"
+    1: "restaurant",              // Cocina
+    2: "weekend",                 // Salón
+    3: "bed",                     // Dormitorio
+    4: "bathtub",                 // Baño
+    5: "local_laundry_service",   // Ropa
+    6: "cleaning_services",       // Limpieza
+    7: "shopping_cart",           // Compra
+    8: "pets"                     // Mascotas
 };
 
 let tasks = [];
@@ -38,10 +37,7 @@ function render() {
 
         <h2>Tareas</h2>
 
-        <button
-            id="newTaskButton"
-            class="icon-button"
-        >
+        <button id="newTaskButton" class="icon-button">
 
             <span class="material-symbols-rounded">
                 add
@@ -65,28 +61,35 @@ function render() {
 
 }
 
+/* ===========================
+   GROUPED TASKS
+=========================== */
+
 function renderGroupedTasks() {
 
     const grouped = {};
 
-    // Agrupar por categoría
     tasks.forEach(task => {
 
         const category = task.categoria || "Sin categoría";
+        const categoryId = task.categoriaId || 0;
 
         if (!grouped[category]) {
-            grouped[category] = [];
+            grouped[category] = {
+                id: categoryId,
+                items: []
+            };
         }
 
-        grouped[category].push(task);
+        grouped[category].items.push(task);
 
     });
 
-    // Render con iconos 👇
     return Object.entries(grouped)
-        .map(([category, items]) => {
+        .map(([category, data]) => {
 
-            const icon = CATEGORY_ICONS[category] || "category";
+            const icon = CATEGORY_ICONS[data.id] || "category";
+            const items = data.items;
 
             return `
 
@@ -126,14 +129,16 @@ function renderGroupedTasks() {
 
 }
 
+/* ===========================
+   EVENTS
+=========================== */
+
 function initEvents() {
 
     document
         .getElementById("newTaskButton")
         .onclick = () => {
-
             loadTaskDetail();
-
         };
 
     document
@@ -145,7 +150,6 @@ function initEvents() {
 function handleTaskClick(e) {
 
     const item = e.target.closest(".task-item");
-
     if (!item) return;
 
     const task = tasks.find(t =>

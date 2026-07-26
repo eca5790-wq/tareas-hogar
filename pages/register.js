@@ -3,6 +3,18 @@ import { registerTask, getRegisterScreen } from "../js/api.js";
 import { APP } from "../js/config.js";
 import { showToast } from "../components/toast.js";
 
+/* ICONOS POR CATEGORÍA (ID) */
+const CATEGORY_ICONS = {
+    1: "restaurant",
+    2: "weekend",
+    3: "bed",
+    4: "bathtub",
+    5: "local_laundry_service",
+    6: "cleaning_services",
+    7: "shopping_cart",
+    8: "pets"
+};
+
 let screenData = {};
 
 export async function loadRegister() {
@@ -18,9 +30,7 @@ export async function loadRegister() {
         <div class="search-box">
 
             <span class="material-symbols-rounded">
-
                 search
-
             </span>
 
             <input
@@ -44,6 +54,10 @@ export async function loadRegister() {
 
 }
 
+/* ===========================
+   EVENTS
+=========================== */
+
 function initEvents() {
 
     document
@@ -55,6 +69,10 @@ function initEvents() {
         .addEventListener("click", handleTaskClick);
 
 }
+
+/* ===========================
+   SEARCH
+=========================== */
 
 function search(e) {
 
@@ -92,21 +110,34 @@ function search(e) {
 
 }
 
+/* ===========================
+   RENDER
+=========================== */
+
 function renderScreen(data) {
 
     document.getElementById("taskContainer").innerHTML =
-
         data.categories.map(renderCategory).join("");
 
 }
 
 function renderCategory(category) {
 
+    const icon = CATEGORY_ICONS[category.id] || "category";
+
     return `
 
         <section class="card">
 
-            <h3>${category.nombre}</h3>
+            <h3 class="category-title">
+
+                <span class="material-symbols-rounded category-icon">
+                    ${icon}
+                </span>
+
+                ${category.nombre}
+
+            </h3>
 
             <div class="card-content">
 
@@ -132,17 +163,13 @@ function renderTask(task) {
             <div>
 
                 <div class="task-name">
-
                     ${task.nombre}
-
                 </div>
 
             </div>
 
             <div class="task-points">
-
                 +${task.puntos}
-
             </div>
 
         </div>
@@ -150,6 +177,10 @@ function renderTask(task) {
     `;
 
 }
+
+/* ===========================
+   ACTIONS
+=========================== */
 
 async function handleTaskClick(e) {
 
@@ -160,11 +191,8 @@ async function handleTaskClick(e) {
     try {
 
         await registerTask(
-
             item.dataset.id,
-
             APP.currentUser
-
         );
 
         item.classList.add("completed");
