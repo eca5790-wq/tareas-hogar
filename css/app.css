@@ -861,9 +861,10 @@ p{
 
 .home-header{
     display:flex;
-    justify-content:space-between;
     align-items:center;
     padding:20px;
+
+    width:100%;
 }
 
 .home-title{
@@ -871,10 +872,13 @@ p{
     font-weight:700;
     margin:0;
 
-    white-space:nowrap; /* 👈 CLAVE */
+    white-space:nowrap;
+
+    flex-grow:1; /* 👈 CLAVE */
 }
 
 .profile-selector{
+
     display:flex;
     align-items:center;
     gap:6px;
@@ -888,6 +892,7 @@ p{
     cursor:pointer;
 
     padding:6px 4px;
+
 }
 
 .profile-selector:active{
