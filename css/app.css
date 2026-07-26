@@ -867,23 +867,18 @@ p{
 
     padding:20px 20px 12px;
 
-    width:100%;
-
 }
 
-/* IMPORTANTE */
 .home-title{
 
     font-size:22px;
     font-weight:700;
 
-    margin:0; /* ← esto corrige el desplazamiento */
+    margin:0;
 
 }
 
 .profile-selector{
-
-    margin-left:auto;
 
     display:flex;
     align-items:center;
@@ -897,27 +892,31 @@ p{
 
     cursor:pointer;
 
-    padding:6px 4px; /* aire táctil */
+    padding:6px 4px;
 
 }
+
 .profile-selector:active{
 
     transform:scale(.96);
 
 }
-/* SECCIONES */
+
+/* ===========================
+   SECTIONS
+=========================== */
 
 .home-section{
 
-    margin-bottom:28px;
+    margin-bottom:32px;
 
 }
 
 .section-title{
 
-    font-size:13px;
-    text-transform:uppercase;
+    font-size:12px;
     letter-spacing:.08em;
+    text-transform:uppercase;
 
     color:var(--text-secondary);
 
@@ -926,7 +925,7 @@ p{
 }
 
 /* ===========================
-   HOY (cards principales)
+   TODAY (cards principales)
 =========================== */
 
 .today-task{
@@ -968,7 +967,7 @@ p{
 
 }
 
-/* Animación al completar */
+/* Animación completar */
 
 .today-task.completed{
 
@@ -1003,7 +1002,7 @@ p{
 }
 
 /* ===========================
-   SEMANA
+   WEEK
 =========================== */
 
 .week-row{
@@ -1060,8 +1059,20 @@ p{
 }
 
 /* ===========================
-   ACTIVIDAD
+   RECENT ACTIVITY
 =========================== */
+
+.recent-list{
+
+    background:white;
+
+    border-radius:18px;
+
+    border:1px solid var(--border);
+
+    padding:0 18px;
+
+}
 
 .recent-item{
 
@@ -1073,6 +1084,10 @@ p{
 
     border-bottom:1px solid var(--border);
 
+    cursor:pointer;
+
+    transition:.15s;
+
 }
 
 .recent-item:last-child{
@@ -1081,14 +1096,14 @@ p{
 
 }
 
-.recent-list{
+.recent-item:hover{
 
-    background:white;
+    background:#F9FAFB;
 
-    border-radius:18px;
+}
 
-    border:1px solid var(--border);
+.recent-item:active{
 
-    padding:0 18px;
+    transform:scale(.98);
 
 }
