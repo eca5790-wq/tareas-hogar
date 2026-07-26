@@ -5,14 +5,14 @@ import { showToast } from "../components/toast.js";
 
 /* ICONOS POR CATEGORÍA */
 const CATEGORY_ICONS = {
-    "cocina": "restaurant",
-    "salón": "weekend",
-    "dormitorio": "bed",
-    "baño": "bathtub",
-    "ropa": "local_laundry_service",
-    "limpieza": "cleaning_services",
-    "compra": "shopping_cart",
-    "mascotas": "pets"
+    1: "restaurant",
+    2: "weekend",
+    3: "bed",
+    4: "bathtub",
+    5: "local_laundry_service",
+    6: "cleaning_services",
+    7: "shopping_cart",
+    8: "pets"
 };
 
 let home = {};
@@ -136,8 +136,7 @@ function todaySection() {
                 ${home.today.length
                     ? home.today.map(task => {
 
-                        const icon = CATEGORY_ICONS[task.categoria] || "task";
-
+const icon = CATEGORY_ICONS[task.categoriaId] || "task";
                         return `
                             <article class="today-task" data-id="${task.id}">
 
@@ -305,8 +304,7 @@ function recentSection() {
                 ${home.recent.length
                     ? home.recent.map(item => {
 
-                        const icon = CATEGORY_ICONS[item.categoria] || "task";
-
+const icon = CATEGORY_ICONS[item.categoriaId] || "task";
                         return `
                             <div class="recent-item" data-id="${item.id}">
 
