@@ -85,15 +85,11 @@ function initEvents() {
 async function handleTodayClick(e) {
 
     const card = e.target.closest(".today-task");
-
     if (!card) return;
 
     try {
 
-        await registerTask(
-            card.dataset.id,
-            APP.currentUser
-        );
+        await registerTask(card.dataset.id, APP.currentUser);
 
         card.classList.add("completed");
 
@@ -119,7 +115,6 @@ async function handleTodayClick(e) {
         showToast("No se ha podido registrar la tarea.");
 
     }
-
 }
 
 function todaySection() {
@@ -136,7 +131,8 @@ function todaySection() {
                 ${home.today.length
                     ? home.today.map(task => {
 
-const icon = CATEGORY_ICONS[task.categoriaId] || "task";
+                        const icon = CATEGORY_ICONS[task.categoriaId] || "category";
+
                         return `
                             <article class="today-task" data-id="${task.id}">
 
@@ -287,7 +283,6 @@ async function handleRecentClick(e) {
         showToast("Error al eliminar");
 
     }
-
 }
 
 function recentSection() {
@@ -304,7 +299,8 @@ function recentSection() {
                 ${home.recent.length
                     ? home.recent.map(item => {
 
-const icon = CATEGORY_ICONS[item.categoriaId] || "task";
+                        const icon = CATEGORY_ICONS[item.categoriaId] || "category";
+
                         return `
                             <div class="recent-item" data-id="${item.id}">
 
@@ -332,9 +328,7 @@ const icon = CATEGORY_ICONS[item.categoriaId] || "task";
                                         ${item.puntos} pts
                                     </span>
 
-                                    <button class="delete-btn">
-                                        ✕
-                                    </button>
+                                    <button class="delete-btn">✕</button>
 
                                 </div>
 
