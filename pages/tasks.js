@@ -31,9 +31,7 @@ function render() {
         >
 
             <span class="material-symbols-rounded">
-
                 add
-
             </span>
 
         </button>
@@ -44,27 +42,60 @@ function render() {
 
         <div id="tasksList">
 
-            ${tasks.map(task =>
-
-                taskItem({
-
-                    id: task.id,
-
-                    title: task.nombre,
-
-                    subtitle: task.categoria,
-
-                    points: task.puntos
-
-                })
-
-            ).join("")}
+            ${renderGroupedTasks()}
 
         </div>
 
     `;
 
     renderNavbar("tasks");
+
+}
+
+function renderGroupedTasks() {
+
+    const grouped = {};
+
+    // Agrupar por categoría
+    tasks.forEach(task => {
+
+        const category = task.categoria || "Sin categoría";
+
+        if (!grouped[category]) {
+            grouped[category] = [];
+        }
+
+        grouped[category].push(task);
+
+    });
+
+    // Render
+    return Object.entries(grouped)
+        .map(([category, items]) => `
+
+            <section class="card">
+
+                <h3>${category}</h3>
+
+                <div class="card-content">
+
+                    ${items.map(task =>
+
+                        taskItem({
+
+                            id: task.id,
+                            title: task.nombre,
+                            points: task.puntos
+
+                        })
+
+                    ).join("")}
+
+                </div>
+
+            </section>
+
+        `).join("");
 
 }
 
