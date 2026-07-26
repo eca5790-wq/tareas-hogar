@@ -862,8 +862,8 @@ p{
 .home-header{
 
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:flex-start;
 
     padding:20px 20px 12px;
 
@@ -876,8 +876,7 @@ p{
 
     margin:0;
 
-    flex:1; /* 👈 CLAVE */
-
+    max-width:70%;   /* 👈 CLAVE */
 }
 
 .profile-selector{
@@ -896,6 +895,7 @@ p{
 
     padding:6px 4px;
 
+    white-space:nowrap; /* 👈 CLAVE */
 }
 
 .profile-selector:active{
