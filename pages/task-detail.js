@@ -87,19 +87,18 @@ function render() {
 
             ${row(
                 "Puntos",
-                task.puntos,
+                task.puntos + " pts",
                 "points"
             )}
 
         </section>
 
-        <button
-            id="saveTask"
-            class="primary-button"
-        >
-
+        <button id="saveTask" class="primary-button">
             Guardar cambios
+        </button>
 
+        <button id="cancelTask" class="secondary-button">
+            Cancelar
         </button>
 
     `;
@@ -114,31 +113,22 @@ function row(title, value, action) {
 
     return `
 
-        <div
-            class="setting-row selectable"
-            data-action="${action}"
-        >
+        <div class="setting-row selectable" data-action="${action}">
 
             <div>
 
                 <div class="setting-title">
-
                     ${title}
-
                 </div>
 
                 <div class="setting-value">
-
                     ${value}
-
                 </div>
 
             </div>
 
             <span class="material-symbols-rounded">
-
                 chevron_right
-
             </span>
 
         </div>
@@ -154,6 +144,10 @@ function initEvents() {
         .addEventListener("click", loadTasks);
 
     document
+        .getElementById("cancelTask")
+        .addEventListener("click", loadTasks);
+
+    document
         .querySelectorAll(".setting-row")
         .forEach(item => {
 
@@ -162,27 +156,19 @@ function initEvents() {
                 switch (item.dataset.action) {
 
                     case "name":
-
                         editName();
-
                         break;
 
                     case "category":
-
                         openCategorySelector();
-
                         break;
 
                     case "points":
-
                         editPoints();
-
                         break;
 
                     case "schedule":
-
                         showToast("Editor de programación pendiente.");
-
                         break;
 
                 }
@@ -196,6 +182,10 @@ function initEvents() {
         .addEventListener("click", save);
 
 }
+
+/* ===========================
+   EDIT NAME
+=========================== */
 
 function editName() {
 
@@ -229,13 +219,21 @@ function editName() {
 
 }
 
+/* ===========================
+   EDIT POINTS (CLAVE)
+=========================== */
+
 function editPoints() {
+
+    const OPTIONS = [5, 10, 15, 20, 25, 30];
 
     openDialog({
 
         title: "Puntos",
 
-        type: "number",
+        type: "select", // 👈 asumimos que tu dialog soporta select
+
+        options: OPTIONS,
 
         value: getCurrentTask().puntos,
 
@@ -243,9 +241,9 @@ function editPoints() {
 
             const points = Number(value);
 
-            if (Number.isNaN(points) || points < 0) {
+            if (!OPTIONS.includes(points)) {
 
-                showToast("Introduce un número válido.");
+                showToast("Selecciona un valor válido.");
 
                 return;
 
@@ -261,6 +259,10 @@ function editPoints() {
 
 }
 
+/* ===========================
+   CATEGORY
+=========================== */
+
 async function openCategorySelector() {
 
     const categories = await getCategories();
@@ -268,6 +270,10 @@ async function openCategorySelector() {
     loadCategorySelector(categories);
 
 }
+
+/* ===========================
+   SAVE
+=========================== */
 
 async function save() {
 
