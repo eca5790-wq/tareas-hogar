@@ -7,6 +7,17 @@ import { getTasks } from "../js/api.js";
 
 import { loadTaskDetail } from "./task-detail.js";
 
+
+// 🔥 MAPA DE ICONOS (AQUÍ VA)
+const CATEGORY_ICONS = {
+    "Limpieza": "cleaning_services",
+    "Cocina": "restaurant",
+    "Baño": "bathtub",
+    "Lavadora": "local_laundry_service",
+    "Jardín": "yard",
+    "Reparaciones": "home_repair_service"
+};
+
 let tasks = [];
 
 export async function loadTasks() {
@@ -69,33 +80,47 @@ function renderGroupedTasks() {
 
     });
 
-    // Render
+    // Render con iconos 👇
     return Object.entries(grouped)
-        .map(([category, items]) => `
+        .map(([category, items]) => {
 
-            <section class="card">
+            const icon = CATEGORY_ICONS[category] || "category";
 
-                <h3>${category}</h3>
+            return `
 
-                <div class="card-content">
+                <section class="card">
 
-                    ${items.map(task =>
+                    <h3 class="category-title">
 
-                        taskItem({
+                        <span class="material-symbols-rounded category-icon">
+                            ${icon}
+                        </span>
 
-                            id: task.id,
-                            title: task.nombre,
-                            points: task.puntos
+                        ${category}
 
-                        })
+                    </h3>
 
-                    ).join("")}
+                    <div class="card-content">
 
-                </div>
+                        ${items.map(task =>
 
-            </section>
+                            taskItem({
 
-        `).join("");
+                                id: task.id,
+                                title: task.nombre,
+                                points: task.puntos
+
+                            })
+
+                        ).join("")}
+
+                    </div>
+
+                </section>
+
+            `;
+
+        }).join("");
 
 }
 
@@ -122,9 +147,7 @@ function handleTaskClick(e) {
     if (!item) return;
 
     const task = tasks.find(t =>
-
         String(t.id) === item.dataset.id
-
     );
 
     if (!task) return;
