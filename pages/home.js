@@ -248,15 +248,23 @@ function recordSection() {
 
             <div class="record-box">
 
-                <div class="record-points">
-                    ${home.record.points} pts
-                </div>
+    <div class="record-left">
 
-                <div class="record-user">
-                    ${home.record.user}
-                </div>
+        <span class="material-symbols-rounded record-icon">
+            trophy
+        </span>
 
-            </div>
+        <span class="record-points">
+            ${home.record.points} pts
+        </span>
+
+    </div>
+
+    <div class="record-user">
+        ${home.record.user}
+    </div>
+
+</div>
 
         </section>
 

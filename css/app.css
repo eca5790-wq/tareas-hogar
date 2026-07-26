@@ -1152,6 +1152,11 @@ p{
     transform:scale(.85);
 
 }
+
+/* ===========================
+   RECORD
+=========================== */
+
 .record-box{
 
     display:flex;
@@ -1160,11 +1165,30 @@ p{
 
     padding:14px 16px;
 
-    background:#F9FAFB;
-
     border-radius:14px;
 
-    font-size:14px;
+    background:linear-gradient(
+        135deg,
+        #F9FAFB,
+        #F3F4F6
+    );
+
+    border:1px solid var(--border);
+
+}
+
+.record-left{
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+}
+
+.record-icon{
+
+    font-size:16px;
+    line-height:1;
 
 }
 
@@ -1177,6 +1201,20 @@ p{
 
 .record-user{
 
+    font-size:14px;
     color:var(--text-secondary);
+
+}
+.record-left{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.record-icon{
+
+    font-size:18px;
+
+    color:#9CA3AF; /* gris elegante */
 
 }
