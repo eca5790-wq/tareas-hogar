@@ -237,28 +237,33 @@ function recentSection() {
                 ${home.recent.length
                     ? home.recent.map(item => `
 
-                        <div
-                            class="recent-item"
-                            data-id="${item.id}"
-                        >
+                       <div class="recent-item" data-id="${item.id}">
 
-                            <div>
+    <div>
 
-                                <div class="task-name">
-                                    ${item.nombre}
-                                </div>
+        <div class="task-name">
+            ${item.nombre}
+        </div>
 
-                                <div class="task-subtitle">
-                                    ${item.usuario} · ${relativeDate(item.fecha)}
-                                </div>
+        <div class="task-subtitle">
+            ${item.usuario} · ${relativeDate(item.fecha)}
+        </div>
 
-                            </div>
+    </div>
 
-                            <div class="today-points">
-                                ${item.puntos} pts
-                            </div>
+    <div class="recent-actions">
 
-                        </div>
+        <span class="today-points">
+            ${item.puntos} pts
+        </span>
+
+        <button class="delete-btn">
+            ✕
+        </button>
+
+    </div>
+
+</div>
 
                     `).join("")
                     : `
