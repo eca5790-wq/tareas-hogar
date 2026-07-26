@@ -109,11 +109,15 @@ async function handleTodayClick(e) {
 
 async function handleRecentClick(e) {
 
+    const btn = e.target.closest(".delete-btn");
+
+    if (!btn) return;
+
     const item = e.target.closest(".recent-item");
 
     if (!item) return;
 
-    if (!confirm("¿Seguro que quieres eliminar este registro?")) return;
+    if (!confirm("¿Eliminar este registro?")) return;
 
     try {
 

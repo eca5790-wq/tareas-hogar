@@ -1107,3 +1107,41 @@ p{
     transform:scale(.98);
 
 }
+.recent-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.delete-btn{
+
+    border:none;
+    background:#FEE2E2;
+
+    color:#DC2626;
+
+    width:28px;
+    height:28px;
+
+    border-radius:50%;
+
+    font-size:14px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    transition:.15s;
+
+}
+
+.delete-btn:hover{
+    background:#FCA5A5;
+}
+
+.delete-btn:active{
+    transform:scale(.9);
+}
