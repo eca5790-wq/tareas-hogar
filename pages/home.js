@@ -5,12 +5,14 @@ import { showToast } from "../components/toast.js";
 
 /* ICONOS POR CATEGORÍA */
 const CATEGORY_ICONS = {
-    "Limpieza": "cleaning_services",
-    "Cocina": "restaurant",
-    "Baño": "bathtub",
-    "Lavadora": "local_laundry_service",
-    "Jardín": "grass",
-    "Reparaciones": "build"
+    "cocina": "restaurant",
+    "salón": "weekend",
+    "dormitorio": "bed",
+    "baño": "bathtub",
+    "ropa": "local_laundry_service",
+    "limpieza": "cleaning_services",
+    "compra": "shopping_cart",
+    "mascotas": "pets"
 };
 
 let home = {};

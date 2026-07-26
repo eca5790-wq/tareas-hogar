@@ -10,12 +10,14 @@ import { loadTaskDetail } from "./task-detail.js";
 
 // 🔥 MAPA DE ICONOS (AQUÍ VA)
 const CATEGORY_ICONS = {
-    "Limpieza": "cleaning_services",
-    "Cocina": "restaurant",
-    "Baño": "bathtub",
-    "Lavadora": "local_laundry_service",
-    "Jardín": "grass",
-    "Reparaciones": "build"
+    "cocina": "restaurant",
+    "salón": "weekend",
+    "dormitorio": "bed",
+    "baño": "bathtub",
+    "ropa": "local_laundry_service",
+    "limpieza": "cleaning_services",
+    "compra": "shopping_cart",
+    "mascotas": "pets"
 };
 
 let tasks = [];
