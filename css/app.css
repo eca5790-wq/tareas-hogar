@@ -876,6 +876,8 @@ p{
 
     margin:0;
 
+    flex:1; /* 👈 CLAVE */
+
 }
 
 .profile-selector{
