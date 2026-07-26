@@ -9,8 +9,8 @@ const CATEGORY_ICONS = {
     "Cocina": "restaurant",
     "Baño": "bathtub",
     "Lavadora": "local_laundry_service",
-    "Jardín": "yard",
-    "Reparaciones": "home_repair_service"
+    "Jardín": "grass",
+    "Reparaciones": "build"
 };
 
 let home = {};
