@@ -62,7 +62,7 @@ function competitionSection() {
         <section class="home-section">
 
             <div class="section-title">
-                Esta semana
+                Competición semanal 
             </div>
 
             <div class="competition-box">
@@ -234,7 +234,7 @@ function todaySection() {
         <section class="home-section">
 
             <div class="section-title">
-                Hoy
+                Te toca hoy
             </div>
 
             <div class="today-list">
@@ -326,7 +326,7 @@ function recentSection() {
         <section class="home-section">
 
             <div class="section-title">
-                Última actividad
+                Últimas tareas añadidas
             </div>
 
             <div class="recent-list">
