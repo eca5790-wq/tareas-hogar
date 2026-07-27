@@ -160,11 +160,13 @@ function initEvents() {
         };
 
     /* 🔥 ANIMACIÓN BARRAS */
-    setTimeout(() => {
+   requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
         document.querySelectorAll(".competition-fill").forEach(el => {
             el.style.width = el.dataset.width + "%";
         });
-    }, 50);
+    });
+});
 }
 
 /* ===========================
