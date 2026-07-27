@@ -128,7 +128,7 @@ function recordMini() {
         <div class="competition-record">
 
             <span>
-                Récord semanal (3 meses) · ${home.record.points} pts · ${home.record.user}
+                Récord semanal más reciente · ${home.record.points} pts · ${home.record.user}
             </span>
 
             <span class="material-symbols-rounded record-icon-right">
