@@ -2,6 +2,7 @@ import { renderNavbar } from "../components/navbar.js";
 import { registerTask, getRegisterScreen } from "../js/api.js";
 import { APP } from "../js/config.js";
 import { showToast } from "../components/toast.js";
+import { loadHome } from "./home.js";
 
 /* ICONOS POR CATEGORÍA (ID) */
 const CATEGORY_ICONS = {
@@ -51,7 +52,6 @@ export async function loadRegister() {
     renderNavbar("register");
 
     initEvents();
-
 }
 
 /* ===========================
@@ -81,11 +81,8 @@ function search(e) {
         .toLowerCase();
 
     if (!text) {
-
         renderScreen(screenData);
-
         return;
-
     }
 
     renderScreen({
@@ -94,15 +91,10 @@ function search(e) {
 
         categories: screenData.categories
             .map(category => ({
-
                 ...category,
-
                 tareas: category.tareas.filter(task =>
-                    task.nombre
-                        .toLowerCase()
-                        .includes(text)
+                    task.nombre.toLowerCase().includes(text)
                 )
-
             }))
             .filter(category => category.tareas.length)
 
@@ -126,7 +118,6 @@ function renderCategory(category) {
     const icon = CATEGORY_ICONS[category.id] || "category";
 
     return `
-
         <section class="card">
 
             <h3 class="category-title">
@@ -140,32 +131,22 @@ function renderCategory(category) {
             </h3>
 
             <div class="card-content">
-
                 ${category.tareas.map(renderTask).join("")}
-
             </div>
 
         </section>
-
     `;
-
 }
 
 function renderTask(task) {
 
     return `
-
-        <div
-            class="task-item"
-            data-id="${task.id}"
-        >
+        <div class="task-item" data-id="${task.id}">
 
             <div>
-
                 <div class="task-name">
                     ${task.nombre}
                 </div>
-
             </div>
 
             <div class="task-points">
@@ -173,38 +154,42 @@ function renderTask(task) {
             </div>
 
         </div>
-
     `;
-
 }
 
 /* ===========================
-   ACTIONS
+   ACTIONS + ANIMACIÓN
 =========================== */
 
-async function handleTaskClick(e) {
+function handleTaskClick(e) {
 
     const item = e.target.closest(".task-item");
-
     if (!item) return;
 
-    try {
+    const id = item.dataset.id;
 
-        await registerTask(
-            item.dataset.id,
-            APP.currentUser
-        );
+    /* 🔥 ANIMACIÓN */
 
-        item.classList.add("completed");
+    item.style.transition = "all .25s ease";
+    item.style.transform = "scale(0.96)";
+    item.style.opacity = "0.6";
 
-        showToast("Tarea registrada");
+    setTimeout(() => {
+        item.style.transform = "scale(1.05)";
+        item.style.opacity = "0";
+    }, 120);
 
-    } catch (error) {
+    showToast("Tarea registrada");
 
-        console.error(error);
+    /* 🔥 BACKEND SIN BLOQUEAR */
+    registerTask(id, APP.currentUser)
+        .catch(err => {
+            console.error(err);
+            showToast("Error al guardar");
+        });
 
-        showToast("No se ha podido registrar la tarea.");
-
-    }
-
+    /* 🔥 VOLVER A HOME CON TRANSICIÓN */
+    setTimeout(() => {
+        loadHome();
+    }, 300);
 }

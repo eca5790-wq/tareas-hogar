@@ -1271,3 +1271,25 @@ p{
 .secondary-button:hover{
     background:#F9FAFB;
 }
+.task-item{
+    will-change: transform, opacity;
+}
+/* mejora animaciones */
+
+.today-task,
+.recent-item{
+    will-change: transform, opacity;
+}
+
+/* efecto suave hover */
+
+.today-task:hover{
+    transform:translateY(-2px);
+}
+
+/* eliminar transición brusca */
+
+.today-task,
+.recent-item{
+    transition:all .2s ease;
+}

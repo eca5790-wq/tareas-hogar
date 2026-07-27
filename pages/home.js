@@ -23,13 +23,6 @@ export async function loadHome() {
     initEvents();
 }
 
-/* 🔥 REFRESH GLOBAL */
-async function refreshHome() {
-    home = await getHomeData(APP.currentUser);
-    render();
-    initEvents();
-}
-
 function render() {
 
     document.getElementById("header").innerHTML = `
@@ -73,44 +66,54 @@ function initEvents() {
         .getElementById("profileButton")
         .onclick = () => {
 
-            const next =
-                APP.currentUser === "Tomás"
-                    ? "Elena"
-                    : "Tomás";
-
-            APP.currentUser = next;
+            APP.currentUser =
+                APP.currentUser === "Tomás" ? "Elena" : "Tomás";
 
             loadHome();
         };
 }
 
 /* ===========================
-   TODAY
+   TODAY (OPTIMISTIC UI)
 =========================== */
 
-async function handleTodayClick(e) {
+function handleTodayClick(e) {
 
     const card = e.target.closest(".today-task");
     if (!card) return;
 
-    try {
+    const id = card.dataset.id;
 
-        await registerTask(card.dataset.id, APP.currentUser);
+    /* 🔥 ANIMACIÓN */
+    card.style.transition = "all .3s ease";
+    card.style.transform = "scale(0.96)";
+    card.style.opacity = "0.6";
 
-        card.classList.add("completed");
-        showToast("Tarea registrada");
+    setTimeout(() => {
+        card.style.transform = "translateX(40px)";
+        card.style.opacity = "0";
+    }, 120);
 
-        /* 🔥 REFRESH tras animación */
-        setTimeout(async () => {
-            await refreshHome();
-        }, 300);
+    setTimeout(() => {
+        card.remove();
+    }, 300);
 
-    } catch (error) {
+    showToast("Tarea registrada");
 
-        console.error(error);
-        showToast("No se ha podido registrar la tarea.");
-    }
+    /* backend en paralelo */
+    registerTask(id, APP.currentUser)
+        .catch(err => {
+            console.error(err);
+            showToast("Error al guardar");
+        });
+
+    /* estado local */
+    home.today = home.today.filter(t => String(t.id) !== id);
 }
+
+/* ===========================
+   TODAY UI
+=========================== */
 
 function todaySection() {
 
@@ -251,10 +254,10 @@ function recordSection() {
 }
 
 /* ===========================
-   RECENT
+   RECENT (OPTIMISTIC UI)
 =========================== */
 
-async function handleRecentClick(e) {
+function handleRecentClick(e) {
 
     const btn = e.target.closest(".delete-btn");
     if (!btn) return;
@@ -262,23 +265,35 @@ async function handleRecentClick(e) {
     const item = e.target.closest(".recent-item");
     if (!item) return;
 
+    const id = item.dataset.id;
+
     if (!confirm("¿Eliminar este registro?")) return;
 
-    try {
+    /* 🔥 ANIMACIÓN */
+    item.style.transition = "all .25s ease";
+    item.style.transform = "translateX(20px)";
+    item.style.opacity = "0";
 
-        await deleteHistory(item.dataset.id);
+    setTimeout(() => {
+        item.remove();
+    }, 250);
 
-        showToast("Registro eliminado");
+    showToast("Registro eliminado");
 
-        /* 🔥 REFRESH inmediato */
-        await refreshHome();
+    /* backend */
+    deleteHistory(id)
+        .catch(err => {
+            console.error(err);
+            showToast("Error al eliminar");
+        });
 
-    } catch (e) {
-
-        console.error(e);
-        showToast("Error al eliminar");
-    }
+    /* estado local */
+    home.recent = home.recent.filter(r => String(r.id) !== id);
 }
+
+/* ===========================
+   RECENT UI
+=========================== */
 
 function recentSection() {
 
