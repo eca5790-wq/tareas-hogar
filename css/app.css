@@ -15,7 +15,6 @@
 :root{
     --background:#F7F8FA;
     --surface:#FFFFFF;
-
     --primary:#4F6D7A;
 
     --text-primary:#1F2937;
@@ -24,6 +23,8 @@
     --border:#E5E7EB;
 
     --success:#22C55E;
+    --warning:#F59E0B;
+    --danger:#EF4444;
 }
 
 /* ===========================
@@ -76,6 +77,10 @@ main{
     padding:24px 20px 96px;
 }
 
+/* ===========================
+   NAVBAR
+=========================== */
+
 nav{
     position:fixed;
     bottom:0;
@@ -90,9 +95,6 @@ nav{
     justify-content:space-around;
     align-items:center;
 }
-/* ===========================
-   NAVBAR
-=========================== */
 
 .nav-item{
     flex:1;
@@ -102,6 +104,12 @@ nav{
     justify-content:center;
     gap:4px;
     color:var(--text-secondary);
+    cursor:pointer;
+}
+
+.nav-item small{
+    font-size:11px;
+    font-weight:500;
 }
 
 .nav-item.active{
@@ -136,11 +144,20 @@ nav{
 }
 
 /* ===========================
-   CARD
+   CARD / LIST
 =========================== */
 
 .card{
     margin-bottom:28px;
+}
+
+.card h3{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--text-secondary);
+    margin-bottom:12px;
 }
 
 .card-content{
@@ -152,7 +169,7 @@ nav{
 }
 
 /* ===========================
-   TASK ITEM
+   TASKS
 =========================== */
 
 .task-item,
@@ -164,6 +181,7 @@ nav{
     border-bottom:1px solid var(--border);
     cursor:pointer;
     transition:.2s ease;
+    will-change:transform, opacity;
 }
 
 .task-item:hover,
@@ -202,6 +220,40 @@ nav{
 }
 
 /* ===========================
+   SETTINGS
+=========================== */
+
+.settings-group{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:18px;
+    overflow:hidden;
+    margin-bottom:24px;
+}
+
+.setting-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px;
+    border-bottom:1px solid var(--border);
+}
+
+.setting-row:last-child{
+    border-bottom:none;
+}
+
+.setting-title{
+    font-size:13px;
+    color:var(--text-secondary);
+}
+
+.setting-value{
+    font-size:16px;
+    font-weight:500;
+}
+
+/* ===========================
    BUTTONS
 =========================== */
 
@@ -209,9 +261,10 @@ nav{
     width:100%;
     height:52px;
     border-radius:16px;
+    border:none;
     background:var(--primary);
     color:white;
-    border:none;
+    font-weight:600;
 }
 
 .secondary-button{
@@ -242,7 +295,32 @@ nav{
     background:white;
     border-radius:20px;
     padding:24px;
+    box-shadow:0 20px 60px rgba(0,0,0,.18);
 }
+
+/* ===========================
+   TOAST (UNIFICADO)
+=========================== */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:32px;
+    transform:translateX(-50%) translateY(30px);
+    background:#222;
+    color:#fff;
+    padding:14px 22px;
+    border-radius:14px;
+    opacity:0;
+    transition:.25s;
+    z-index:2000;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+}
+
 /* ===========================
    HOME
 =========================== */
@@ -260,57 +338,10 @@ nav{
 }
 
 /* ===========================
-   COMPETITION
-=========================== */
-
-.competition-box{
-    background:white;
-    border-radius:18px;
-    border:1px solid var(--border);
-    padding:18px;
-}
-
-.competition-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:10px;
-}
-
-.competition-bar{
-    flex:1;
-    height:6px;
-    background:#EEF2F4;
-    border-radius:999px;
-}
-
-.competition-bar div{
-    height:100%;
-    background:linear-gradient(
-        90deg,
-        var(--primary),
-        #6B8A96
-    );
-}
-
-/* ===========================
-   RECORD
-=========================== */
-
-.record-box{
-    display:flex;
-    justify-content:space-between;
-    padding:14px 16px;
-    border-radius:14px;
-    background:#F9FAFB;
-}
-
-/* ===========================
    ANIMATIONS
 =========================== */
 
 .today-task,
 .recent-item{
     transition:all .2s ease;
-    will-change:transform, opacity;
 }
