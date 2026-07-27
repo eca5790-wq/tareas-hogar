@@ -85,28 +85,22 @@ function competitionRow(name, points, otherPoints, max) {
     const winner = points > otherPoints;
 
     return `
-        <div class="competition-row">
+        <div class="competition-row ${winner ? "winner" : ""}">
 
-            <div class="competition-name">
+            <div class="competition-top">
 
-                ${winner ? `
-                    <div class="winner-badge">
-                        <span class="material-symbols-rounded">
-                            emoji_events
-                        </span>
-                    </div>
-                ` : ""}
+                <div class="competition-name">
+                    ${name}
+                </div>
 
-                ${name}
+                <div class="competition-score">
+                    ${points} pts
+                </div>
 
             </div>
 
             <div class="competition-bar">
                 <div style="width:${width}%"></div>
-            </div>
-
-            <div class="competition-points">
-                ${points}
             </div>
 
         </div>
@@ -120,13 +114,7 @@ function recordMini() {
     return `
         <div class="competition-record">
 
-            <span>
-                Récord semanal (3 meses) · ${home.record.points} pts · ${home.record.user}
-            </span>
-
-            <span class="material-symbols-rounded record-icon-right">
-                military_tech
-            </span>
+            Récord semanal · ${home.record.points} pts · ${home.record.user}
 
         </div>
     `;
