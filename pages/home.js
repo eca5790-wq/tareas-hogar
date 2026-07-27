@@ -113,7 +113,8 @@ function competitionRow(name, points, otherPoints) {
             </div>
 
             <div class="competition-bar">
-<div style="width:${width}%"></div>            </div>
+                <div class="competition-fill" data-width="${width}"></div>
+            </div>
 
         </div>
     `;
@@ -143,11 +144,6 @@ function recordMini() {
 =========================== */
 
 function initEvents() {
-    setTimeout(() => {
-    document.querySelectorAll(".competition-fill").forEach(el => {
-        el.style.width = el.dataset.width + "%";
-    });
-}, 50);
 
     document
         .querySelector(".today-list")
@@ -166,6 +162,13 @@ function initEvents() {
 
             loadHome();
         };
+
+    /* 🔥 ANIMACIÓN BARRAS */
+    setTimeout(() => {
+        document.querySelectorAll(".competition-fill").forEach(el => {
+            el.style.width = el.dataset.width + "%";
+        });
+    }, 50);
 }
 
 /* ===========================
@@ -178,10 +181,8 @@ function handleTodayClick(e) {
     if (!card) return;
 
     const id = card.dataset.id;
-
     const taskData = home.today.find(t => String(t.id) === id);
 
-    // animación
     card.style.transition = "all .3s ease";
     card.style.transform = "scale(0.96)";
     card.style.opacity = "0.6";
@@ -193,14 +194,10 @@ function handleTodayClick(e) {
 
     showToast("Tarea registrada");
 
-    /* 🔥 IMPORTANTE: actualizar datos DESPUÉS de animación */
-
     setTimeout(() => {
 
-        // eliminar del today
         home.today = home.today.filter(t => String(t.id) !== id);
 
-        // añadir a recent
         const newItem = {
             id: "tmp-" + Date.now(),
             nombre: taskData?.nombre || "",
@@ -213,11 +210,10 @@ function handleTodayClick(e) {
         home.recent.unshift(newItem);
         home.recent = home.recent.slice(0, 5);
 
-        // 🔥 actualizar puntuación correctamente
         if (APP.currentUser === "Elena") {
-            home.week.Elena = (home.week.Elena || 0) + (taskData?.puntos || 0);
+            home.week.Elena += taskData?.puntos || 0;
         } else {
-            home.week["Tomás"] = (home.week["Tomás"] || 0) + (taskData?.puntos || 0);
+            home.week["Tomás"] += taskData?.puntos || 0;
         }
 
         render();
@@ -225,7 +221,6 @@ function handleTodayClick(e) {
 
     }, 300);
 
-    // backend async
     registerTask(id, APP.currentUser)
         .catch(err => {
             console.error(err);
@@ -255,7 +250,6 @@ function todaySection() {
 
                         return `
                             <article class="today-task" data-id="${task.id}">
-
                                 <div class="task-name">
                                     <span class="material-symbols-rounded task-icon">
                                         ${icon}
@@ -266,7 +260,6 @@ function todaySection() {
                                 <div class="today-points">
                                     ${task.puntos} pts
                                 </div>
-
                             </article>
                         `;
                     }).join("")
@@ -299,35 +292,32 @@ function handleRecentClick(e) {
     item.style.transform = "translateX(20px)";
     item.style.opacity = "0";
 
- setTimeout(() => {
-
-    home.recent = home.recent.filter(r => String(r.id) !== id);
-
-    // 🔥 restar puntos
-    const itemData = home.recent.find(r => String(r.id) === id);
-
-    if (itemData) {
-        if (itemData.usuario === "Elena") {
-            home.week.Elena -= itemData.puntos;
-        } else {
-            home.week["Tomás"] -= itemData.puntos;
-        }
-    }
-
-    render();
-    initEvents();
-
-}, 250);
-
     showToast("Registro eliminado");
+
+    setTimeout(() => {
+
+        const itemData = home.recent.find(r => String(r.id) === id);
+
+        home.recent = home.recent.filter(r => String(r.id) !== id);
+
+        if (itemData) {
+            if (itemData.usuario === "Elena") {
+                home.week.Elena -= itemData.puntos;
+            } else {
+                home.week["Tomás"] -= itemData.puntos;
+            }
+        }
+
+        render();
+        initEvents();
+
+    }, 250);
 
     deleteHistory(id)
         .catch(err => {
             console.error(err);
             showToast("Error al eliminar");
         });
-
-    home.recent = home.recent.filter(r => String(r.id) !== id);
 }
 
 /* ===========================

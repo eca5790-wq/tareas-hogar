@@ -1395,10 +1395,8 @@ p{
 
 /* record */
 
-.competition-row.winner .competition-name::before{
-    content:"🏆";
-    margin-right:6px;
-    font-size:14px;
+.competition-row.winner{
+    opacity:1;
 }
 .competition-fill{
     width:0%;
@@ -1406,6 +1404,9 @@ p{
     background:var(--primary);
     border-radius:999px;
     transition:width .6s ease;
+}
+.competition-row:not(.winner){
+    opacity:.7;
 }
 /* record */
 
