@@ -23,6 +23,13 @@ export async function loadHome() {
     initEvents();
 }
 
+/* 🔥 REFRESH GLOBAL */
+async function refreshHome() {
+    home = await getHomeData(APP.currentUser);
+    render();
+    initEvents();
+}
+
 function render() {
 
     document.getElementById("header").innerHTML = `
@@ -74,7 +81,6 @@ function initEvents() {
             APP.currentUser = next;
 
             loadHome();
-
         };
 }
 
@@ -92,28 +98,17 @@ async function handleTodayClick(e) {
         await registerTask(card.dataset.id, APP.currentUser);
 
         card.classList.add("completed");
-
         showToast("Tarea registrada");
 
-        setTimeout(() => {
-
-            card.remove();
-
-            if (!document.querySelector(".today-task")) {
-
-                document.querySelector(".today-list").innerHTML = `
-                    <p>No hay tareas para hoy.</p>
-                `;
-
-            }
-
-        }, 350);
+        /* 🔥 REFRESH tras animación */
+        setTimeout(async () => {
+            await refreshHome();
+        }, 300);
 
     } catch (error) {
 
         console.error(error);
         showToast("No se ha podido registrar la tarea.");
-
     }
 }
 
@@ -273,15 +268,15 @@ async function handleRecentClick(e) {
 
         await deleteHistory(item.dataset.id);
 
-        item.remove();
-
         showToast("Registro eliminado");
+
+        /* 🔥 REFRESH inmediato */
+        await refreshHome();
 
     } catch (e) {
 
         console.error(e);
         showToast("Error al eliminar");
-
     }
 }
 
