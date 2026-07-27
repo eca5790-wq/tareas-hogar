@@ -20,6 +20,8 @@ function render() {
     document.getElementById("content").innerHTML = `
         ${weekSummary()}
         ${weekComparison()}
+        ${weeklyWinners()}
+        ${topTasks()}
     `;
 
     renderNavbar("stats");
@@ -91,6 +93,71 @@ function weekComparison() {
                         <div style="width:${tWidth}%"></div>
                     </div>
                 </div>
+
+            </div>
+
+        </section>
+    `;
+}
+
+/* ===========================
+   SEMANAS GANADAS
+=========================== */
+
+function weeklyWinners() {
+
+    if (!stats.stats?.weeklyWinners) return "";
+
+    const w = stats.stats.weeklyWinners;
+
+    return `
+        <section class="home-section">
+
+            <div class="section-title">
+                Semanas ganadas
+            </div>
+
+            <div class="stats-summary">
+
+                <div>
+                    Elena<br>
+                    <strong>${w.Elena}</strong>
+                </div>
+
+                <div>
+                    Tomás<br>
+                    <strong>${w["Tomás"]}</strong>
+                </div>
+
+            </div>
+
+        </section>
+    `;
+}
+
+/* ===========================
+   TOP TAREAS
+=========================== */
+
+function topTasks() {
+
+    if (!stats.stats?.topTasks) return "";
+
+    return `
+        <section class="home-section">
+
+            <div class="section-title">
+                Tareas más realizadas
+            </div>
+
+            <div class="stats-list">
+
+                ${stats.stats.topTasks.map(t => `
+                    <div class="stats-row">
+                        ${t.nombre}
+                        <span>${t.count}</span>
+                    </div>
+                `).join("")}
 
             </div>
 
