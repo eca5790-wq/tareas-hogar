@@ -43,15 +43,80 @@ function render() {
     `;
 
     document.getElementById("content").innerHTML = `
-        ${todaySection()}
-        ${weekSection()}
-        ${recordSection()}
-        ${recentSection()}
+      ${competitionSection()}
+${todaySection()}
+${recentSection()}
     `;
 
     renderNavbar("home");
 }
+function competitionSection() {
 
+    const e = home.week.Elena;
+    const t = home.week["Tomás"];
+
+    const max = Math.max(e, t, 1);
+
+    return `
+        <section class="home-section competition">
+
+            <div class="competition-box">
+
+                <div class="competition-header">
+                    Esta semana
+                </div>
+
+                ${competitionRow("Elena", e, max)}
+                ${competitionRow("Tomás", t, max)}
+
+                ${recordMini()}
+
+            </div>
+
+        </section>
+    `;
+}
+function competitionRow(name, points, max) {
+
+    const width = Math.max(
+        8,
+        Math.round((points / max) * 100)
+    );
+
+    return `
+        <div class="competition-row">
+
+            <div class="competition-name">
+                ${name}
+            </div>
+
+            <div class="competition-bar">
+                <div style="width:${width}%"></div>
+            </div>
+
+            <div class="competition-points">
+                ${points}
+            </div>
+
+        </div>
+    `;
+}
+function recordMini() {
+
+    if (!home.record) return "";
+
+    return `
+        <div class="competition-record">
+
+            <span class="material-symbols-rounded">
+                emoji_events
+            </span>
+
+            ${home.record.points} pts · ${home.record.user}
+
+        </div>
+    `;
+}
 function initEvents() {
 
     document
