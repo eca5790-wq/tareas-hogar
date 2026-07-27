@@ -23,6 +23,10 @@ export async function loadHome() {
     initEvents();
 }
 
+/* ===========================
+   RENDER
+=========================== */
+
 function render() {
 
     document.getElementById("header").innerHTML = `
@@ -64,8 +68,8 @@ function competitionSection() {
                     Esta semana
                 </div>
 
-                ${competitionRow("Elena", e, max)}
-                ${competitionRow("Tomás", t, max)}
+                ${competitionRow("Elena", e, t, max)}
+                ${competitionRow("Tomás", t, e, max)}
 
                 ${recordMini()}
 
@@ -75,22 +79,26 @@ function competitionSection() {
     `;
 }
 
-function competitionRow(name, points, max) {
+function competitionRow(name, points, otherPoints, max) {
 
     const width = Math.max(8, Math.round((points / max) * 100));
-    const winner = points === max;
+    const winner = points > otherPoints;
 
     return `
         <div class="competition-row">
 
             <div class="competition-name">
-                ${name}
 
                 ${winner ? `
-                    <span class="material-symbols-rounded winner-icon">
-                        emoji_events
-                    </span>
+                    <div class="winner-badge">
+                        <span class="material-symbols-rounded">
+                            emoji_events
+                        </span>
+                    </div>
                 ` : ""}
+
+                ${name}
+
             </div>
 
             <div class="competition-bar">
@@ -112,11 +120,13 @@ function recordMini() {
     return `
         <div class="competition-record">
 
-            <span class="material-symbols-rounded">
-                military_tech
+            <span>
+                Récord semanal (3 meses) · ${home.record.points} pts · ${home.record.user}
             </span>
 
-            Récord semanal (3 meses) · ${home.record.points} pts · ${home.record.user}
+            <span class="material-symbols-rounded record-icon-right">
+                military_tech
+            </span>
 
         </div>
     `;
@@ -158,13 +168,16 @@ function handleTodayClick(e) {
 
     const id = card.dataset.id;
 
+    // obtener datos desde estado (no DOM)
+    const taskData = home.today.find(t => String(t.id) === id);
+
     // animación
     card.style.transition = "all .3s ease";
     card.style.transform = "scale(0.96)";
     card.style.opacity = "0.6";
 
     setTimeout(() => {
-        card.style.transform = "translateX(40px)";
+        card.style.transform = "translateX(20px)";
         card.style.opacity = "0";
     }, 120);
 
@@ -172,7 +185,20 @@ function handleTodayClick(e) {
 
     showToast("Tarea registrada");
 
-    // backend async + sync parcial
+    // insertar inmediatamente en recent
+    const newItem = {
+        id: "tmp-" + Date.now(),
+        nombre: taskData?.nombre || "",
+        usuario: APP.currentUser,
+        fecha: new Date().toISOString(),
+        puntos: taskData?.puntos || 0,
+        categoriaId: taskData?.categoriaId
+    };
+
+    home.recent.unshift(newItem);
+    home.recent = home.recent.slice(0, 5);
+
+    // backend + sync parcial
     registerTask(id, APP.currentUser)
         .then(async () => {
 

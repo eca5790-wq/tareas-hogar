@@ -1304,6 +1304,20 @@ p{
    COMPETITION
 =========================== */
 
+.winner-badge{
+
+    display:flex;
+    justify-content:center;
+
+    margin-bottom:4px;
+
+}
+
+.winner-badge span{
+    font-size:18px;
+    color:#F59E0B;
+}
+
 .competition-box{
 
     background:white;
@@ -1387,16 +1401,18 @@ p{
 
 .competition-record{
 
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
     margin-top:10px;
 
-    display:flex;
-    align-items:center;
-    gap:6px;
-
     font-size:12px;
-
     color:var(--text-secondary);
 
-    opacity:.8;
+}
 
+.record-icon-right{
+    font-size:16px;
+    opacity:.8;
 }
