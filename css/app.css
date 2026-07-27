@@ -1400,7 +1400,13 @@ p{
     margin-right:6px;
     font-size:14px;
 }
-
+.competition-fill{
+    width:0%;
+    height:100%;
+    background:var(--primary);
+    border-radius:999px;
+    transition:width .6s ease;
+}
 /* record */
 
 .competition-record{

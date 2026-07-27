@@ -113,8 +113,7 @@ function competitionRow(name, points, otherPoints) {
             </div>
 
             <div class="competition-bar">
-                <div style="width:${width}%"></div>
-            </div>
+<div style="width:${width}%"></div>            </div>
 
         </div>
     `;
@@ -144,6 +143,11 @@ function recordMini() {
 =========================== */
 
 function initEvents() {
+    setTimeout(() => {
+    document.querySelectorAll(".competition-fill").forEach(el => {
+        el.style.width = el.dataset.width + "%";
+    });
+}, 50);
 
     document
         .querySelector(".today-list")
@@ -187,43 +191,46 @@ function handleTodayClick(e) {
         card.style.opacity = "0";
     }, 120);
 
-    setTimeout(() => card.remove(), 300);
-
     showToast("Tarea registrada");
 
-    /* 🔥 UPDATE LOCAL (INSTANTÁNEO) */
+    /* 🔥 IMPORTANTE: actualizar datos DESPUÉS de animación */
 
-    const newItem = {
-        id: "tmp-" + Date.now(),
-        nombre: taskData?.nombre || "",
-        usuario: APP.currentUser,
-        fecha: new Date().toISOString(),
-        puntos: taskData?.puntos || 0,
-        categoriaId: taskData?.categoriaId
-    };
+    setTimeout(() => {
 
-    home.recent.unshift(newItem);
-    home.recent = home.recent.slice(0, 5);
+        // eliminar del today
+        home.today = home.today.filter(t => String(t.id) !== id);
 
-    // actualizar puntuación local
-    if (APP.currentUser === "Elena") {
-        home.week.Elena += taskData?.puntos || 0;
-    } else {
-        home.week["Tomás"] += taskData?.puntos || 0;
-    }
+        // añadir a recent
+        const newItem = {
+            id: "tmp-" + Date.now(),
+            nombre: taskData?.nombre || "",
+            usuario: APP.currentUser,
+            fecha: new Date().toISOString(),
+            puntos: taskData?.puntos || 0,
+            categoriaId: taskData?.categoriaId
+        };
 
-    render();
-    initEvents();
+        home.recent.unshift(newItem);
+        home.recent = home.recent.slice(0, 5);
 
-    /* BACKEND SIN BLOQUEAR */
+        // 🔥 actualizar puntuación correctamente
+        if (APP.currentUser === "Elena") {
+            home.week.Elena = (home.week.Elena || 0) + (taskData?.puntos || 0);
+        } else {
+            home.week["Tomás"] = (home.week["Tomás"] || 0) + (taskData?.puntos || 0);
+        }
 
+        render();
+        initEvents();
+
+    }, 300);
+
+    // backend async
     registerTask(id, APP.currentUser)
         .catch(err => {
             console.error(err);
             showToast("Error al guardar");
         });
-
-    home.today = home.today.filter(t => String(t.id) !== id);
 }
 
 /* ===========================
@@ -292,7 +299,25 @@ function handleRecentClick(e) {
     item.style.transform = "translateX(20px)";
     item.style.opacity = "0";
 
-    setTimeout(() => item.remove(), 250);
+ setTimeout(() => {
+
+    home.recent = home.recent.filter(r => String(r.id) !== id);
+
+    // 🔥 restar puntos
+    const itemData = home.recent.find(r => String(r.id) === id);
+
+    if (itemData) {
+        if (itemData.usuario === "Elena") {
+            home.week.Elena -= itemData.puntos;
+        } else {
+            home.week["Tomás"] -= itemData.puntos;
+        }
+    }
+
+    render();
+    initEvents();
+
+}, 250);
 
     showToast("Registro eliminado");
 
