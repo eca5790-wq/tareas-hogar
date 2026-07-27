@@ -291,6 +291,8 @@ nav{
 /* ===========================
    TASK
 =========================== */
+
+
 .category-title{
 
     display:flex;
@@ -383,6 +385,11 @@ nav{
 
 }
 
+.task-points-sub{
+    font-size:12px;
+    color:var(--text-secondary);
+    margin-top:4px;
+}
 /* ===========================
    PROFILE
 =========================== */

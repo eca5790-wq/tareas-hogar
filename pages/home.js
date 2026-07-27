@@ -27,34 +27,32 @@ function render() {
 
     document.getElementById("header").innerHTML = `
         <div class="home-header">
-
-            <div class="home-title">
-                Tareas del hogar
-            </div>
+            <div class="home-title">Tareas del hogar</div>
 
             <button id="profileButton" class="profile-selector">
                 ${APP.currentUser}
-                <span class="material-symbols-rounded">
-                    expand_more
-                </span>
+                <span class="material-symbols-rounded">expand_more</span>
             </button>
-
         </div>
     `;
 
     document.getElementById("content").innerHTML = `
-      ${competitionSection()}
-${todaySection()}
-${recentSection()}
+        ${competitionSection()}
+        ${todaySection()}
+        ${recentSection()}
     `;
 
     renderNavbar("home");
 }
+
+/* ===========================
+   COMPETITION
+=========================== */
+
 function competitionSection() {
 
     const e = home.week.Elena;
     const t = home.week["Tomás"];
-
     const max = Math.max(e, t, 1);
 
     return `
@@ -76,18 +74,23 @@ function competitionSection() {
         </section>
     `;
 }
+
 function competitionRow(name, points, max) {
 
-    const width = Math.max(
-        8,
-        Math.round((points / max) * 100)
-    );
+    const width = Math.max(8, Math.round((points / max) * 100));
+    const winner = points === max;
 
     return `
         <div class="competition-row">
 
             <div class="competition-name">
                 ${name}
+
+                ${winner ? `
+                    <span class="material-symbols-rounded winner-icon">
+                        emoji_events
+                    </span>
+                ` : ""}
             </div>
 
             <div class="competition-bar">
@@ -101,6 +104,7 @@ function competitionRow(name, points, max) {
         </div>
     `;
 }
+
 function recordMini() {
 
     if (!home.record) return "";
@@ -109,14 +113,19 @@ function recordMini() {
         <div class="competition-record">
 
             <span class="material-symbols-rounded">
-                emoji_events
+                military_tech
             </span>
 
-            ${home.record.points} pts · ${home.record.user}
+            Récord semanal (3 meses) · ${home.record.points} pts · ${home.record.user}
 
         </div>
     `;
 }
+
+/* ===========================
+   EVENTS
+=========================== */
+
 function initEvents() {
 
     document
@@ -139,7 +148,7 @@ function initEvents() {
 }
 
 /* ===========================
-   TODAY (OPTIMISTIC UI)
+   TODAY
 =========================== */
 
 function handleTodayClick(e) {
@@ -149,7 +158,7 @@ function handleTodayClick(e) {
 
     const id = card.dataset.id;
 
-    /* 🔥 ANIMACIÓN */
+    // animación
     card.style.transition = "all .3s ease";
     card.style.transform = "scale(0.96)";
     card.style.opacity = "0.6";
@@ -159,20 +168,28 @@ function handleTodayClick(e) {
         card.style.opacity = "0";
     }, 120);
 
-    setTimeout(() => {
-        card.remove();
-    }, 300);
+    setTimeout(() => card.remove(), 300);
 
     showToast("Tarea registrada");
 
-    /* backend en paralelo */
+    // backend async + sync parcial
     registerTask(id, APP.currentUser)
+        .then(async () => {
+
+            const fresh = await getHomeData(APP.currentUser);
+
+            home.week = fresh.week;
+            home.recent = fresh.recent;
+
+            render();
+            initEvents();
+
+        })
         .catch(err => {
             console.error(err);
             showToast("Error al guardar");
         });
 
-    /* estado local */
     home.today = home.today.filter(t => String(t.id) !== id);
 }
 
@@ -200,13 +217,10 @@ function todaySection() {
                             <article class="today-task" data-id="${task.id}">
 
                                 <div class="task-name">
-
                                     <span class="material-symbols-rounded task-icon">
                                         ${icon}
                                     </span>
-
                                     ${task.nombre}
-
                                 </div>
 
                                 <div class="today-points">
@@ -215,7 +229,6 @@ function todaySection() {
 
                             </article>
                         `;
-
                     }).join("")
                     : `<p>No hay tareas para hoy.</p>`
                 }
@@ -227,99 +240,7 @@ function todaySection() {
 }
 
 /* ===========================
-   WEEK
-=========================== */
-
-function weekSection() {
-
-    const score = home.week;
-
-    return `
-        <section class="home-section">
-
-            <div class="section-title">
-                Esta semana
-            </div>
-
-            ${weekRow("Elena", score.Elena)}
-            ${weekRow("Tomás", score["Tomás"])}
-
-        </section>
-    `;
-}
-
-function weekRow(name, points) {
-
-    const MAX_POINTS = 100;
-
-    const width = Math.max(
-        8,
-        Math.min(
-            100,
-            Math.round((points / MAX_POINTS) * 100)
-        )
-    );
-
-    return `
-        <div class="week-row">
-
-            <div class="week-name">
-                ${name}
-            </div>
-
-            <div class="week-progress">
-                <div class="week-bar" style="width:${width}%"></div>
-            </div>
-
-            <div class="week-points">
-                ${points}
-            </div>
-
-        </div>
-    `;
-}
-
-/* ===========================
-   RECORD
-=========================== */
-
-function recordSection() {
-
-    if (!home.record) return "";
-
-    return `
-        <section class="home-section">
-
-            <div class="section-title">
-                Récord reciente
-            </div>
-
-            <div class="record-box">
-
-                <div class="record-left">
-
-                    <span class="material-symbols-rounded record-icon">
-                        emoji_events
-                    </span>
-
-                    <span class="record-points">
-                        ${home.record.points} pts
-                    </span>
-
-                </div>
-
-                <div class="record-user">
-                    ${home.record.user}
-                </div>
-
-            </div>
-
-        </section>
-    `;
-}
-
-/* ===========================
-   RECENT (OPTIMISTIC UI)
+   RECENT
 =========================== */
 
 function handleRecentClick(e) {
@@ -334,25 +255,31 @@ function handleRecentClick(e) {
 
     if (!confirm("¿Eliminar este registro?")) return;
 
-    /* 🔥 ANIMACIÓN */
     item.style.transition = "all .25s ease";
     item.style.transform = "translateX(20px)";
     item.style.opacity = "0";
 
-    setTimeout(() => {
-        item.remove();
-    }, 250);
+    setTimeout(() => item.remove(), 250);
 
     showToast("Registro eliminado");
 
-    /* backend */
     deleteHistory(id)
+        .then(async () => {
+
+            const fresh = await getHomeData(APP.currentUser);
+
+            home.week = fresh.week;
+            home.recent = fresh.recent;
+
+            render();
+            initEvents();
+
+        })
         .catch(err => {
             console.error(err);
             showToast("Error al eliminar");
         });
 
-    /* estado local */
     home.recent = home.recent.filter(r => String(r.id) !== id);
 }
 
@@ -382,34 +309,28 @@ function recentSection() {
                                 <div class="recent-info">
 
                                     <div class="task-name">
-
                                         <span class="material-symbols-rounded task-icon">
                                             ${icon}
                                         </span>
-
                                         ${item.nombre}
-
                                     </div>
 
                                     <div class="task-subtitle">
                                         ${item.usuario} · ${relativeDate(item.fecha)}
                                     </div>
 
+                                    <div class="task-subtitle">
+                                        ${item.puntos} pts
+                                    </div>
+
                                 </div>
 
                                 <div class="recent-actions">
-
-                                    <span class="today-points">
-                                        ${item.puntos} pts
-                                    </span>
-
                                     <button class="delete-btn">✕</button>
-
                                 </div>
 
                             </div>
                         `;
-
                     }).join("")
                     : `<p>No hay actividad reciente.</p>`
                 }
