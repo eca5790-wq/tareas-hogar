@@ -13,13 +13,14 @@ export async function loadStats() {
 
 function render() {
 
-    document.getElementById("header").innerHTML = `
-        <h2>Estadísticas</h2>
-    `;
+    document.getElementById("content").innerHTML = `
+    ${weeklyWinners()}
+    ${weeklyHistory()}
+    ${topTasks()}
+`;
 
     document.getElementById("content").innerHTML = `
-        ${weekSummary()}
-        ${weekComparison()}
+      
         ${weeklyWinners()}
         ${topTasks()}
     `;
@@ -30,7 +31,36 @@ function render() {
 /* ===========================
    RESUMEN SEMANAL
 =========================== */
+function weeklyHistory() {
 
+    if (!stats.stats?.weeklyHistory) return "";
+
+    return `
+        <section class="home-section">
+
+            <div class="section-title">
+                Últimas semanas
+            </div>
+
+            <div class="stats-list">
+
+                ${stats.stats.weeklyHistory.map(w => `
+                    <div class="stats-row">
+
+                        <span>${w.week}</span>
+
+                        <strong>
+                            ${w.winner || "-"}
+                        </strong>
+
+                    </div>
+                `).join("")}
+
+            </div>
+
+        </section>
+    `;
+}
 function weekSummary() {
 
     return `
