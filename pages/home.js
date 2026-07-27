@@ -131,10 +131,6 @@ function recordMini() {
                 Récord semanal más reciente · ${home.record.points} pts · ${home.record.user}
             </span>
 
-            <span class="material-symbols-rounded record-icon-right">
-                military_tech
-            </span>
-
         </div>
     `;
 }
