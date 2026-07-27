@@ -3,7 +3,7 @@ import { getHomeData, registerTask, deleteHistory } from "../js/api.js";
 import { renderNavbar } from "../components/navbar.js";
 import { showToast } from "../components/toast.js";
 
-/* ICONOS POR CATEGORÍA */
+/* ICONOS */
 const CATEGORY_ICONS = {
     1: "restaurant",
     2: "weekend",
@@ -57,19 +57,18 @@ function competitionSection() {
 
     const e = home.week.Elena;
     const t = home.week["Tomás"];
-    const max = Math.max(e, t, 1);
 
     return `
-        <section class="home-section competition">
+        <section class="home-section">
+
+            <div class="section-title">
+                Esta semana
+            </div>
 
             <div class="competition-box">
 
-                <div class="competition-header">
-                    Esta semana
-                </div>
-
-                ${competitionRow("Elena", e, t, max)}
-                ${competitionRow("Tomás", t, e, max)}
+                ${competitionRow("Elena", e, t)}
+                ${competitionRow("Tomás", t, e)}
 
                 ${recordMini()}
 
@@ -79,18 +78,32 @@ function competitionSection() {
     `;
 }
 
-function competitionRow(name, points, otherPoints, max) {
+function competitionRow(name, points, otherPoints) {
 
-    const width = Math.max(8, Math.round((points / max) * 100));
+    const MAX_POINTS = 100;
+
+    const width = Math.max(
+        8,
+        Math.min(100, Math.round((points / MAX_POINTS) * 100))
+    );
+
     const winner = points > otherPoints;
 
     return `
-        <div class="competition-row ${winner ? "winner" : ""}">
+        <div class="competition-row">
 
             <div class="competition-top">
 
                 <div class="competition-name">
+
                     ${name}
+
+                    ${winner ? `
+                        <span class="material-symbols-rounded winner-icon">
+                            workspace_premium
+                        </span>
+                    ` : ""}
+
                 </div>
 
                 <div class="competition-score">
@@ -114,7 +127,13 @@ function recordMini() {
     return `
         <div class="competition-record">
 
-            Récord semanal · ${home.record.points} pts · ${home.record.user}
+            <span>
+                Récord semanal (3 meses) · ${home.record.points} pts · ${home.record.user}
+            </span>
+
+            <span class="material-symbols-rounded record-icon-right">
+                military_tech
+            </span>
 
         </div>
     `;
@@ -156,7 +175,6 @@ function handleTodayClick(e) {
 
     const id = card.dataset.id;
 
-    // obtener datos desde estado (no DOM)
     const taskData = home.today.find(t => String(t.id) === id);
 
     // animación
@@ -173,7 +191,8 @@ function handleTodayClick(e) {
 
     showToast("Tarea registrada");
 
-    // insertar inmediatamente en recent
+    /* 🔥 UPDATE LOCAL (INSTANTÁNEO) */
+
     const newItem = {
         id: "tmp-" + Date.now(),
         nombre: taskData?.nombre || "",
@@ -186,19 +205,19 @@ function handleTodayClick(e) {
     home.recent.unshift(newItem);
     home.recent = home.recent.slice(0, 5);
 
-    // backend + sync parcial
+    // actualizar puntuación local
+    if (APP.currentUser === "Elena") {
+        home.week.Elena += taskData?.puntos || 0;
+    } else {
+        home.week["Tomás"] += taskData?.puntos || 0;
+    }
+
+    render();
+    initEvents();
+
+    /* BACKEND SIN BLOQUEAR */
+
     registerTask(id, APP.currentUser)
-        .then(async () => {
-
-            const fresh = await getHomeData(APP.currentUser);
-
-            home.week = fresh.week;
-            home.recent = fresh.recent;
-
-            render();
-            initEvents();
-
-        })
         .catch(err => {
             console.error(err);
             showToast("Error al guardar");
@@ -278,17 +297,6 @@ function handleRecentClick(e) {
     showToast("Registro eliminado");
 
     deleteHistory(id)
-        .then(async () => {
-
-            const fresh = await getHomeData(APP.currentUser);
-
-            home.week = fresh.week;
-            home.recent = fresh.recent;
-
-            render();
-            initEvents();
-
-        })
         .catch(err => {
             console.error(err);
             showToast("Error al eliminar");
