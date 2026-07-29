@@ -21,95 +21,73 @@ async function request(action, params = {}) {
     }
 
     return await response.json();
-
 }
 
 export function clearCache() {
-
     cache.categories = null;
-
 }
 
+/* ===========================
+   API CALLS
+=========================== */
+
 export function getHomeData(user) {
-
     return request("home", { user });
-
 }
 
 export function getRegisterScreen(user) {
-
     return request("registerScreen", { user });
-
 }
 
 export function registerTask(taskId, user) {
-
     return request("registerTask", {
         taskId,
         user
     });
-
 }
+
 export function deleteHistory(id) {
-
     return request("deleteHistory", { id });
-
 }
 
 export function getTasks() {
-
     return request("tasks");
-
 }
 
 export async function getCategories() {
 
     if (cache.categories) {
-
         return cache.categories;
-
     }
 
     cache.categories = await request("categories");
 
     return cache.categories;
-
 }
 
 export async function createTask(task) {
 
     const result = await request("createTask", {
-
         nombre: task.nombre,
-
         categoriaId: task.categoriaId,
-
         puntos: task.puntos
-
     });
 
     clearCache();
 
     return result;
-
 }
 
 export async function updateTask(task) {
 
     const result = await request("updateTask", {
-
         id: task.id,
-
         nombre: task.nombre,
-
         categoriaId: task.categoriaId,
-
         puntos: task.puntos
-
     });
 
     clearCache();
 
     return result;
-
 }
