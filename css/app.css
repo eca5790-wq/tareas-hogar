@@ -954,7 +954,7 @@ p{
 
     white-space:nowrap;
 
-    flex-grow:1; /* ðŸ‘ˆ CLAVE */
+    flex-grow:1; /* 👈 CLAVE */
 }
 
 .profile-selector{
@@ -1048,7 +1048,7 @@ p{
 
 }
 
-/* AnimaciÃ³n completar */
+/* Animación completar */
 
 .today-task.completed{
 
@@ -1202,7 +1202,7 @@ p{
     border:none;
     border-radius:50%;
 
-    background:transparent;   /* ðŸ‘ˆ clave */
+    background:transparent;   /* 👈 clave */
     color:#9CA3AF;            /* gris suave */
 
     font-size:16px;
@@ -1343,7 +1343,7 @@ p{
     transform:translateY(-2px);
 }
 
-/* eliminar transiciÃ³n brusca */
+/* eliminar transición brusca */
 
 .today-task,
 .recent-item{
@@ -1432,7 +1432,7 @@ p{
 .competition-fill{
     width:0%;
     height:100%;
-    height:8px;           /* ðŸ‘ˆ ESTA LÃNEA ES LA CLAVE */
+    height:8px;           /* 👈 ESTA LÍNEA ES LA CLAVE */
     background:var(--primary);
     border-radius:999px;
     transition:width .6s ease;
@@ -1446,7 +1446,7 @@ p{
 }
 
 .competition-row.winner .competition-fill{
-    background:#5B7C89; /* un pelÃ­n mÃ¡s fuerte */
+    background:#5B7C89; /* un pelín más fuerte */
 }
 
 .competition-row:not(.winner){
@@ -1473,7 +1473,7 @@ p{
     text-align:center;
     border:1px solid var(--border);
 
-    box-shadow:0 6px 16px rgba(0,0,0,.04); /* ðŸ‘ˆ nuevo */
+    box-shadow:0 6px 16px rgba(0,0,0,.04); /* 👈 nuevo */
 }
 
 .stats-bars .bar-row{

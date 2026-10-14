@@ -2,7 +2,6 @@ import { renderNavbar } from "../components/navbar.js";
 import { registerTask, getRegisterScreen } from "../js/api.js";
 import { APP } from "../js/config.js";
 import { showToast } from "../components/toast.js";
-import { loadHome } from "./home.js";
 
 const CATEGORY_ICONS = {
   1: "restaurant",
@@ -206,36 +205,37 @@ function renderTask(task) {
   `;
 }
 
-function handleTaskClick(event) {
+async function handleTaskClick(event) {
   const item = event.target.closest(".task-item");
   if (!item || item.dataset.pending === "true") return;
 
   const id = item.dataset.id;
   item.dataset.pending = "true";
   item.style.pointerEvents = "none";
-  item.style.transition = "all .25s ease";
+  item.style.transition = "transform .15s ease, opacity .15s ease";
   item.style.transform = "scale(0.96)";
   item.style.opacity = "0.6";
 
-  setTimeout(() => {
-    item.style.transform = "scale(1.05)";
-    item.style.opacity = "0";
-  }, 120);
+  try {
+    const result = await registerTask(id, APP.currentUser);
 
-  showToast("Tarea registrada");
+    if (!result || result.success === false) {
+      throw new Error(result?.error || "No se pudo registrar la tarea");
+    }
 
-  registerTask(id, APP.currentUser)
-    .then(result => {
-      if (result?.success === false) {
-        throw new Error(result.error || "No se pudo registrar la tarea");
-      }
-    })
-    .catch(error => {
-      console.error(error);
-      showToast("Error al guardar");
-    });
-
-  setTimeout(() => {
-    loadHome();
-  }, 300);
+    const points = Number(result.points);
+    showToast(
+      Number.isFinite(points)
+        ? `Tarea registrada · +${points} pts`
+        : "Tarea registrada"
+    );
+  } catch (error) {
+    console.error(error);
+    showToast("Error al guardar");
+  } finally {
+    item.dataset.pending = "false";
+    item.style.pointerEvents = "";
+    item.style.transform = "";
+    item.style.opacity = "";
+  }
 }
