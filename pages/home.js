@@ -25,6 +25,12 @@ function createEmptyHome() {
   return {
     today: [],
     week: { Elena: 0, "Tomás": 0 },
+    weekDetails: {
+      carryover: { Elena: 0, "Tomás": 0 },
+      earned: { Elena: 0, "Tomás": 0 },
+      weekStart: "",
+      weekEnd: ""
+    },
     record: null,
     recent: [],
     stats: {
@@ -47,6 +53,18 @@ function normalizeHomeData(data) {
     week: {
       Elena: Number(data.week?.Elena) || 0,
       "Tomás": Number(data.week?.["Tomás"]) || 0
+    },
+    weekDetails: {
+      carryover: {
+        Elena: Number(data.weekDetails?.carryover?.Elena) || 0,
+        "Tomás": Number(data.weekDetails?.carryover?.["Tomás"]) || 0
+      },
+      earned: {
+        Elena: Number(data.weekDetails?.earned?.Elena) || 0,
+        "Tomás": Number(data.weekDetails?.earned?.["Tomás"]) || 0
+      },
+      weekStart: data.weekDetails?.weekStart || "",
+      weekEnd: data.weekDetails?.weekEnd || ""
     },
     record: data.record || null,
     recent: Array.isArray(data.recent) ? data.recent : empty.recent,
@@ -172,21 +190,22 @@ function render() {
 function competitionSection() {
   const elenaPoints = home.week.Elena;
   const tomasPoints = home.week["Tomás"];
+  const details = home.weekDetails;
 
   return `
     <section class="home-section">
-      <div class="section-title">Competición semanal</div>
+      <div class="section-title">Competición semanal · lunes a domingo</div>
 
       <div class="competition-box">
-        ${competitionRow("Elena", elenaPoints, tomasPoints)}
-        ${competitionRow("Tomás", tomasPoints, elenaPoints)}
+        ${competitionRow("Elena", elenaPoints, tomasPoints, details.carryover.Elena, details.earned.Elena)}
+        ${competitionRow("Tomás", tomasPoints, elenaPoints, details.carryover["Tomás"], details.earned["Tomás"])}
         ${recordMini()}
       </div>
     </section>
   `;
 }
 
-function competitionRow(name, points, otherPoints) {
+function competitionRow(name, points, otherPoints, carryover = 0, earned = 0) {
   const MAX_POINTS = 100;
   const width = Math.max(
     8,
@@ -208,7 +227,12 @@ function competitionRow(name, points, otherPoints) {
           }
         </div>
 
-        <div class="competition-score">${points} pts</div>
+        <div>
+          <div class="competition-score">${points} pts</div>
+          <div class="task-points-sub">
+            ${earned} esta semana · ${carryover} de ventaja arrastrada
+          </div>
+        </div>
       </div>
 
       <div class="competition-bar">
@@ -296,8 +320,10 @@ function handleTodayClick(event) {
 
     if (APP.currentUser === "Elena") {
       home.week.Elena += taskData.puntos || 0;
+      home.weekDetails.earned.Elena += taskData.puntos || 0;
     } else {
       home.week["Tomás"] += taskData.puntos || 0;
+      home.weekDetails.earned["Tomás"] += taskData.puntos || 0;
     }
 
     render();
@@ -369,26 +395,24 @@ function deleteRecentRecord(id, item) {
   showToast("Registro eliminado");
 
   setTimeout(() => {
-    const itemData = home.recent.find(record => String(record.id) === id);
-
     home.recent = home.recent.filter(record => String(record.id) !== id);
-
-    if (itemData) {
-      if (itemData.usuario === "Elena") {
-        home.week.Elena -= itemData.puntos;
-      } else {
-        home.week["Tomás"] -= itemData.puntos;
-      }
-    }
 
     render();
     initEvents();
   }, 250);
 
-  deleteHistory(id).catch(error => {
-    console.error(error);
-    showToast("Error al eliminar");
-  });
+  deleteHistory(id)
+    .then(result => {
+      if (!result || result.success === false) {
+        throw new Error(result?.error || "No se pudo eliminar el registro");
+      }
+      loadHome();
+    })
+    .catch(error => {
+      console.error(error);
+      showToast("Error al eliminar");
+      loadHome();
+    });
 }
 
 function recentSection() {
