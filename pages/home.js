@@ -126,7 +126,8 @@ export async function loadHome() {
     home = freshHome;
     saveHomeCache(user, home);
 
-    // Evita reiniciar las barras si la respuesta coincide con la caché.
+    // Si ya se dibujó la caché y la respuesta es idéntica, no vuelvas a
+    // crear la sección: las barras animadas arrancarían otra vez desde cero.
     if (dataChanged) {
       render();
       initEvents();
@@ -243,8 +244,8 @@ function initEvents() {
 
   if (profileButton) {
     profileButton.onclick = () => {
-      APP.currentUser =
-        APP.currentUser === "Tomás" ? "Elena" : "Tomás";
+      const newUser = APP.currentUser === "Tomás" ? "Elena" : "Tomás";
+      APP.setCurrentUser(newUser);
 
       loadHome();
     };
