@@ -119,10 +119,18 @@ export async function loadHome() {
       return;
     }
 
-    home = normalizeHomeData(freshData);
+    const freshHome = normalizeHomeData(freshData);
+    const dataChanged =
+      !cachedHome || JSON.stringify(home) !== JSON.stringify(freshHome);
+
+    home = freshHome;
     saveHomeCache(user, home);
-    render();
-    initEvents();
+
+    // Evita reiniciar las barras si la respuesta coincide con la caché.
+    if (dataChanged) {
+      render();
+      initEvents();
+    }
   } catch (error) {
     console.error("No se pudo cargar Inicio:", error);
 
