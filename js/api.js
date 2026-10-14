@@ -30,10 +30,7 @@ function readCache(key) {
 
     const entry = JSON.parse(saved);
 
-    if (
-      !entry ||
-      Date.now() - entry.savedAt >= API_CACHE_TTL_MS
-    ) {
+    if (!entry || Date.now() - entry.savedAt >= API_CACHE_TTL_MS) {
       localStorage.removeItem(key);
       return null;
     }
@@ -131,6 +128,14 @@ export function getCategories() {
   return request("categories");
 }
 
+export function getPointsConfiguration() {
+  return request("pointsConfiguration");
+}
+
+export function getHistoryExport() {
+  return request("exportHistory");
+}
+
 /* Cambios */
 
 export async function registerTask(taskId, user) {
@@ -167,6 +172,40 @@ export async function updateTask(task) {
     nombre: task.nombre,
     categoriaId: task.categoriaId,
     puntos: task.puntos
+  });
+
+  clearCache();
+  return result;
+}
+
+export async function createCategory(category) {
+  const result = await request("createCategory", {
+    nombre: category.nombre,
+    icono: category.icono || "",
+    color: category.color || ""
+  });
+
+  clearCache();
+  return result;
+}
+
+export async function updateCategory(category) {
+  const result = await request("updateCategory", {
+    id: category.id,
+    nombre: category.nombre,
+    icono: category.icono || "",
+    color: category.color || ""
+  });
+
+  clearCache();
+  return result;
+}
+
+export async function updatePointsConfiguration(config) {
+  const result = await request("updatePointsConfiguration", {
+    bonusDays: config.bonusDays,
+    bonusPoints: config.bonusPoints,
+    maxBonus: config.maxBonus
   });
 
   clearCache();

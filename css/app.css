@@ -655,6 +655,55 @@ p{
 
 }
 
+.settings-heading{
+    margin:20px 4px 10px;
+    font-size:16px;
+    font-weight:600;
+}
+
+.category-form{
+    padding:16px;
+    border-bottom:1px solid var(--border);
+}
+
+.category-form:last-child{
+    border-bottom:none;
+}
+
+.settings-field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    margin-bottom:14px;
+    color:var(--text-secondary);
+    font-size:13px;
+}
+
+.settings-field input{
+    width:100%;
+    min-height:46px;
+    padding:0 12px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:white;
+    color:var(--text-primary);
+    font:inherit;
+    font-size:15px;
+}
+
+.settings-help,
+.settings-export p,
+.settings-loading{
+    margin:0 0 12px;
+    color:var(--text-secondary);
+    font-size:13px;
+    line-height:1.5;
+}
+
+.settings-export{
+    padding:16px;
+}
+
 .setting-row{
 
     display:flex;
@@ -905,7 +954,7 @@ p{
 
     white-space:nowrap;
 
-    flex-grow:1; /* 👈 CLAVE */
+    flex-grow:1; /* ðŸ‘ˆ CLAVE */
 }
 
 .profile-selector{
@@ -999,7 +1048,7 @@ p{
 
 }
 
-/* Animación completar */
+/* AnimaciÃ³n completar */
 
 .today-task.completed{
 
@@ -1153,7 +1202,7 @@ p{
     border:none;
     border-radius:50%;
 
-    background:transparent;   /* 👈 clave */
+    background:transparent;   /* ðŸ‘ˆ clave */
     color:#9CA3AF;            /* gris suave */
 
     font-size:16px;
@@ -1294,7 +1343,7 @@ p{
     transform:translateY(-2px);
 }
 
-/* eliminar transición brusca */
+/* eliminar transiciÃ³n brusca */
 
 .today-task,
 .recent-item{
@@ -1383,7 +1432,7 @@ p{
 .competition-fill{
     width:0%;
     height:100%;
-    height:8px;           /* 👈 ESTA LÍNEA ES LA CLAVE */
+    height:8px;           /* ðŸ‘ˆ ESTA LÃNEA ES LA CLAVE */
     background:var(--primary);
     border-radius:999px;
     transition:width .6s ease;
@@ -1397,7 +1446,7 @@ p{
 }
 
 .competition-row.winner .competition-fill{
-    background:#5B7C89; /* un pelín más fuerte */
+    background:#5B7C89; /* un pelÃ­n mÃ¡s fuerte */
 }
 
 .competition-row:not(.winner){
@@ -1424,7 +1473,7 @@ p{
     text-align:center;
     border:1px solid var(--border);
 
-    box-shadow:0 6px 16px rgba(0,0,0,.04); /* 👈 nuevo */
+    box-shadow:0 6px 16px rgba(0,0,0,.04); /* ðŸ‘ˆ nuevo */
 }
 
 .stats-bars .bar-row{
