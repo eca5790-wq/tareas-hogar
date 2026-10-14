@@ -2,6 +2,7 @@ import { APP } from "../js/config.js";
 import { getHomeData, registerTask, deleteHistory } from "../js/api.js";
 import { renderNavbar } from "../components/navbar.js";
 import { showToast } from "../components/toast.js";
+import { openConfirmDialog } from "../components/dialog.js";
 
 const CATEGORY_ICONS = {
   1: "restaurant",
@@ -126,8 +127,7 @@ export async function loadHome() {
     home = freshHome;
     saveHomeCache(user, home);
 
-    // Si ya se dibujó la caché y la respuesta es idéntica, no vuelvas a
-    // crear la sección: las barras animadas arrancarían otra vez desde cero.
+    // Evita reiniciar la animación de las barras si los datos no han cambiado.
     if (dataChanged) {
       render();
       initEvents();
@@ -246,7 +246,6 @@ function initEvents() {
     profileButton.onclick = () => {
       const newUser = APP.currentUser === "Tomás" ? "Elena" : "Tomás";
       APP.setCurrentUser(newUser);
-
       loadHome();
     };
   }
@@ -354,8 +353,15 @@ function handleRecentClick(event) {
 
   const id = item.dataset.id;
 
-  if (!confirm("¿Eliminar este registro?")) return;
+  openConfirmDialog({
+    title: "¿Eliminar este registro?",
+    message: "Se quitará del histórico y se actualizarán los puntos de la semana.",
+    confirmText: "Eliminar registro",
+    onConfirm: () => deleteRecentRecord(id, item)
+  });
+}
 
+function deleteRecentRecord(id, item) {
   item.style.transition = "all .25s ease";
   item.style.transform = "translateX(20px)";
   item.style.opacity = "0";
