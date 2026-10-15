@@ -213,6 +213,12 @@ function competitionRow(name, points, otherPoints, carryover = 0, earned = 0) {
   );
   const winner = points > otherPoints;
 
+  const detailText = carryover > 0
+    ? `${earned} ganados esta semana · +${carryover} de ventaja`
+    : earned > 0
+      ? "Puntos ganados esta semana"
+      : "";
+
   return `
     <div class="competition-row">
       <div class="competition-top">
@@ -229,9 +235,11 @@ function competitionRow(name, points, otherPoints, carryover = 0, earned = 0) {
 
         <div>
           <div class="competition-score">${points} pts</div>
-          <div class="task-points-sub">
-            ${earned} esta semana · ${carryover} de ventaja arrastrada
-          </div>
+          ${
+            detailText
+              ? `<div class="task-points-sub">${detailText}</div>`
+              : ""
+          }
         </div>
       </div>
 
