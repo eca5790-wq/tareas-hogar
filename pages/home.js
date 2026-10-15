@@ -227,20 +227,15 @@ function competitionRow(name, points, otherPoints, carryover = 0, earned = 0) {
 
         <div class="competition-score-block">
           <div class="competition-score">${points} pts</div>
-          <div class="task-points-sub competition-breakdown">
-            <span class="competition-earned">
-              <strong>${earned}</strong>
-              <small>esta semana</small>
-            </span>
-            ${
-              carryover > 0
-                ? `<span class="competition-carryover">
-                     <strong>+${carryover}</strong>
-                     <small>acumulados</small>
-                   </span>`
-                : ""
-            }
-          </div>
+          ${
+            carryover > 0
+              ? `<div class="task-points-sub competition-breakdown">
+                   <span class="competition-carryover">
+                     ${carryover} de la semana pasada
+                   </span>
+                 </div>`
+              : ""
+          }
         </div>
       </div>
 
