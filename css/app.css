@@ -19,6 +19,11 @@
 
     --primary:#4F6D7A;
 
+    --elena:#A85D70;
+    --elena-soft:#F8ECEF;
+    --tomas:#4F788A;
+    --tomas-soft:#EAF1F4;
+
     --text-primary:#1F2937;
     --text-secondary:#6B7280;
 
@@ -955,7 +960,7 @@ p{
 .home-header{
     display:flex;
     align-items:center;
-    padding:20px;
+    padding:0;
 
     width:100%;
 }
@@ -1408,10 +1413,12 @@ p{
 .competition-row{
     margin-bottom:16px;
 }
+
 .competition-top{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:12px;
     margin-bottom:6px;
 }
 
@@ -1419,51 +1426,108 @@ p{
     font-size:14px;
     font-weight:500;
 }
-.competition-score{
-    font-size:14px;
-    font-weight:600;
-    color:var(--text-secondary);
+
+.competition-score-block{
+    min-width:0;
+    text-align:right;
 }
 
+.competition-score{
+    font-size:16px;
+    font-weight:700;
+    line-height:1.15;
+}
 
+.competition-breakdown{
+    display:flex;
+    justify-content:flex-end;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:6px;
+}
 
+.competition-earned,
+.competition-carryover{
+    display:inline-flex;
+    align-items:baseline;
+    gap:4px;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:11px;
+    line-height:1;
+    white-space:nowrap;
+}
+
+.competition-breakdown strong{
+    font-size:12px;
+    font-weight:700;
+}
+
+.competition-breakdown small{
+    color:var(--text-secondary);
+    font-size:10px;
+}
 
 .competition-points{
-
     width:35px;
-
     text-align:right;
-
     font-size:13px;
     font-weight:600;
-
     color:var(--text-secondary);
-
 }
 
-/* record */
 .competition-fill{
     width:0%;
-    height:100%;
-    height:8px;           /* 👈 ESTA LÍNEA ES LA CLAVE */
+    height:8px;
     background:var(--primary);
     border-radius:999px;
     transition:width .6s ease;
 }
+
+.competition-row--elena .competition-name,
+.competition-row--elena .competition-score,
+.competition-row--elena .competition-breakdown strong{
+    color:var(--elena);
+}
+
+.competition-row--elena .competition-earned,
+.competition-row--elena .competition-carryover{
+    background:var(--elena-soft);
+}
+
+.competition-row--elena .competition-fill{
+    background:var(--elena);
+}
+
+.competition-row--tomas .competition-name,
+.competition-row--tomas .competition-score,
+.competition-row--tomas .competition-breakdown strong{
+    color:var(--tomas);
+}
+
+.competition-row--tomas .competition-earned,
+.competition-row--tomas .competition-carryover{
+    background:var(--tomas-soft);
+}
+
+.competition-row--tomas .competition-fill{
+    background:var(--tomas);
+}
+
 .competition-row.winner{
     opacity:1;
 }
 
 .competition-row.winner .competition-name{
-    font-weight:600;
+    font-weight:700;
 }
 
 .competition-row.winner .competition-fill{
-    background:#5B7C89; /* un pelín más fuerte */
+    filter:saturate(1.12);
 }
 
 .competition-row:not(.winner){
-    opacity:.7;
+    opacity:.78;
 }
 /* record */
 

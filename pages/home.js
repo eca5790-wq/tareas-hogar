@@ -91,10 +91,7 @@ function readHomeCache(user) {
 
     const entry = JSON.parse(saved);
 
-    if (
-      !entry ||
-      Date.now() - entry.savedAt > HOME_CACHE_MAX_AGE
-    ) {
+    if (!entry || Date.now() - entry.savedAt > HOME_CACHE_MAX_AGE) {
       localStorage.removeItem(homeCacheKey(user));
       return null;
     }
@@ -212,15 +209,10 @@ function competitionRow(name, points, otherPoints, carryover = 0, earned = 0) {
     Math.min(100, Math.round((points / MAX_POINTS) * 100))
   );
   const winner = points > otherPoints;
-
-  const detailText = carryover > 0
-    ? `${earned} ganados esta semana · +${carryover} de la semana pasada`
-    : earned > 0
-      ? "Puntos ganados esta semana"
-      : "";
+  const personClass = name === "Elena" ? "elena" : "tomas";
 
   return `
-    <div class="competition-row">
+    <div class="competition-row competition-row--${personClass}${winner ? " winner" : ""}">
       <div class="competition-top">
         <div class="competition-name">
           ${name}
@@ -233,13 +225,22 @@ function competitionRow(name, points, otherPoints, carryover = 0, earned = 0) {
           }
         </div>
 
-        <div>
+        <div class="competition-score-block">
           <div class="competition-score">${points} pts</div>
-          ${
-            detailText
-              ? `<div class="task-points-sub">${detailText}</div>`
-              : ""
-          }
+          <div class="task-points-sub competition-breakdown">
+            <span class="competition-earned">
+              <strong>${earned}</strong>
+              <small>esta semana</small>
+            </span>
+            ${
+              carryover > 0
+                ? `<span class="competition-carryover">
+                     <strong>+${carryover}</strong>
+                     <small>acumulados</small>
+                   </span>`
+                : ""
+            }
+          </div>
         </div>
       </div>
 
