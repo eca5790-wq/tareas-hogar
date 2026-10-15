@@ -214,7 +214,7 @@ function competitionRow(name, points, otherPoints, carryover = 0, earned = 0) {
   const winner = points > otherPoints;
 
   const detailText = carryover > 0
-    ? `${earned} ganados esta semana · +${carryover} de ventaja`
+    ? `${earned} ganados esta semana · +${carryover} de la semana pasada`
     : earned > 0
       ? "Puntos ganados esta semana"
       : "";
