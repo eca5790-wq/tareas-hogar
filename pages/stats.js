@@ -36,10 +36,7 @@ function weeklyWinners() {
     <section class="home-section">
       <div class="section-title">Semanas ganadas</div>
 
-      <div
-        class="stats-wins-card"
-        style="background:#fff;padding:16px;border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,.04)"
-      >
+      <div class="stats-wins-card">
         ${winnerBar("Elena", elena, maxWins, "elena")}
         ${winnerBar("Tomás", tomas, maxWins, "tomas")}
       </div>
@@ -52,21 +49,15 @@ function winnerBar(name, count, max, person) {
 
   return `
     <div class="stats-winner-row">
-      <div
-        class="stats-winner-label stats-winner-label--${person}"
-        style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--${person})"
-      >
+      <div class="stats-winner-label stats-winner-label--${person}">
         <span>${name}</span>
         <strong>${count}</strong>
       </div>
 
-      <div
-        class="stats-winner-track"
-        style="height:9px;background:#eef2f4;border-radius:999px;overflow:hidden;margin-bottom:14px"
-      >
+      <div class="stats-winner-track">
         <div
           class="stats-winner-fill stats-winner-fill--${person}"
-          style="width:${width}%;height:100%;background:var(--${person});border-radius:999px;transition:width .4s ease"
+          style="width:${width}%"
           role="progressbar"
           aria-label="Semanas ganadas por ${name}"
           aria-valuemin="0"
@@ -100,22 +91,12 @@ function weeklyHistory() {
 
 function winnerBadge(winner) {
   if (!winner) {
-    return `
-      <span
-        class="stats-winner-badge"
-        style="font-size:12px;color:var(--text-secondary)"
-      >Empate</span>
-    `;
+    return `<span class="stats-winner-badge stats-winner-badge--tie">Empate</span>`;
   }
 
   const person = winner === "Elena" ? "elena" : "tomas";
 
-  return `
-    <span
-      class="stats-winner-badge"
-      style="font-size:12px;font-weight:600;color:var(--${person})"
-    >${escapeHTML(winner)}</span>
-  `;
+  return `<span class="stats-winner-badge stats-winner-badge--${person}">${escapeHTML(winner)}</span>`;
 }
 
 function formatWeekRange(value) {
@@ -182,10 +163,7 @@ function topTasksByPerson() {
     <section class="home-section">
       <div class="section-title">Lo que más hace cada uno</div>
 
-      <div
-        class="stats-person-grid"
-        style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px"
-      >
+      <div class="stats-person-grid">
         ${personTasks("Elena", byPerson.Elena, "elena")}
         ${personTasks("Tomás", byPerson["Tomás"], "tomas")}
       </div>
@@ -197,11 +175,8 @@ function personTasks(name, tasks, person) {
   const safeTasks = Array.isArray(tasks) ? tasks : [];
 
   return `
-    <div
-      class="stats-person-card stats-person-card--${person}"
-      style="background:#fff;padding:16px;border:1px solid var(--border);border-top:3px solid var(--${person});border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,.04)"
-    >
-      <h3 style="margin:0 0 8px;color:var(--${person});font-size:15px">
+    <div class="stats-person-card stats-person-card--${person}">
+      <h3>
         ${name}
       </h3>
 
@@ -215,7 +190,7 @@ function personTasks(name, tasks, person) {
                 </div>
               `).join("")}
             </div>`
-          : `<p style="color:var(--text-secondary);font-size:13px">
+          : `<p class="stats-empty">
               Aún no hay tareas registradas.
             </p>`
       }

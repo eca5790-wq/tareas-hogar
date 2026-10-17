@@ -1813,3 +1813,228 @@ p{
     padding:10px 0;
     border-bottom:1px solid var(--border);
 }
+
+/* ===========================
+   CONSISTENCIA ENTRE PAGINAS
+=========================== */
+
+html,
+body {
+    line-height: 1.45;
+}
+
+header {
+    min-height: 64px;
+    height: auto;
+}
+
+header h2,
+.history-header h2 {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-title {
+    font-size: 22px;
+    line-height: 1.2;
+}
+
+main {
+    padding-top: 24px;
+}
+
+.home-section,
+.card {
+    margin-bottom: 28px;
+}
+
+.section-title,
+.card h3,
+.settings-heading {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    line-height: 1.35;
+    text-transform: uppercase;
+}
+
+.section-title {
+    margin: 0 0 12px;
+}
+
+.card h3 {
+    margin: 0 0 12px;
+}
+
+.settings-heading {
+    margin: 0 4px 12px;
+}
+
+.history-header h2 {
+    white-space: normal;
+}
+
+.history-header p {
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.history-section {
+    padding: 0;
+}
+
+.history-item-meta {
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.card-content,
+.settings-group,
+.history-list,
+.competition-box,
+.recent-list,
+.today-task,
+.stats-wins-card,
+.stats-list,
+.stats-person-card {
+    border-radius: 18px;
+}
+
+.stats-wins-card,
+.stats-list,
+.stats-person-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: 0 2px 8px rgba(31, 41, 55, .04);
+}
+
+.stats-wins-card {
+    padding: 16px;
+}
+
+.stats-winner-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.stats-winner-label--elena,
+.stats-person-card--elena h3 {
+    color: var(--elena);
+}
+
+.stats-winner-label--tomas,
+.stats-person-card--tomas h3 {
+    color: var(--tomas);
+}
+
+.stats-winner-track {
+    height: 9px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    border-radius: 999px;
+    background: #EEF2F4;
+}
+
+.stats-winner-row:last-child .stats-winner-track {
+    margin-bottom: 0;
+}
+
+.stats-winner-fill {
+    height: 100%;
+    border-radius: inherit;
+    transition: width .4s ease;
+}
+
+.stats-winner-fill--elena {
+    background: var(--elena);
+}
+
+.stats-winner-fill--tomas {
+    background: var(--tomas);
+}
+
+.stats-winner-badge {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stats-winner-badge--elena {
+    color: var(--elena);
+}
+
+.stats-winner-badge--tomas {
+    color: var(--tomas);
+}
+
+.stats-winner-badge--tie,
+.stats-empty {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.stats-list {
+    padding: 4px 14px;
+}
+
+.stats-row {
+    gap: 12px;
+    align-items: center;
+    min-height: 44px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.stats-row span:first-child {
+    min-width: 0;
+}
+
+.stats-person-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 12px;
+}
+
+.stats-person-card {
+    padding: 16px;
+    border-top: 3px solid var(--primary);
+}
+
+.stats-person-card--elena {
+    border-top-color: var(--elena);
+}
+
+.stats-person-card--tomas {
+    border-top-color: var(--tomas);
+}
+
+.stats-person-card h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.stats-person-card .stats-list {
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+}
+
+.stats-empty {
+    margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stats-winner-fill {
+        transition: none;
+    }
+}
