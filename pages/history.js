@@ -1,148 +1,172 @@
-import { getHistoryPage } from "../js/api.js";
-import { navigate } from "../js/router.js";
-import { renderNavbar } from "../components/navbar.js";
-
-const PAGE_SIZE = 20;
-
-let historyItems = [];
-let nextOffset = 0;
-let hasMore = true;
-let loading = false;
-let errorMessage = "";
-let requestId = 0;
-
-export async function loadHistory() {
-  requestId++;
-  historyItems = [];
-  nextOffset = 0;
-  hasMore = true;
-  loading = true;
-  errorMessage = "";
-  render();
-  await fetchNextPage(requestId);
+function getHistory() {
+  return getHistoryTable();
 }
 
-async function fetchNextPage(activeRequestId = requestId) {
-  if (loading && nextOffset > 0) return;
+function getHistoryExport() {
+  const values = getHistoryTable();
 
-  const requestedOffset = nextOffset;
-  loading = true;
-  errorMessage = "";
-  render();
+  return {
+    success: true,
+    headers: values.length ? values[0] : [],
+    rows: values.slice(1).filter(row => row[3])
+  };
+}
 
-  try {
-    const result = await getHistoryPage(requestedOffset, PAGE_SIZE);
-    if (activeRequestId !== requestId) return;
-    if (!result || !Array.isArray(result.items)) {
-      throw new Error(result?.error || "Respuesta del historial no válida");
-    }
+/**
+ * Devuelve una página del histórico, de más reciente a más antigua.
+ * offset y limit permiten cargar más registros sin enviar toda la hoja.
+ */
+function getHistoryPage(offset, limit) {
+  const safeOffset = Math.max(0, Number(offset) || 0);
+  const safeLimit = Math.min(50, Math.max(1, Number(limit) || 20));
+  const historyRows = getHistoryRows()
+    .slice()
+    .reverse();
+  const pageRows = historyRows.slice(safeOffset, safeOffset + safeLimit);
+  const taskRows = getTasksTable().slice(1);
+  const categoryRows = getCategoriesTable().slice(1);
+  const tasksById = Object.create(null);
+  const categoriesById = Object.create(null);
 
-    historyItems = historyItems.concat(result.items);
-    nextOffset = Number(result.nextOffset) || requestedOffset + result.items.length;
-    hasMore = Boolean(result.hasMore);
-  } catch (error) {
-    console.error("No se pudo cargar el historial:", error);
-    errorMessage = "No se pudo cargar el historial. Comprueba la conexión y vuelve a intentarlo.";
-  } finally {
-    if (activeRequestId === requestId) {
-      loading = false;
-      render();
+  taskRows.forEach(row => {
+    tasksById[String(row[0])] = {
+      nombre: row[1],
+      categoriaId: row[2]
+    };
+  });
+
+  categoryRows.forEach(row => {
+    categoriesById[String(row[0])] = row[1];
+  });
+
+  return {
+    items: pageRows.map(row => {
+      const task = tasksById[String(row[3])];
+      const categoryId = task ? task.categoriaId : row[4];
+
+      return {
+        id: row[0],
+        fecha: row[1],
+        usuario: row[2],
+        tareaId: row[3],
+        nombre: task ? task.nombre : String(row[3]),
+        categoriaId: categoryId,
+        categoria: categoriesById[String(categoryId)] || "General",
+        puntos: Number(row[7]) || 0
+      };
+    }),
+    offset: safeOffset,
+    limit: safeLimit,
+    nextOffset: safeOffset + pageRows.length,
+    hasMore: safeOffset + pageRows.length < historyRows.length
+  };
+}
+
+function deleteHistory(data) {
+  const sheet = getSheet().getSheetByName("Histórico");
+  const lastRow = sheet.getLastRow();
+
+  if (lastRow <= 1) {
+    return { success: false };
+  }
+
+  const ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+
+  for (let i = 0; i < ids.length; i++) {
+    if (String(ids[i][0]) === String(data.id)) {
+      sheet.deleteRow(i + 2);
+      CacheService.getScriptCache().remove("history");
+
+      return { success: true };
     }
   }
+
+  return { success: false };
 }
 
-function render() {
-  document.getElementById("header").innerHTML = `
-    <div class="history-header">
-      <button class="history-back" id="historyBackButton" type="button" aria-label="Volver a Inicio">
-        <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
-      </button>
-      <div>
-        <h2>Historial</h2>
-        <p>Tareas registradas, de más recientes a más antiguas</p>
-      </div>
-    </div>
-  `;
-
-  document.getElementById("content").innerHTML = `
-    <section class="home-section history-section">
-      ${historyItems.length
-        ? `<div class="history-list">${historyItems.map(historyItem).join("")}</div>`
-        : loading
-          ? `<p class="history-message">Cargando historial…</p>`
-          : errorMessage
-            ? `<p class="history-message">${escapeHTML(errorMessage)}</p>`
-            : `<p class="history-message">Todavía no hay tareas registradas.</p>`
-      }
-      ${errorMessage && historyItems.length
-        ? `<p class="history-message history-error">${escapeHTML(errorMessage)}</p>`
-        : ""
-      }
-      ${errorMessage
-        ? `<button class="history-more" id="historyRetryButton" type="button">Reintentar</button>`
-        : ""
-      }
-      ${hasMore && !errorMessage
-        ? `<button class="history-more" id="historyMoreButton" type="button" ${loading ? "disabled" : ""}>${loading ? "Cargando…" : "Cargar 20 más"}</button>`
-        : ""
-      }
-      ${!hasMore && historyItems.length
-        ? `<p class="history-end">Has llegado al principio del historial.</p>`
-        : ""
-      }
-    </section>
-  `;
-
-  renderNavbar("home");
-  document.getElementById("historyBackButton")?.addEventListener("click", () => navigate("home"));
-  document.getElementById("historyMoreButton")?.addEventListener("click", () => fetchNextPage());
-  document.getElementById("historyRetryButton")?.addEventListener("click", () => fetchNextPage());
+function getHistoryRows() {
+  return getHistory()
+    .slice(1)
+    .filter(row => row[3]);
 }
 
-function historyItem(item) {
-  const icon = {
-    1: "restaurant",
-    2: "weekend",
-    3: "bed",
-    4: "bathtub",
-    5: "local_laundry_service",
-    6: "cleaning_services",
-    7: "shopping_cart",
-    8: "pets"
-  }[String(item.categoriaId)] || "category";
-  const personClass = item.usuario === "Elena" ? "elena" : "tomas";
-
-  return `
-    <article class="history-item history-item--${personClass}">
-      <div class="history-item-icon material-symbols-rounded" aria-hidden="true">${icon}</div>
-      <div class="history-item-info">
-        <div class="history-item-name">${escapeHTML(item.nombre || "Tarea")}</div>
-        <div class="history-item-meta">
-          <span class="history-person history-person--${personClass}">${escapeHTML(item.usuario || "")}</span>
-          <span>${escapeHTML(formatDate(item.fecha))}</span>
-        </div>
-      </div>
-      <strong class="history-item-points">${Number(item.puntos) || 0} pts</strong>
-    </article>
-  `;
+function getTaskHistory(taskId) {
+  return getHistoryRows()
+    .filter(row => String(row[3]) === String(taskId));
 }
 
-function formatDate(value) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat("es-ES", {
-    day: "numeric",
-    month: "short",
-    year: "numeric"
-  }).format(date);
+function getLastTaskExecution(taskId) {
+  const history = getTaskHistory(taskId);
+
+  if (history.length === 0) {
+    return null;
+  }
+
+  return history.reduce((latest, current) => {
+    if (!latest) return current;
+
+    return new Date(current[1]) > new Date(latest[1])
+      ? current
+      : latest;
+  }, null);
 }
 
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, character => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[character]);
+function getTaskExecutions(taskId) {
+  return getTaskHistory(taskId).length;
+}
+
+// Stats.js usa getWeeklyHistory() para otro cálculo.
+function getHistoryLastSevenDays() {
+  const today = new Date();
+
+  return getHistoryRows().filter(row => {
+    const date = new Date(row[1]);
+    const diffDays = Math.floor(
+      (today - date) / (1000 * 60 * 60 * 24)
+    );
+
+    return diffDays <= 7;
+  });
+}
+
+function getHistoryByUser(user) {
+  return getHistoryRows()
+    .filter(row => row[2] === user);
+}
+
+function getHistoryByCategory(categoryId) {
+  return getHistoryRows()
+    .filter(row => String(row[4]) === String(categoryId));
+}
+
+function saveHistory(record) {
+  const sheet = getSheet().getSheetByName("Histórico");
+  const lastRow = sheet.getLastRow();
+
+  const ids = lastRow > 1
+    ? sheet.getRange(2, 1, lastRow - 1, 1).getValues()
+    : [];
+
+  let maxId = 0;
+
+  for (let i = 0; i < ids.length; i++) {
+    maxId = Math.max(maxId, Number(ids[i][0]) || 0);
+  }
+
+  const id = maxId + 1;
+
+  sheet.appendRow([
+    id,
+    record.fecha,
+    record.usuarioId,
+    record.tareaId,
+    record.categoriaId,
+    record.puntosBase,
+    record.bonus,
+    record.puntosFinales,
+    record.comentario || "",
+    record.origen || "manual"
+  ]);
+
+  CacheService.getScriptCache().remove("history");
 }
