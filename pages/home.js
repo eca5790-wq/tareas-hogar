@@ -270,7 +270,7 @@ function competitionSection() {
 
   return `
     <section class="home-section">
-      <div class="section-title">Competición semanal · lunes a domingo</div>
+      <div class="section-title">Competición semanal</div>
 
       <div class="competition-box">
         ${competitionRow("Elena", elenaPoints, tomasPoints, details.carryover.Elena, details.earned.Elena)}

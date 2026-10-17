@@ -114,6 +114,12 @@ function renderPage() {
   `;
 
   document.getElementById("content").innerHTML = `
+    <div class="register-date-field">
+      <label for="registerDate">¿Qué día hiciste la tarea?</label>
+      <input id="registerDate" class="register-date-input" type="date">
+      <small>Puedes elegir cualquier día de esta semana hasta hoy.</small>
+    </div>
+
     <div class="search-box">
       <span class="material-symbols-rounded">search</span>
 
@@ -127,6 +133,21 @@ function renderPage() {
 
     <div id="taskContainer"></div>
   `;
+
+  const dateInput = document.getElementById("registerDate");
+  const today = new Date();
+  const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  dateInput.min = formatLocalDate(monday);
+  dateInput.max = formatLocalDate(today);
+  dateInput.value = dateInput.max;
+}
+
+function formatLocalDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function initEvents() {
@@ -217,7 +238,8 @@ async function handleTaskClick(event) {
   item.style.opacity = "0.6";
 
   try {
-    const result = await registerTask(id, APP.currentUser);
+    const date = document.getElementById("registerDate")?.value;
+    const result = await registerTask(id, APP.currentUser, date);
 
     if (!result || result.success === false) {
       throw new Error(result?.error || "No se pudo registrar la tarea");

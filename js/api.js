@@ -187,10 +187,11 @@ function requestJSONP(action, params = {}) {
 
 /* Cambios */
 
-export async function registerTask(taskId, user) {
+export async function registerTask(taskId, user, date) {
   const result = await request("registerTask", {
     taskId,
-    user
+    user,
+    date
   });
 
   clearCache();
