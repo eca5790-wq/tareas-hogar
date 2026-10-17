@@ -466,12 +466,26 @@ function recentSection() {
 function relativeDate(value) {
   const date = new Date(value);
   const today = new Date();
-  const diff = Math.floor((today - date) / 86400000);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const dateDay = Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  ) / 86400000;
+
+  const todayDay = Date.UTC(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  ) / 86400000;
+
+  const diff = todayDay - dateDay;
 
   if (diff === 0) return "Hoy";
   if (diff === 1) return "Ayer";
 
-  if (diff < 7) {
+  if (diff >= 2 && diff < 7) {
     return ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][
       date.getDay()
     ];
