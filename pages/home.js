@@ -1,6 +1,7 @@
 import { APP } from "../js/config.js";
 import { getHomeData, registerTask, deleteHistory } from "../js/api.js";
 import { renderNavbar } from "../components/navbar.js";
+import { navigate } from "../js/router.js";
 import { showToast } from "../components/toast.js";
 import { openConfirmDialog } from "../components/dialog.js";
 
@@ -268,6 +269,10 @@ function initEvents() {
     .querySelector(".recent-list")
     ?.addEventListener("click", handleRecentClick);
 
+  document.getElementById("openHistoryButton")?.addEventListener("click", () => {
+    navigate("history");
+  });
+
   const profileButton = document.getElementById("profileButton");
 
   if (profileButton) {
@@ -459,6 +464,11 @@ function recentSection() {
             : `<p>No hay actividad reciente.</p>`
         }
       </div>
+
+      <button class="history-link" id="openHistoryButton" type="button">
+        Ver todo el historial
+        <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+      </button>
     </section>
   `;
 }

@@ -3,6 +3,7 @@ import { loadRegister } from "../pages/register.js";
 import { loadTasks } from "../pages/tasks.js";
 import { loadStats } from "../pages/stats.js";
 import { loadSettings } from "../pages/settings.js";
+import { loadHistory } from "../pages/history.js";
 
 const routes = {
 
@@ -14,7 +15,9 @@ const routes = {
 
     stats: loadStats,
 
-    settings: loadSettings
+    settings: loadSettings,
+
+    history: loadHistory
 
 };
 

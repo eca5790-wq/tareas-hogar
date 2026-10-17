@@ -136,6 +136,10 @@ export function getHistoryExport() {
   return request("exportHistory");
 }
 
+export function getHistoryPage(offset = 0, limit = 20) {
+  return request("historyPage", { offset, limit });
+}
+
 /* Cambios */
 
 export async function registerTask(taskId, user) {
