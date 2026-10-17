@@ -143,10 +143,14 @@ export async function loadHome() {
     home = freshHome;
     saveHomeCache(user, home);
 
-    // Evita reiniciar la animación de las barras si los datos no han cambiado.
     if (dataChanged) {
-      render();
-      initEvents();
+      if (cachedHome && document.querySelector(".competition-box")) {
+        // Actualiza solo las zonas que cambian; evita reconstruir toda la Home.
+        updateRenderedHome();
+      } else {
+        render();
+        initEvents();
+      }
     }
   } catch (error) {
     console.error("No se pudo cargar Inicio:", error);
@@ -183,6 +187,80 @@ function render() {
   `;
 
   renderNavbar("home");
+}
+
+function updateRenderedHome() {
+  updateCompetitionDOM();
+
+  const todayList = document.querySelector(".today-list");
+  if (todayList) todayList.innerHTML = renderTodayItems();
+
+  const recentList = document.querySelector(".recent-list");
+  if (recentList) recentList.innerHTML = renderRecentItems();
+}
+
+function updateCompetitionDOM() {
+  const people = [
+    { name: "Elena", key: "Elena", personClass: "elena", other: "Tomás" },
+    { name: "Tomás", key: "Tomás", personClass: "tomas", other: "Elena" }
+  ];
+
+  people.forEach(person => {
+    const row = document.querySelector(`.competition-row--${person.personClass}`);
+    if (!row) return;
+
+    const points = Number(home.week[person.key]) || 0;
+    const winner = points > (Number(home.week[person.other]) || 0);
+    row.classList.toggle("winner", winner);
+
+    const score = row.querySelector(".competition-score");
+    if (score) score.textContent = `${points} pts`;
+
+    const fill = row.querySelector(".competition-fill");
+    if (fill) {
+      const width = Math.max(8, Math.min(100, Math.round((points / 100) * 100)));
+      fill.dataset.width = String(width);
+      fill.style.width = `${width}%`;
+    }
+
+    const name = row.querySelector(".competition-name");
+    const icon = name?.querySelector(".winner-icon");
+    if (winner && name && !icon) {
+      name.insertAdjacentHTML(
+        "beforeend",
+        '<span class="material-symbols-rounded winner-icon">workspace_premium</span>'
+      );
+    } else if (!winner && icon) {
+      icon.remove();
+    }
+
+    const scoreBlock = row.querySelector(".competition-score-block");
+    let carryover = row.querySelector(".competition-breakdown");
+    const carryoverPoints = Number(home.weekDetails.carryover[person.key]) || 0;
+
+    if (carryoverPoints > 0 && scoreBlock) {
+      if (!carryover) {
+        carryover = document.createElement("div");
+        carryover.className = "task-points-sub competition-breakdown";
+        scoreBlock.appendChild(carryover);
+      }
+      carryover.innerHTML = `<span class="competition-carryover">${carryoverPoints} de la semana pasada</span>`;
+    } else if (carryover) {
+      carryover.remove();
+    }
+  });
+
+  const box = document.querySelector(".competition-box");
+  const oldRecord = box?.querySelector(".competition-record");
+  if (box) {
+    if (home.record && oldRecord) {
+      oldRecord.textContent = `Récord semanal más reciente · ${home.record.points} pts · ${home.record.user}`;
+    } else if (home.record && !oldRecord) {
+      box.insertAdjacentHTML("beforeend", recordMini());
+    } else if (!home.record && oldRecord) {
+      oldRecord.remove();
+    }
+  }
 }
 
 function competitionSection() {
@@ -294,12 +372,14 @@ function initEvents() {
 
 function handleTodayClick(event) {
   const card = event.target.closest(".today-task");
-  if (!card) return;
+  if (!card || card.dataset.pending === "true") return;
 
   const id = card.dataset.id;
   const taskData = home.today.find(task => String(task.id) === id);
 
   if (!taskData) return;
+
+  card.dataset.pending = "true";
 
   card.style.transition = "all .3s ease";
   card.style.transform = "scale(0.96)";
@@ -327,21 +407,24 @@ function handleTodayClick(event) {
     home.recent.unshift(newItem);
     home.recent = home.recent.slice(0, 5);
 
+    const pointsEarned = Number(taskData.puntosTotales ?? taskData.puntos) || 0;
+
     if (APP.currentUser === "Elena") {
-      home.week.Elena += taskData.puntos || 0;
-      home.weekDetails.earned.Elena += taskData.puntos || 0;
+      home.week.Elena += pointsEarned;
+      home.weekDetails.earned.Elena += pointsEarned;
     } else {
-      home.week["Tomás"] += taskData.puntos || 0;
-      home.weekDetails.earned["Tomás"] += taskData.puntos || 0;
+      home.week["Tomás"] += pointsEarned;
+      home.weekDetails.earned["Tomás"] += pointsEarned;
     }
 
-    render();
-    initEvents();
+    saveHomeCache(APP.currentUser, home);
+    updateRenderedHome();
   }, 300);
 
   registerTask(id, APP.currentUser).catch(error => {
     console.error(error);
     showToast("Error al guardar");
+    loadHome();
   });
 }
 
@@ -351,32 +434,27 @@ function todaySection() {
       <div class="section-title">Te toca hoy</div>
 
       <div class="today-list">
-        ${
-          home.today.length
-            ? home.today
-                .map(task => {
-                  const icon =
-                    CATEGORY_ICONS[task.categoriaId] || "category";
-
-                  return `
-                    <article class="today-task" data-id="${task.id}">
-                      <div class="task-name">
-                        <span class="material-symbols-rounded task-icon">
-                          ${icon}
-                        </span>
-                        ${task.nombre}
-                      </div>
-
-                      <div class="today-points">${task.puntos} pts</div>
-                    </article>
-                  `;
-                })
-                .join("")
-            : `<p>No hay tareas para hoy.</p>`
-        }
+        ${renderTodayItems()}
       </div>
     </section>
   `;
+}
+
+function renderTodayItems() {
+  if (!home.today.length) return `<p>No hay tareas para hoy.</p>`;
+
+  return home.today.map(task => {
+    const icon = CATEGORY_ICONS[task.categoriaId] || "category";
+    return `
+      <article class="today-task" data-id="${task.id}">
+        <div class="task-name">
+          <span class="material-symbols-rounded task-icon">${icon}</span>
+          ${task.nombre}
+        </div>
+        <div class="today-points">${task.puntos} pts</div>
+      </article>
+    `;
+  }).join("");
 }
 
 function handleRecentClick(event) {
@@ -430,39 +508,7 @@ function recentSection() {
       <div class="section-title">Últimas tareas añadidas</div>
 
       <div class="recent-list">
-        ${
-          home.recent.length
-            ? home.recent
-                .map(item => {
-                  const icon =
-                    CATEGORY_ICONS[item.categoriaId] || "category";
-
-                  return `
-                    <div class="recent-item" data-id="${item.id}">
-                      <div class="recent-info">
-                        <div class="task-name">
-                          <span class="material-symbols-rounded task-icon">
-                            ${icon}
-                          </span>
-                          ${item.nombre}
-                        </div>
-
-                        <div class="task-subtitle">
-                          ${item.usuario} · ${relativeDate(item.fecha)}
-                        </div>
-
-                        <div class="task-subtitle">${item.puntos} pts</div>
-                      </div>
-
-                      <div class="recent-actions">
-                        <button class="delete-btn">✕</button>
-                      </div>
-                    </div>
-                  `;
-                })
-                .join("")
-            : `<p>No hay actividad reciente.</p>`
-        }
+        ${renderRecentItems()}
       </div>
 
       <button class="history-link" id="openHistoryButton" type="button">
@@ -471,6 +517,29 @@ function recentSection() {
       </button>
     </section>
   `;
+}
+
+function renderRecentItems() {
+  if (!home.recent.length) return `<p>No hay actividad reciente.</p>`;
+
+  return home.recent.map(item => {
+    const icon = CATEGORY_ICONS[item.categoriaId] || "category";
+    return `
+      <div class="recent-item" data-id="${item.id}">
+        <div class="recent-info">
+          <div class="task-name">
+            <span class="material-symbols-rounded task-icon">${icon}</span>
+            ${item.nombre}
+          </div>
+          <div class="task-subtitle">${item.usuario} · ${relativeDate(item.fecha)}</div>
+          <div class="task-subtitle">${item.puntos} pts</div>
+        </div>
+        <div class="recent-actions">
+          <button class="delete-btn">✕</button>
+        </div>
+      </div>
+    `;
+  }).join("");
 }
 
 function relativeDate(value) {
