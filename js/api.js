@@ -5,6 +5,7 @@ const API_CACHE_PREFIX = "tareas-hogar-api-v1:";
 const API_CACHE_TTL_MS = 15 * 1000;
 
 const memoryCache = new Map();
+let jsonpRequestId = 0;
 
 const CACHEABLE_ACTIONS = new Set([
   "home",
@@ -137,7 +138,51 @@ export function getHistoryExport() {
 }
 
 export function getHistoryPage(offset = 0, limit = 20) {
-  return request("historyPage", { offset, limit });
+  return requestJSONP("historyPage", { offset, limit });
+}
+
+// Apps Script ContentService no entrega cabeceras CORS para fetch desde GitHub Pages.
+// Para esta consulta de solo lectura usamos JSONP mediante una etiqueta <script>.
+function requestJSONP(action, params = {}) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `__tareasHogarJsonp_${Date.now()}_${++jsonpRequestId}`;
+    const script = document.createElement("script");
+    let settled = false;
+
+    const cleanup = () => {
+      window.clearTimeout(timeoutId);
+      delete window[callbackName];
+      script.remove();
+    };
+
+    const finish = (handler, value) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      handler(value);
+    };
+
+    const timeoutId = window.setTimeout(() => {
+      finish(
+        reject,
+        new Error("Tiempo de espera agotado. Comprueba el despliegue de Apps Script.")
+      );
+    }, 15000);
+
+    window[callbackName] = data => finish(resolve, data);
+    script.onerror = () => finish(reject, new Error("No se pudo cargar la respuesta de Apps Script."));
+
+    const query = new URLSearchParams({
+      action,
+      ...params,
+      callback: callbackName,
+      t: Date.now()
+    });
+
+    script.async = true;
+    script.src = `${API_URL}?${query}`;
+    document.head.appendChild(script);
+  });
 }
 
 /* Cambios */
