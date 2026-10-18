@@ -3,56 +3,167 @@ import { navigate } from "../js/router.js";
 import { renderNavbar } from "../components/navbar.js";
 
 const PAGE_SIZE = 20;
-
+const HISTORY_CACHE_KEY = "tareas-hogar-history:two-weeks:v2";
+const HISTORY_CACHE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 let historyItems = [];
 let nextOffset = 0;
 let hasMore = true;
 let loading = false;
+let refreshingFirstPage = false;
 let errorMessage = "";
 let requestId = 0;
+let failedOffset = 0;
 
 export async function loadHistory() {
-  requestId++;
-  historyItems = [];
-  nextOffset = 0;
-  hasMore = true;
+  const activeRequestId = ++requestId;
+  const cachedPage = readCachedFirstPage();
+
+  historyItems = cachedPage ? cachedPage.items : [];
+  nextOffset = cachedPage ? cachedPage.nextOffset : 0;
+  hasMore = cachedPage ? cachedPage.hasMore : true;
   loading = true;
+  refreshingFirstPage = Boolean(cachedPage);
   errorMessage = "";
-  render();
-  await fetchNextPage(requestId);
+  failedOffset = 0;
+
+  renderShell();
+  renderContent();
+
+  await fetchPage(0, {
+    activeRequestId,
+    replace: true,
+    renderAtStart: false
+  });
 }
 
-async function fetchNextPage(activeRequestId = requestId) {
-  if (loading && nextOffset > 0) return;
+async function fetchPage(
+  offset,
+  { activeRequestId = requestId, replace = false, renderAtStart = true } = {}
+) {
+  if (loading && !replace) return;
 
-  const requestedOffset = nextOffset;
   loading = true;
+  refreshingFirstPage = replace && historyItems.length > 0;
   errorMessage = "";
-  render();
+
+  if (renderAtStart) renderContent();
 
   try {
-    const result = await getHistoryPage(requestedOffset, PAGE_SIZE);
+    const result = await getHistoryPage(offset, PAGE_SIZE);
+
     if (activeRequestId !== requestId) return;
     if (!result || !Array.isArray(result.items)) {
       throw new Error(result?.error || "Respuesta del historial no válida");
     }
 
-    historyItems = historyItems.concat(result.items);
-    nextOffset = Number(result.nextOffset) || requestedOffset + result.items.length;
+    if (replace) {
+      historyItems = result.items;
+      writeCachedFirstPage(result);
+    } else {
+      historyItems = historyItems.concat(result.items);
+    }
+
+    const returnedOffset = Number(result.nextOffset);
+    nextOffset = Number.isFinite(returnedOffset)
+      ? returnedOffset
+      : offset + result.items.length;
     hasMore = Boolean(result.hasMore);
+    failedOffset = nextOffset;
   } catch (error) {
+    if (activeRequestId !== requestId) return;
+
     console.error("No se pudo cargar el historial:", error);
+    failedOffset = offset;
     errorMessage = "No se pudo cargar el historial. Comprueba la conexión y vuelve a intentarlo.";
   } finally {
     if (activeRequestId === requestId) {
       loading = false;
-      render();
+      refreshingFirstPage = false;
+      renderContent();
     }
   }
 }
 
-function render() {
+function readCachedFirstPage() {
+  try {
+    const saved = localStorage.getItem(HISTORY_CACHE_KEY);
+    if (!saved) return null;
+
+    const entry = JSON.parse(saved);
+    const age = Date.now() - Number(entry?.savedAt);
+
+    if (
+      !entry ||
+      !Array.isArray(entry.items) ||
+      !Number.isFinite(age) ||
+      age < 0 ||
+      age > HISTORY_CACHE_MAX_AGE_MS
+    ) {
+      localStorage.removeItem(HISTORY_CACHE_KEY);
+      return null;
+    }
+
+    return {
+      items: entry.items.filter(item => isWithinCurrentAndPreviousWeek(item.fecha)),
+      nextOffset: Number(entry.nextOffset) || entry.items.length,
+      hasMore: Boolean(entry.hasMore)
+    };
+  } catch (error) {
+    console.warn("No se pudo leer la caché del historial:", error);
+    return null;
+  }
+}
+
+
+function isWithinCurrentAndPreviousWeek(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return false;
+
+  const today = new Date();
+  const currentWeekStart = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+  const daysSinceMonday = (currentWeekStart.getDay() + 6) % 7;
+  currentWeekStart.setDate(currentWeekStart.getDate() - daysSinceMonday);
+
+  const windowStart = new Date(currentWeekStart);
+  windowStart.setDate(windowStart.getDate() - 7);
+  const windowEnd = new Date(currentWeekStart);
+  windowEnd.setDate(windowEnd.getDate() + 7);
+
+  return date >= windowStart && date < windowEnd;
+}
+
+function writeCachedFirstPage(result) {
+  const returnedOffset = Number(result.nextOffset);
+  const entry = {
+    savedAt: Date.now(),
+    items: result.items,
+    nextOffset: Number.isFinite(returnedOffset)
+      ? returnedOffset
+      : result.items.length,
+    hasMore: Boolean(result.hasMore)
+  };
+
+  try {
+    localStorage.setItem(HISTORY_CACHE_KEY, JSON.stringify(entry));
+  } catch (error) {
+    console.warn("No se pudo guardar la caché del historial:", error);
+  }
+}
+
+function retryLoading() {
+  fetchPage(failedOffset, {
+    activeRequestId: requestId,
+    replace: failedOffset === 0,
+    renderAtStart: true
+  });
+}
+
+function renderShell() {
   document.getElementById("header").innerHTML = `
     <div class="history-header">
       <button class="history-back" id="historyBackButton" type="button" aria-label="Volver a Inicio">
@@ -60,11 +171,16 @@ function render() {
       </button>
       <div>
         <h2>Historial</h2>
-        <p>Tareas registradas, de más recientes a más antiguas</p>
+        <p>Tareas de esta semana y la anterior</p>
       </div>
     </div>
   `;
 
+  renderNavbar("home");
+  document.getElementById("historyBackButton")?.addEventListener("click", () => navigate("home"));
+}
+
+function renderContent() {
   document.getElementById("content").innerHTML = `
     <section class="home-section history-section">
       ${historyItems.length
@@ -73,7 +189,7 @@ function render() {
           ? `<p class="history-message">Cargando historial…</p>`
           : errorMessage
             ? `<p class="history-message">${escapeHTML(errorMessage)}</p>`
-            : `<p class="history-message">Todavía no hay tareas registradas.</p>`
+            : `<p class="history-message">No hay tareas registradas esta semana ni la anterior.</p>`
       }
       ${errorMessage && historyItems.length
         ? `<p class="history-message history-error">${escapeHTML(errorMessage)}</p>`
@@ -83,21 +199,24 @@ function render() {
         ? `<button class="history-more" id="historyRetryButton" type="button">Reintentar</button>`
         : ""
       }
-      ${hasMore && !errorMessage
-        ? `<button class="history-more" id="historyMoreButton" type="button" ${loading ? "disabled" : ""}>${loading ? "Cargando…" : "Cargar 20 más"}</button>`
+      ${historyItems.length > 0 && hasMore && !errorMessage
+        ? `<button class="history-more" id="historyMoreButton" type="button" ${loading ? "disabled" : ""}>${loading && !refreshingFirstPage ? "Cargando…" : "Cargar 20 más"}</button>`
         : ""
       }
       ${!hasMore && historyItems.length
-        ? `<p class="history-end">Has llegado al principio del historial.</p>`
+        ? `<p class="history-end">Has llegado al final de estas dos semanas.</p>`
         : ""
       }
     </section>
   `;
 
-  renderNavbar("home");
-  document.getElementById("historyBackButton")?.addEventListener("click", () => navigate("home"));
-  document.getElementById("historyMoreButton")?.addEventListener("click", () => fetchNextPage());
-  document.getElementById("historyRetryButton")?.addEventListener("click", () => fetchNextPage());
+  document.getElementById("historyMoreButton")?.addEventListener("click", () => {
+    fetchPage(nextOffset, {
+      activeRequestId: requestId,
+      renderAtStart: true
+    });
+  });
+  document.getElementById("historyRetryButton")?.addEventListener("click", retryLoading);
 }
 
 function historyItem(item) {
