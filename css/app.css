@@ -2123,8 +2123,13 @@ main {
 
 /* Collapsible category groups on the Register page. */
 .register-category {
+    margin-bottom: 12px;
     padding: 0;
     overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--surface);
+    box-shadow: 0 2px 8px rgba(31, 41, 55, .04);
 }
 
 .register-category-summary {
