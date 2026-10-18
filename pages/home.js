@@ -16,6 +16,13 @@ const CATEGORY_ICONS = {
   8: "pets"
 };
 
+function categoryColorClass(categoryId) {
+  const id = Number(categoryId);
+  return Number.isInteger(id) && id >= 1 && id <= 8
+    ? `category-color-${id}`
+    : "category-color-default";
+}
+
 const HOME_CACHE_PREFIX = "tareas-hogar-home-v1:";
 const HOME_CACHE_MAX_AGE = 24 * 60 * 60 * 1000;
 
@@ -430,8 +437,11 @@ function handleTodayClick(event) {
 
 function todaySection() {
   return `
-    <section class="home-section">
-      <div class="section-title">Te toca hoy</div>
+    <section class="home-section today-section">
+      <div class="today-section-heading">
+        <div class="section-title">Te toca hoy</div>
+        <span class="today-section-label">Programadas</span>
+      </div>
 
       <div class="today-list">
         ${renderTodayItems()}
@@ -448,7 +458,7 @@ function renderTodayItems() {
     return `
       <article class="today-task" data-id="${task.id}">
         <div class="task-name">
-          <span class="material-symbols-rounded task-icon">${icon}</span>
+          <span class="material-symbols-rounded task-icon ${categoryColorClass(task.categoriaId)}">${icon}</span>
           ${task.nombre}
         </div>
         <div class="today-points">${task.puntos} pts</div>
@@ -528,7 +538,7 @@ function renderRecentItems() {
       <div class="recent-item" data-id="${item.id}">
         <div class="recent-info">
           <div class="task-name">
-            <span class="material-symbols-rounded task-icon">${icon}</span>
+            <span class="material-symbols-rounded task-icon ${categoryColorClass(item.categoriaId)}">${icon}</span>
             ${item.nombre}
           </div>
           <div class="task-subtitle">${item.usuario} · ${relativeDate(item.fecha)}</div>

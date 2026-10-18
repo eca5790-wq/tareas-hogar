@@ -14,6 +14,13 @@ const CATEGORY_ICONS = {
   8: "pets"
 };
 
+function categoryColorClass(categoryId) {
+  const id = Number(categoryId);
+  return Number.isInteger(id) && id >= 1 && id <= 8
+    ? `category-color-${id}`
+    : "category-color-default";
+}
+
 const REGISTER_CACHE_PREFIX = "tareas-hogar-api-v1:registerScreen:";
 const REGISTER_CACHE_MAX_AGE = 24 * 60 * 60 * 1000;
 
@@ -201,7 +208,7 @@ function renderCategory(category) {
   return `
     <section class="card">
       <h3 class="category-title">
-        <span class="material-symbols-rounded category-icon">
+        <span class="material-symbols-rounded category-icon ${categoryColorClass(category.id)}">
           ${icon}
         </span>
         ${category.nombre}
