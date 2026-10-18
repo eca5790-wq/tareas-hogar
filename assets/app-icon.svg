@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Tareas Hogar">
-  <rect width="64" height="64" fill="#4F6D7A"/>
-  <path d="M14 29 32 14l18 15M20 27v25h24V27" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="m25 40 5 5 10-11" fill="none" stroke="#F0AE9C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Tareas Hogar">
+  <rect width="512" height="512" fill="#4F6D7A"/>
+  <path d="M58 236 256 68l198 168M116 214v206h280V214" fill="none" stroke="#FFFFFF" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m192 315 50 50 89-99" fill="none" stroke="#F0AE9C" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
