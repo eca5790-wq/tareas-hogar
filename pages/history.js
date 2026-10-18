@@ -4,6 +4,7 @@ import { renderNavbar } from "../components/navbar.js";
 
 const PAGE_SIZE = 20;
 
+
 let historyItems = [];
 let nextOffset = 0;
 let hasMore = true;
@@ -82,7 +83,7 @@ function render() {
         ? `<button class="history-more" id="historyRetryButton" type="button">Reintentar</button>`
         : ""
       }
-      ${historyItems.length > 0 && hasMore && !errorMessage
+      ${hasMore && !errorMessage
         ? `<button class="history-more" id="historyMoreButton" type="button" ${loading ? "disabled" : ""}>${loading ? "Cargando…" : "Cargar 20 más"}</button>`
         : ""
       }
@@ -114,7 +115,7 @@ function historyItem(item) {
 
   return `
     <article class="history-item history-item--${personClass}">
-      <div class="history-item-icon material-symbols-rounded" aria-hidden="true">${icon}</div>
+      <div class="history-item-icon history-item-icon--${personClass} material-symbols-rounded" aria-hidden="true">${icon}</div>
       <div class="history-item-info">
         <div class="history-item-name">${escapeHTML(item.nombre || "Tarea")}</div>
         <div class="history-item-meta">
