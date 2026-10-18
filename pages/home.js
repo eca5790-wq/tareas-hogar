@@ -438,10 +438,7 @@ function handleTodayClick(event) {
 function todaySection() {
   return `
     <section class="home-section today-section">
-      <div class="today-section-heading">
-        <div class="section-title">Te toca hoy</div>
-        <span class="today-section-label">Programadas</span>
-      </div>
+      <div class="section-title">Te toca hoy</div>
 
       <div class="today-list">
         ${renderTodayItems()}

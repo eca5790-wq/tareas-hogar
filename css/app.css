@@ -1359,16 +1359,6 @@ p{
     font-size:20px;
 }
 
-.history-item--elena .history-item-icon{
-    background:var(--elena-soft);
-    color:var(--elena);
-}
-
-.history-item--tomas .history-item-icon{
-    background:var(--tomas-soft);
-    color:var(--tomas);
-}
-
 .history-item-info{
     min-width:0;
     flex:1;
@@ -2037,4 +2027,110 @@ main {
     .stats-winner-fill {
         transition: none;
     }
+}
+
+
+/* Category colors: shared by Register, Home and History icons. */
+.category-color-1 { color: #D97706 !important; }
+.category-color-2 { color: #7C5CC4 !important; }
+.category-color-3 { color: #3977B8 !important; }
+.category-color-4 { color: #168A91 !important; }
+.category-color-5 { color: #397F55 !important; }
+.category-color-6 { color: #C05B70 !important; }
+.category-color-7 { color: #B7791F !important; }
+.category-color-8 { color: #D05C35 !important; }
+.category-color-default { color: #64748B !important; }
+
+/* Give the scheduled tasks area its own quiet visual grouping. */
+.today-section {
+    padding: 14px 12px 2px;
+    margin-left: -12px;
+    margin-right: -12px;
+    border: 1px solid #E4EAED;
+    border-radius: 20px;
+    background: #F5F8F9;
+}
+
+.today-section .section-title {
+    margin-top: 0;
+}
+
+/* Collapsible category groups on the Register page. */
+.register-category {
+    padding: 0;
+    overflow: hidden;
+}
+
+.register-category-summary {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 54px;
+    padding: 0 16px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.register-category-summary::-webkit-details-marker {
+    display: none;
+}
+
+.register-category-summary::marker {
+    content: "";
+}
+
+.register-category-summary .category-icon {
+    flex: 0 0 auto;
+}
+
+.register-category-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    line-height: 1.35;
+    text-transform: uppercase;
+}
+
+.register-category-count {
+    min-width: 25px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #F0F3F5;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.register-category-chevron {
+    flex: 0 0 auto;
+    color: #8A96A1;
+    font-size: 20px;
+    transition: transform .18s ease;
+}
+
+.register-category[open] .register-category-chevron {
+    transform: rotate(180deg);
+}
+
+.register-category .card-content {
+    margin: 0 12px 12px;
+}
+
+.today-section .today-task .task-icon.category-color-1 { color: #D97706 !important; }
+.today-section .today-task .task-icon.category-color-2 { color: #7C5CC4 !important; }
+.today-section .today-task .task-icon.category-color-3 { color: #3977B8 !important; }
+.today-section .today-task .task-icon.category-color-4 { color: #168A91 !important; }
+.today-section .today-task .task-icon.category-color-5 { color: #397F55 !important; }
+.today-section .today-task .task-icon.category-color-6 { color: #C05B70 !important; }
+.today-section .today-task .task-icon.category-color-7 { color: #B7791F !important; }
+.today-section .today-task .task-icon.category-color-8 { color: #D05C35 !important; }
+.today-section .today-task .task-icon.category-color-default { color: #64748B !important; }
+
+@media (prefers-reduced-motion: reduce) {
+    .register-category-chevron { transition: none; }
 }

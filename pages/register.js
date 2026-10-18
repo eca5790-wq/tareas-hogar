@@ -27,6 +27,8 @@ const REGISTER_CACHE_MAX_AGE = 24 * 60 * 60 * 1000;
 let screenData = createEmptyScreenData();
 let registerLoadRequest = 0;
 let isLoading = false;
+let currentSearchText = "";
+const openCategoryIds = new Set();
 
 function createEmptyScreenData() {
   return {
@@ -76,6 +78,8 @@ function readRegisterCache(user) {
 export async function loadRegister() {
   const user = APP.currentUser;
   const requestId = ++registerLoadRequest;
+  currentSearchText = "";
+  openCategoryIds.clear();
   const cachedData = readRegisterCache(user);
 
   screenData = cachedData || createEmptyScreenData();
@@ -96,7 +100,7 @@ export async function loadRegister() {
     screenData = normalizeScreenData(response);
     isLoading = false;
 
-    renderScreen(getFilteredData());
+    renderScreen(getFilteredData(currentSearchText));
   } catch (error) {
     console.error("No se pudo cargar Registro:", error);
 
@@ -105,7 +109,7 @@ export async function loadRegister() {
     }
 
     isLoading = false;
-    renderScreen(getFilteredData());
+    renderScreen(getFilteredData(currentSearchText));
 
     showToast(
       cachedData
@@ -165,11 +169,26 @@ function initEvents() {
   document
     .getElementById("taskContainer")
     ?.addEventListener("click", handleTaskClick);
+
+  document
+    .getElementById("taskContainer")
+    ?.addEventListener("toggle", handleCategoryToggle, true);
 }
 
 function search(event) {
-  const text = event.target.value.trim().toLowerCase();
-  renderScreen(getFilteredData(text));
+  currentSearchText = event.target.value.trim().toLowerCase();
+  renderScreen(getFilteredData(currentSearchText));
+}
+
+function handleCategoryToggle(event) {
+  const category = event.target;
+  if (!category.matches?.("details.register-category")) return;
+
+  const id = String(category.dataset.categoryId || "");
+  if (!id) return;
+
+  if (category.open) openCategoryIds.add(id);
+  else openCategoryIds.delete(id);
 }
 
 function getFilteredData(searchText = "") {
@@ -199,36 +218,51 @@ function renderScreen(data) {
     return;
   }
 
-  container.innerHTML = data.categories.map(renderCategory).join("");
+  container.innerHTML = data.categories
+    .map(category => renderCategory(category, Boolean(currentSearchText)))
+    .join("");
 }
 
-function renderCategory(category) {
+function renderCategory(category, searchActive = false) {
   const icon = CATEGORY_ICONS[category.id] || "category";
+  const id = String(category.id ?? category.nombre ?? "");
+  const open = searchActive || openCategoryIds.has(id);
+  const tasks = category.tareas || [];
 
   return `
-    <section class="card">
-      <h3 class="category-title">
-        <span class="material-symbols-rounded category-icon ${categoryColorClass(category.id)}">
-          ${icon}
-        </span>
-        ${category.nombre}
-      </h3>
+    <details class="card register-category" data-category-id="${escapeHTML(id)}" ${open ? "open" : ""}>
+      <summary class="register-category-summary">
+        <span class="material-symbols-rounded category-icon ${categoryColorClass(category.id)}" aria-hidden="true">${icon}</span>
+        <span class="register-category-name">${escapeHTML(category.nombre || "Categoría")}</span>
+        <span class="register-category-count">${tasks.length}</span>
+        <span class="material-symbols-rounded register-category-chevron" aria-hidden="true">expand_more</span>
+      </summary>
 
       <div class="card-content">
-        ${(category.tareas || []).map(renderTask).join("")}
+        ${tasks.map(renderTask).join("")}
       </div>
-    </section>
+    </details>
   `;
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>\"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  })[character]);
 }
 
 function renderTask(task) {
   return `
     <div class="task-item" data-id="${task.id}">
       <div>
-        <div class="task-name">${task.nombre}</div>
+        <div class="task-name">${escapeHTML(task.nombre || "Tarea")}</div>
       </div>
 
-      <div class="task-points">+${task.puntos}</div>
+      <div class="task-points">+${Number(task.puntos) || 0}</div>
     </div>
   `;
 }
