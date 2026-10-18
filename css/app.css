@@ -214,7 +214,6 @@ nav{
     font-size:24px;
 
 }
-
 #navbar .nav-item.active {
     color: var(--primary);
     background: transparent;
@@ -240,7 +239,6 @@ nav{
 #navbar .nav-item.active small {
     font-weight: 700;
 }
-
 /* ===========================
    SEARCH
 =========================== */
@@ -366,6 +364,7 @@ nav{
    TASK
 =========================== */
 
+
 .category-title{
 
     display:flex;
@@ -433,11 +432,11 @@ nav{
 
 }
 
+
 .task-icon{
     font-size:18px;
     color:#9CA3AF;
 }
-
 .task-points{
 
     min-width:50px;
@@ -463,7 +462,6 @@ nav{
     color:var(--text-secondary);
     margin-top:4px;
 }
-
 /* ===========================
    PROFILE
 =========================== */
@@ -531,7 +529,6 @@ p{
     line-height:1.5;
 
 }
-
 /* ===========================
    TODAY
 =========================== */
@@ -613,7 +610,6 @@ p{
     }
 
 }
-
 .primary-button{
 
     width:100%;
@@ -645,7 +641,6 @@ p{
     cursor:pointer;
 
 }
-
 .new-task-row{
 
     display:flex;
@@ -665,7 +660,6 @@ p{
     cursor:pointer;
 
 }
-
 .back-button{
 
     width:40px;
@@ -717,7 +711,6 @@ p{
     cursor:pointer;
 
 }
-
 /* SETTINGS */
 
 .settings-group{
@@ -904,7 +897,6 @@ p{
     transform:translateX(18px);
 
 }
-
 .selectable{
 
     cursor:pointer;
@@ -918,7 +910,6 @@ p{
     background:#F9FAFB;
 
 }
-
 .dialog-overlay{
 
     position:fixed;
@@ -985,7 +976,6 @@ p{
     gap:12px;
 
 }
-
 .toast{
 
     position:fixed;
@@ -1017,7 +1007,6 @@ p{
     transform:translateX(-50%) translateY(0);
 
 }
-
 /* ===========================
    HOME
 =========================== */
@@ -1443,7 +1432,6 @@ p{
         transition:none;
     }
 }
-
 .recent-actions{
     display:flex;
     align-items:center;
@@ -1458,8 +1446,8 @@ p{
     border:none;
     border-radius:50%;
 
-    background:transparent;
-    color:#9CA3AF;
+    background:transparent;   /* 👈 clave */
+    color:#9CA3AF;            /* gris suave */
 
     font-size:16px;
     font-weight:600;
@@ -1543,7 +1531,6 @@ p{
     color:var(--text-secondary);
 
 }
-
 .record-left{
     display:flex;
     align-items:center;
@@ -1554,10 +1541,9 @@ p{
 
     font-size:18px;
 
-    color:#9CA3AF;
+    color:#9CA3AF; /* gris elegante */
 
 }
-
 .secondary-button{
 
     width:100%;
@@ -1585,11 +1571,9 @@ p{
 .secondary-button:hover{
     background:#F9FAFB;
 }
-
 .task-item{
     will-change: transform, opacity;
 }
-
 /* mejora animaciones */
 
 .today-task,
@@ -1609,7 +1593,6 @@ p{
 .recent-item{
     transition:all .2s ease;
 }
-
 /* ===========================
    COMPETITION
 =========================== */
@@ -1772,7 +1755,6 @@ p{
 .competition-row:not(.winner){
     opacity:.78;
 }
-
 /* record */
 
 .competition-record{
@@ -1780,7 +1762,6 @@ p{
     font-size:12px;
     color:var(--text-secondary);
 }
-
 .stats-summary{
     display:flex;
     justify-content:space-between;
@@ -1795,7 +1776,7 @@ p{
     text-align:center;
     border:1px solid var(--border);
 
-    box-shadow:0 6px 16px rgba(0,0,0,.04);
+    box-shadow:0 6px 16px rgba(0,0,0,.04); /* 👈 nuevo */
 }
 
 .stats-bars .bar-row{
@@ -2048,6 +2029,7 @@ main {
     }
 }
 
+
 /* Category colors: shared by Register, Home and History icons. */
 .category-color-1 { color: #D97706 !important; }
 .category-color-2 { color: #7C5CC4 !important; }
@@ -2064,10 +2046,9 @@ main {
     padding: 14px 12px 2px;
     margin-left: -12px;
     margin-right: -12px;
-    border: 1px solid #DCE7EA;
-    border-left: 4px solid #9BB7C0;
+    border: 1px solid #E4EAED;
     border-radius: 20px;
-    background: #EDF3F5;
+    background: #F5F8F9;
 }
 
 .today-section .section-title {
@@ -2077,12 +2058,7 @@ main {
 /* Collapsible category groups on the Register page. */
 .register-category {
     padding: 0;
-    margin-bottom: 12px;
     overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background: var(--surface);
-    box-shadow: 0 2px 7px rgba(31, 41, 55, .045);
 }
 
 .register-category-summary {
@@ -2143,16 +2119,6 @@ main {
 
 .register-category .card-content {
     margin: 0 12px 12px;
-}
-
-.today-section .today-task {
-    border-color: #D6E1E5;
-    background: #FFFFFF;
-    box-shadow: inset 3px 0 0 #B1C6CD, 0 2px 7px rgba(31, 55, 64, .045);
-}
-
-.today-section .today-task:hover {
-    box-shadow: inset 3px 0 0 #8FAEB8, 0 8px 18px rgba(31, 55, 64, .09);
 }
 
 .today-section .today-task .task-icon.category-color-1 { color: #D97706 !important; }

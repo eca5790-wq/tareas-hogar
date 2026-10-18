@@ -4,12 +4,6 @@ import { renderNavbar } from "../components/navbar.js";
 
 const PAGE_SIZE = 20;
 
-function categoryColorClass(categoryId) {
-  const id = Number(categoryId);
-  return Number.isInteger(id) && id >= 1 && id <= 8
-    ? `category-color-${id}`
-    : "category-color-default";
-}
 
 let historyItems = [];
 let nextOffset = 0;
@@ -121,7 +115,7 @@ function historyItem(item) {
 
   return `
     <article class="history-item history-item--${personClass}">
-      <div class="history-item-icon material-symbols-rounded ${categoryColorClass(item.categoriaId)}" aria-hidden="true">${icon}</div>
+      <div class="history-item-icon history-item-icon--${personClass} material-symbols-rounded" aria-hidden="true">${icon}</div>
       <div class="history-item-info">
         <div class="history-item-name">${escapeHTML(item.nombre || "Tarea")}</div>
         <div class="history-item-meta">
