@@ -437,7 +437,6 @@ function todaySection() {
           <span class="material-symbols-rounded" aria-hidden="true">event_available</span>
           Te toca hoy
         </div>
-        <span class="today-count" aria-label="${home.today.length} tareas">${home.today.length}</span>
       </div>
 
       <div class="today-list">

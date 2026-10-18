@@ -115,7 +115,7 @@ function historyItem(item) {
 
   return `
     <article class="history-item history-item--${personClass}">
-      <div class="history-item-icon history-item-icon--${personClass} material-symbols-rounded" aria-hidden="true">${icon}</div>
+      <div class="history-item-icon material-symbols-rounded" aria-hidden="true">${icon}</div>
       <div class="history-item-info">
         <div class="history-item-name">${escapeHTML(item.nombre || "Tarea")}</div>
         <div class="history-item-meta">

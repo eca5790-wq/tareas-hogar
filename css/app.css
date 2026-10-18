@@ -2051,30 +2051,80 @@ main {
 .register-category .category-icon.category-color-8 { color: #D05C35 !important; }
 .register-category .category-icon.category-color-default { color: #64748B !important; }
 
-/* Give the scheduled tasks area its own quiet visual grouping. */
+/* A single calm panel for today's scheduled tasks. */
 .today-section {
-    padding: 14px 12px 2px;
-    margin-left: -12px;
-    margin-right: -12px;
+    padding: 16px;
+    margin-left: -4px;
+    margin-right: -4px;
     border: 1px solid #DCE7EA;
-    border-left: 4px solid #9BB7C0;
     border-radius: 20px;
-    background: #EDF3F5;
+    background: #F0F5F6;
 }
 
-.today-section .section-title {
-    margin-top: 0;
+.today-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 12px;
+}
+
+.today-section-heading .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.today-section-heading .material-symbols-rounded {
+    color: var(--primary);
+    font-size: 19px;
+}
+
+.today-list {
+    overflow: hidden;
+    border: 1px solid #E1E8EA;
+    border-radius: 16px;
+    background: #FFFFFF;
+}
+
+.today-section .today-task {
+    min-height: 58px;
+    margin: 0;
+    padding: 13px 14px;
+    border: 0;
+    border-radius: 0;
+    background: #FFFFFF;
+    box-shadow: none;
+    transform: none;
+}
+
+.today-section .today-task + .today-task {
+    border-top: 1px solid #EDF0F1;
+}
+
+.today-section .today-task:hover {
+    background: #F8FAFA;
+    box-shadow: none;
+    transform: none;
+}
+
+.today-section .today-task.completed {
+    animation: homeCompleted .35s forwards;
+}
+
+.today-section .today-task .today-task-icon {
+    color: #71828A;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .today-section .today-task { transition: none; }
 }
 
 /* Collapsible category groups on the Register page. */
 .register-category {
     padding: 0;
-    margin-bottom: 12px;
     overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background: var(--surface);
-    box-shadow: 0 2px 7px rgba(31, 41, 55, .045);
 }
 
 .register-category-summary {
@@ -2137,16 +2187,6 @@ main {
     margin: 0 12px 12px;
 }
 
-.today-section .today-task {
-    border-color: #D6E1E5;
-    background: #FFFFFF;
-    box-shadow: inset 3px 0 0 #B1C6CD, 0 2px 7px rgba(31, 55, 64, .045);
-}
-
-.today-section .today-task:hover {
-    box-shadow: inset 3px 0 0 #8FAEB8, 0 8px 18px rgba(31, 55, 64, .09);
-}
-
 
 @media (prefers-reduced-motion: reduce) {
     .register-category-chevron { transition: none; }
@@ -2180,87 +2220,3 @@ main {
 
 .recent-person--elena { color: var(--elena); }
 .recent-person--tomas { color: var(--tomas); }
-
-/* A single calm panel with divided rows for today's scheduled tasks. */
-.today-section {
-    padding: 16px;
-    margin-left: -4px;
-    margin-right: -4px;
-    border: 1px solid #DCE7EA;
-    border-radius: 20px;
-    background: #F0F5F6;
-}
-
-.today-section-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 0 0 12px;
-}
-
-.today-section-heading .section-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-}
-
-.today-section-heading .material-symbols-rounded {
-    color: var(--primary);
-    font-size: 19px;
-}
-
-.today-count {
-    display: grid;
-    place-items: center;
-    min-width: 27px;
-    height: 27px;
-    padding: 0 7px;
-    border-radius: 999px;
-    background: #DDE9EC;
-    color: #45636E;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.today-list {
-    overflow: hidden;
-    border: 1px solid #E1E8EA;
-    border-radius: 16px;
-    background: #FFFFFF;
-}
-
-.today-section .today-task {
-    min-height: 58px;
-    margin: 0;
-    padding: 13px 14px;
-    border: 0;
-    border-radius: 0;
-    background: #FFFFFF;
-    box-shadow: none;
-    transform: none;
-}
-
-.today-section .today-task + .today-task {
-    border-top: 1px solid #EDF0F1;
-}
-
-.today-section .today-task:hover {
-    background: #F8FAFA;
-    box-shadow: none;
-    transform: none;
-}
-
-.today-section .today-task.completed {
-    animation: homeCompleted .35s forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .today-section .today-task { transition: none; }
-}
-
-
-.today-section .today-task .today-task-icon {
-    color: #71828A;
-}
