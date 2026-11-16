@@ -539,7 +539,9 @@ function renderRecentItems() {
           <div class="task-subtitle">${item.puntos} pts</div>
         </div>
         <div class="recent-actions">
-          <button class="delete-btn">✕</button>
+          <button class="delete-btn" type="button" aria-label="Eliminar registro">
+            <span class="material-symbols-rounded" aria-hidden="true">close</span>
+          </button>
         </div>
       </div>
     `;

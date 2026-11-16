@@ -32,6 +32,33 @@
     --success:#22C55E;
     --warning:#F59E0B;
     --danger:#EF4444;
+    --danger-dark:#B91C1C;
+
+    --radius-sm:12px;
+    --radius-md:14px;
+    --radius-lg:16px;
+    --radius-xl:18px;
+    --radius-2xl:20px;
+    --radius-pill:999px;
+
+}
+
+/* Basic dark theme: core surfaces/text only, component-level light colors are untouched. */
+@media (prefers-color-scheme: dark){
+
+    :root{
+
+        --background:#15191C;
+        --surface:#1E2327;
+
+        --primary:#7FA8B8;
+
+        --text-primary:#F3F4F6;
+        --text-secondary:#9CA3AF;
+
+        --border:#2E343A;
+
+    }
 
 }
 
@@ -191,8 +218,21 @@ nav{
 
     outline-offset:-4px;
 
-    border-radius:12px;
+    border-radius:var(--radius-sm);
 
+}
+
+/* Generic visible focus ring for every other interactive element. */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+[role="button"]:focus-visible,
+.task-item:focus-visible,
+.recent-item:focus-visible,
+.today-task:focus-visible,
+.selectable:focus-visible{
+    outline:2px solid var(--primary);
+    outline-offset:2px;
 }
 
 .nav-item small{
@@ -226,7 +266,7 @@ nav{
     place-items: center;
     width: 54px;
     height: 30px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: #EAF0F2;
     font-variation-settings: "FILL" 1;
     transform: translateY(-1px);
@@ -264,7 +304,7 @@ nav{
     min-height: 48px;
     padding: 0 14px;
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
     background: var(--surface);
     color: var(--text-primary);
     font: inherit;
@@ -280,7 +320,7 @@ nav{
 
     background:#EEF2F4;
 
-    border-radius:16px;
+    border-radius:var(--radius-lg);
 
     height:52px;
 
@@ -352,7 +392,7 @@ nav{
 
     background:white;
 
-    border-radius:18px;
+    border-radius:var(--radius-xl);
 
     overflow:hidden;
 
@@ -395,6 +435,8 @@ nav{
     transition:.15s;
 
     border-bottom:1px solid var(--border);
+
+    will-change:transform, opacity;
 
 }
 
@@ -445,7 +487,7 @@ nav{
 
     text-align:center;
 
-    border-radius:999px;
+    border-radius:var(--radius-pill);
 
     background:#EEF2F4;
 
@@ -517,16 +559,6 @@ p{
 
 }
 
-.today-task.completed{
-
-    background:#ECFDF3;
-
-    pointer-events:none;
-
-    animation:completedFade .35s forwards;
-
-}
-
 .today-task.completed .material-symbols-rounded{
 
     color:var(--success);
@@ -544,42 +576,6 @@ p{
     color:var(--success);
 
 }
-
-@keyframes completedFade{
-
-    0%{
-
-        transform:scale(1);
-
-        opacity:1;
-
-    }
-
-    40%{
-
-        transform:scale(.98);
-
-    }
-
-    100%{
-
-        opacity:0;
-
-        transform:translateX(12px);
-
-        height:0;
-
-        padding-top:0;
-
-        padding-bottom:0;
-
-        margin:0;
-
-        border:none;
-
-    }
-
-}
 .primary-button{
 
     width:100%;
@@ -588,7 +584,7 @@ p{
 
     border:none;
 
-    border-radius:16px;
+    border-radius:var(--radius-lg);
 
     margin-top:16px;
 
@@ -689,7 +685,7 @@ p{
 
     border:1px solid var(--border);
 
-    border-radius:18px;
+    border-radius:var(--radius-xl);
 
     overflow:hidden;
 
@@ -726,7 +722,7 @@ p{
     min-height:46px;
     padding:0 12px;
     border:1px solid var(--border);
-    border-radius:12px;
+    border-radius:var(--radius-sm);
     background:white;
     color:var(--text-primary);
     font:inherit;
@@ -828,7 +824,7 @@ p{
 
     background:#D1D5DB;
 
-    border-radius:999px;
+    border-radius:var(--radius-pill);
 
     transition:.2s;
 
@@ -901,7 +897,7 @@ p{
 
     background:white;
 
-    border-radius:20px;
+    border-radius:var(--radius-2xl);
 
     padding:24px;
 
@@ -931,7 +927,7 @@ p{
 
     border:1px solid #ddd;
 
-    border-radius:12px;
+    border-radius:var(--radius-sm);
 
     outline:none;
 
@@ -960,7 +956,7 @@ p{
 
     padding:14px 22px;
 
-    border-radius:14px;
+    border-radius:var(--radius-md);
 
     font-size:14px;
 
@@ -1063,7 +1059,7 @@ p{
 
     background:white;
 
-    border-radius:18px;
+    border-radius:var(--radius-xl);
 
     padding:18px 20px;
 
@@ -1073,7 +1069,9 @@ p{
 
     cursor:pointer;
 
-    transition:.18s;
+    transition:all .2s ease;
+
+    will-change:transform, opacity;
 
 }
 
@@ -1154,7 +1152,7 @@ p{
 
     background:#EEF2F4;
 
-    border-radius:999px;
+    border-radius:var(--radius-pill);
 
     overflow:hidden;
 
@@ -1168,7 +1166,7 @@ p{
 
     background:var(--primary);
 
-    border-radius:999px;
+    border-radius:var(--radius-pill);
 
     transition:.3s;
 
@@ -1193,7 +1191,7 @@ p{
 
     background:white;
 
-    border-radius:18px;
+    border-radius:var(--radius-xl);
 
     border:1px solid var(--border);
 
@@ -1213,7 +1211,9 @@ p{
 
     cursor:pointer;
 
-    transition:.15s;
+    transition:all .2s ease;
+
+    will-change:transform, opacity;
 
 }
 
@@ -1248,7 +1248,7 @@ p{
     margin-top:12px;
     padding:13px 16px;
     border:1px solid var(--border);
-    border-radius:14px;
+    border-radius:var(--radius-md);
     background:var(--surface);
     color:var(--primary);
     font:600 14px "Inter",sans-serif;
@@ -1304,7 +1304,7 @@ p{
 .history-list{
     overflow:hidden;
     border:1px solid var(--border);
-    border-radius:18px;
+    border-radius:var(--radius-xl);
     background:var(--surface);
 }
 
@@ -1327,7 +1327,7 @@ p{
     flex:0 0 38px;
     display:grid;
     place-items:center;
-    border-radius:12px;
+    border-radius:var(--radius-sm);
     background:#F3F5F7;
     color:var(--primary);
     font-size:20px;
@@ -1385,7 +1385,7 @@ p{
     margin-top:14px;
     padding:13px 16px;
     border:1px solid var(--border);
-    border-radius:14px;
+    border-radius:var(--radius-md);
     background:var(--surface);
     color:var(--primary);
     font:600 14px "Inter",sans-serif;
@@ -1446,6 +1446,10 @@ p{
 
 }
 
+.delete-btn .material-symbols-rounded{
+    font-size:18px;
+}
+
 /* Hover suave */
 
 .delete-btn:hover{
@@ -1475,7 +1479,7 @@ p{
 
     padding:14px 16px;
 
-    border-radius:14px;
+    border-radius:var(--radius-md);
 
     background:linear-gradient(
         135deg,
@@ -1497,8 +1501,9 @@ p{
 
 .record-icon{
 
-    font-size:16px;
+    font-size:18px;
     line-height:1;
+    color:#9CA3AF; /* gris elegante */
 
 }
 
@@ -1515,25 +1520,12 @@ p{
     color:var(--text-secondary);
 
 }
-.record-left{
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
-
-.record-icon{
-
-    font-size:18px;
-
-    color:#9CA3AF; /* gris elegante */
-
-}
 .secondary-button{
 
     width:100%;
     height:52px;
 
-    border-radius:16px;
+    border-radius:var(--radius-lg);
 
     border:1px solid var(--border);
 
@@ -1554,28 +1546,6 @@ p{
 
 .secondary-button:hover{
     background:#F9FAFB;
-}
-.task-item{
-    will-change: transform, opacity;
-}
-/* mejora animaciones */
-
-.today-task,
-.recent-item{
-    will-change: transform, opacity;
-}
-
-/* efecto suave hover */
-
-.today-task:hover{
-    transform:translateY(-2px);
-}
-
-/* eliminar transición brusca */
-
-.today-task,
-.recent-item{
-    transition:all .2s ease;
 }
 /* ===========================
    COMPETITION
@@ -1599,7 +1569,7 @@ p{
 
     background:white;
 
-    border-radius:18px;
+    border-radius:var(--radius-xl);
 
     border:1px solid var(--border);
 
@@ -1662,7 +1632,7 @@ p{
     align-items:baseline;
     gap:4px;
     padding:4px 8px;
-    border-radius:999px;
+    border-radius:var(--radius-pill);
     font-size:11px;
     line-height:1;
     white-space:nowrap;
@@ -1690,7 +1660,7 @@ p{
     width:0%;
     height:8px;
     background:var(--primary);
-    border-radius:999px;
+    border-radius:var(--radius-pill);
     transition:width .6s ease;
 }
 
@@ -1756,7 +1726,7 @@ p{
     background:white;
     flex:1;
     padding:16px;
-    border-radius:14px;
+    border-radius:var(--radius-md);
     text-align:center;
     border:1px solid var(--border);
 
@@ -1770,7 +1740,7 @@ p{
 .bar{
     height:8px;
     background:#EEF2F4;
-    border-radius:999px;
+    border-radius:var(--radius-pill);
     overflow:hidden;
 }
 
@@ -1877,7 +1847,7 @@ main {
 .stats-wins-card,
 .stats-list,
 .stats-person-card {
-    border-radius: 18px;
+    border-radius: var(--radius-xl);
 }
 
 .stats-wins-card,
@@ -1914,7 +1884,7 @@ main {
     height: 9px;
     overflow: hidden;
     margin-bottom: 14px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: #EEF2F4;
 }
 
@@ -2015,15 +1985,15 @@ main {
 
 
 /* Category colors: shared by Register, Home and History icons. */
-.register-category .category-icon.category-color-1 { color: #D97706 !important; }
-.register-category .category-icon.category-color-2 { color: #7C5CC4 !important; }
-.register-category .category-icon.category-color-3 { color: #3977B8 !important; }
-.register-category .category-icon.category-color-4 { color: #168A91 !important; }
-.register-category .category-icon.category-color-5 { color: #397F55 !important; }
-.register-category .category-icon.category-color-6 { color: #C05B70 !important; }
-.register-category .category-icon.category-color-7 { color: #B7791F !important; }
-.register-category .category-icon.category-color-8 { color: #D05C35 !important; }
-.register-category .category-icon.category-color-default { color: #64748B !important; }
+.register-category .category-icon.category-color-1 { color: #D97706; }
+.register-category .category-icon.category-color-2 { color: #7C5CC4; }
+.register-category .category-icon.category-color-3 { color: #3977B8; }
+.register-category .category-icon.category-color-4 { color: #168A91; }
+.register-category .category-icon.category-color-5 { color: #397F55; }
+.register-category .category-icon.category-color-6 { color: #C05B70; }
+.register-category .category-icon.category-color-7 { color: #B7791F; }
+.register-category .category-icon.category-color-8 { color: #D05C35; }
+.register-category .category-icon.category-color-default { color: #64748B; }
 
 /* A single calm panel for today's scheduled tasks. */
 .today-section {
@@ -2031,7 +2001,7 @@ main {
     margin-left: -4px;
     margin-right: -4px;
     border: 1px solid #DCE7EA;
-    border-radius: 20px;
+    border-radius: var(--radius-2xl);
     background: #F0F5F6;
 }
 
@@ -2058,7 +2028,7 @@ main {
 .today-list {
     overflow: hidden;
     border: 1px solid #E1E8EA;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     background: #FFFFFF;
 }
 
@@ -2115,7 +2085,7 @@ main {
     display: grid;
     place-items: center;
     margin-bottom: 16px;
-    border-radius: 14px;
+    border-radius: var(--radius-md);
     background: #fef2f2;
     color: #dc2626;
 }
@@ -2154,14 +2124,14 @@ main {
 }
 
 .confirm-dialog-cancel {
-    border: 1px solid #e5e7eb;
-    background: #fff;
+    border: 1px solid var(--border);
+    background: var(--surface);
     color: #4b5563;
 }
 
 .confirm-dialog-delete {
     border: 0;
-    background: #dc2626;
+    background: var(--danger);
     color: #fff;
 }
 
@@ -2170,7 +2140,7 @@ main {
 }
 
 .confirm-dialog-delete:hover {
-    background: #b91c1c;
+    background: var(--danger-dark);
 }
 
 @keyframes confirmFadeIn {
@@ -2214,7 +2184,7 @@ main {
     padding: 0;
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: 18px;
+    border-radius: var(--radius-xl);
     background: var(--surface);
     box-shadow: 0 2px 8px rgba(31, 41, 55, .04);
 }
@@ -2255,7 +2225,7 @@ main {
 .register-category-count {
     min-width: 25px;
     padding: 3px 8px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: #F0F3F5;
     color: var(--text-secondary);
     font-size: 12px;
@@ -2286,13 +2256,23 @@ main {
 
 
 /* Profile identity in Home recent activity. */
+/* Floated so the title/subtitle lines below stay indented next to the icon. */
+.recent-item .task-name {
+    display: block;
+}
+
+.recent-item .recent-info {
+    overflow: hidden;
+}
+
 .recent-person-icon {
     display: grid;
     place-items: center;
+    float: left;
     width: 36px;
     height: 36px;
-    flex: 0 0 36px;
-    border-radius: 12px;
+    margin-right: 10px;
+    border-radius: var(--radius-sm);
     font-size: 19px;
 }
 
