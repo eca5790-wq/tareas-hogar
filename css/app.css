@@ -16,6 +16,8 @@
 
     --background:#F7F8FA;
     --surface:#FFFFFF;
+    --surface-muted:#EEF2F4;
+    --hover-bg:#F9FAFB;
 
     --primary:#4F6D7A;
 
@@ -33,6 +35,13 @@
     --warning:#F59E0B;
     --danger:#EF4444;
     --danger-dark:#B91C1C;
+    --danger-soft:#FEF2F2;
+    --success-soft:#ECFDF3;
+
+    --nav-active-bg:#EAF0F2;
+    --switch-off-bg:#D1D5DB;
+    --record-gradient-1:#F9FAFB;
+    --record-gradient-2:#F3F4F6;
 
     --radius-sm:12px;
     --radius-md:14px;
@@ -40,6 +49,9 @@
     --radius-xl:18px;
     --radius-2xl:20px;
     --radius-pill:999px;
+
+    --today-panel-bg:#F0F5F6;
+    --today-panel-border:#DCE7EA;
 
 }
 
@@ -50,13 +62,31 @@
 
         --background:#15191C;
         --surface:#1E2327;
+        --surface-muted:#262C31;
+        --hover-bg:#262C31;
 
         --primary:#7FA8B8;
+
+        --elena:#E0897A;
+        --elena-soft:#3A2B28;
+        --tomas:#7FAFC4;
+        --tomas-soft:#223138;
 
         --text-primary:#F3F4F6;
         --text-secondary:#9CA3AF;
 
         --border:#2E343A;
+
+        --danger-soft:#3A1F20;
+        --success-soft:#133023;
+
+        --nav-active-bg:#262C31;
+        --switch-off-bg:#3A4046;
+        --record-gradient-1:#1E2327;
+        --record-gradient-2:#262C31;
+
+        --today-panel-bg:#192327;
+        --today-panel-border:#273238;
 
     }
 
@@ -116,7 +146,7 @@ header{
 
     padding:0 20px;
 
-    background:white;
+    background:var(--surface);
 
     border-bottom:1px solid var(--border);
 
@@ -170,7 +200,7 @@ nav{
 
     padding-bottom:env(safe-area-inset-bottom, 0px);
 
-    background:white;
+    background:var(--surface);
 
     border-top:1px solid var(--border);
 
@@ -267,7 +297,7 @@ input:focus-visible,
     width: 54px;
     height: 30px;
     border-radius: var(--radius-pill);
-    background: #EAF0F2;
+    background: var(--nav-active-bg);
     font-variation-settings: "FILL" 1;
     transform: translateY(-1px);
 }
@@ -318,7 +348,7 @@ input:focus-visible,
 
     gap:12px;
 
-    background:#EEF2F4;
+    background:var(--surface-muted);
 
     border-radius:var(--radius-lg);
 
@@ -390,7 +420,7 @@ input:focus-visible,
 
 .card-content{
 
-    background:white;
+    background:var(--surface);
 
     border-radius:var(--radius-xl);
 
@@ -448,7 +478,7 @@ input:focus-visible,
 
 .task-item:hover{
 
-    background:#F9FAFB;
+    background:var(--hover-bg);
 
 }
 
@@ -489,7 +519,7 @@ input:focus-visible,
 
     border-radius:var(--radius-pill);
 
-    background:#EEF2F4;
+    background:var(--surface-muted);
 
     color:var(--primary);
 
@@ -660,7 +690,7 @@ p{
 
     font-family:inherit;
 
-    background:white;
+    background:var(--surface);
 
 }
 
@@ -681,7 +711,7 @@ p{
 
 .settings-group{
 
-    background:white;
+    background:var(--surface);
 
     border:1px solid var(--border);
 
@@ -723,7 +753,7 @@ p{
     padding:0 12px;
     border:1px solid var(--border);
     border-radius:var(--radius-sm);
-    background:white;
+    background:var(--surface);
     color:var(--text-primary);
     font:inherit;
     font-size:15px;
@@ -822,7 +852,7 @@ p{
 
     inset:0;
 
-    background:#D1D5DB;
+    background:var(--switch-off-bg);
 
     border-radius:var(--radius-pill);
 
@@ -846,7 +876,7 @@ p{
 
     border-radius:50%;
 
-    background:white;
+    background:var(--surface);
 
     transition:.2s;
 
@@ -873,7 +903,7 @@ p{
 
 .selectable:hover{
 
-    background:#F9FAFB;
+    background:var(--hover-bg);
 
 }
 .dialog-overlay{
@@ -895,7 +925,7 @@ p{
 
     width:min(420px,90vw);
 
-    background:white;
+    background:var(--surface);
 
     border-radius:var(--radius-2xl);
 
@@ -925,9 +955,12 @@ p{
 
     padding:14px 16px;
 
-    border:1px solid #ddd;
+    border:1px solid var(--border);
 
     border-radius:var(--radius-sm);
+
+    background:var(--surface);
+    color:var(--text-primary);
 
     outline:none;
 
@@ -1057,7 +1090,7 @@ p{
     justify-content:space-between;
     align-items:center;
 
-    background:white;
+    background:var(--surface);
 
     border-radius:var(--radius-xl);
 
@@ -1096,7 +1129,7 @@ p{
 
 .today-task.completed{
 
-    background:#ECFDF3;
+    background:var(--success-soft);
 
     pointer-events:none;
 
@@ -1150,7 +1183,7 @@ p{
     width:100%;
     height:6px;
 
-    background:#EEF2F4;
+    background:var(--surface-muted);
 
     border-radius:var(--radius-pill);
 
@@ -1189,7 +1222,7 @@ p{
 
 .recent-list{
 
-    background:white;
+    background:var(--surface);
 
     border-radius:var(--radius-xl);
 
@@ -1202,18 +1235,23 @@ p{
 .recent-item{
 
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    gap:12px;
 
     padding:16px 0;
 
     border-bottom:1px solid var(--border);
 
-    cursor:pointer;
-
     transition:all .2s ease;
 
     will-change:transform, opacity;
+
+}
+
+.recent-info{
+
+    min-width:0;
+    flex:1;
 
 }
 
@@ -1225,13 +1263,7 @@ p{
 
 .recent-item:hover{
 
-    background:#F9FAFB;
-
-}
-
-.recent-item:active{
-
-    transform:scale(.98);
+    background:var(--hover-bg);
 
 }
 
@@ -1258,7 +1290,7 @@ p{
 
 .history-link:hover,
 .history-more:hover{
-    background:#F1F5F7;
+    background:var(--hover-bg);
 }
 
 .history-link:active,
@@ -1328,7 +1360,7 @@ p{
     display:grid;
     place-items:center;
     border-radius:var(--radius-sm);
-    background:#F3F5F7;
+    background:var(--surface-muted);
     color:var(--primary);
     font-size:20px;
 }
@@ -1454,8 +1486,8 @@ p{
 
 .delete-btn:hover{
 
-    background:#F3F4F6;
-    color:#6B7280;
+    background:var(--hover-bg);
+    color:var(--text-secondary);
 
 }
 
@@ -1483,8 +1515,8 @@ p{
 
     background:linear-gradient(
         135deg,
-        #F9FAFB,
-        #F3F4F6
+        var(--record-gradient-1),
+        var(--record-gradient-2)
     );
 
     border:1px solid var(--border);
@@ -1529,7 +1561,7 @@ p{
 
     border:1px solid var(--border);
 
-    background:white;
+    background:var(--surface);
 
     color:var(--text-secondary);
 
@@ -1545,7 +1577,7 @@ p{
 }
 
 .secondary-button:hover{
-    background:#F9FAFB;
+    background:var(--hover-bg);
 }
 /* ===========================
    COMPETITION
@@ -1562,12 +1594,12 @@ p{
 
 .winner-badge span{
     font-size:18px;
-    color:#F59E0B;
+    color:var(--warning);
 }
 
 .competition-box{
 
-    background:white;
+    background:var(--surface);
 
     border-radius:var(--radius-xl);
 
@@ -1723,7 +1755,7 @@ p{
 }
 
 .stats-summary div{
-    background:white;
+    background:var(--surface);
     flex:1;
     padding:16px;
     border-radius:var(--radius-md);
@@ -1739,7 +1771,7 @@ p{
 
 .bar{
     height:8px;
-    background:#EEF2F4;
+    background:var(--surface-muted);
     border-radius:var(--radius-pill);
     overflow:hidden;
 }
@@ -1885,7 +1917,7 @@ main {
     overflow: hidden;
     margin-bottom: 14px;
     border-radius: var(--radius-pill);
-    background: #EEF2F4;
+    background: var(--surface-muted);
 }
 
 .stats-winner-row:last-child .stats-winner-track {
@@ -2000,9 +2032,9 @@ main {
     padding: 16px;
     margin-left: -4px;
     margin-right: -4px;
-    border: 1px solid #DCE7EA;
+    border: 1px solid var(--today-panel-border);
     border-radius: var(--radius-2xl);
-    background: #F0F5F6;
+    background: var(--today-panel-bg);
 }
 
 .today-section-heading {
@@ -2027,9 +2059,9 @@ main {
 
 .today-list {
     overflow: hidden;
-    border: 1px solid #E1E8EA;
+    border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    background: #FFFFFF;
+    background: var(--surface);
 }
 
 .today-section .today-task {
@@ -2038,17 +2070,17 @@ main {
     padding: 13px 14px;
     border: 0;
     border-radius: 0;
-    background: #FFFFFF;
+    background: var(--surface);
     box-shadow: none;
     transform: none;
 }
 
 .today-section .today-task + .today-task {
-    border-top: 1px solid #EDF0F1;
+    border-top: 1px solid var(--border);
 }
 
 .today-section .today-task:hover {
-    background: #F8FAFA;
+    background: var(--hover-bg);
     box-shadow: none;
     transform: none;
 }
@@ -2072,8 +2104,8 @@ main {
 .confirm-dialog {
     width: min(100%, 360px);
     padding: 24px;
-    background: #fff;
-    border: 1px solid #e5e7eb;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 22px;
     box-shadow: 0 22px 60px rgba(17, 24, 39, .2);
     animation: confirmRise .2s ease-out;
@@ -2086,8 +2118,8 @@ main {
     place-items: center;
     margin-bottom: 16px;
     border-radius: var(--radius-md);
-    background: #fef2f2;
-    color: #dc2626;
+    background: var(--danger-soft);
+    color: var(--danger);
 }
 
 .confirm-dialog-icon .material-symbols-rounded {
@@ -2096,14 +2128,14 @@ main {
 
 .confirm-dialog h3 {
     margin: 0 0 8px;
-    color: #1f2937;
+    color: var(--text-primary);
     font-size: 18px;
     font-weight: 600;
 }
 
 .confirm-dialog p {
     margin: 0;
-    color: #6b7280;
+    color: var(--text-secondary);
     font-size: 14px;
     line-height: 1.5;
 }
@@ -2126,7 +2158,7 @@ main {
 .confirm-dialog-cancel {
     border: 1px solid var(--border);
     background: var(--surface);
-    color: #4b5563;
+    color: var(--text-secondary);
 }
 
 .confirm-dialog-delete {
@@ -2136,7 +2168,7 @@ main {
 }
 
 .confirm-dialog-cancel:hover {
-    background: #f9fafb;
+    background: var(--hover-bg);
 }
 
 .confirm-dialog-delete:hover {
@@ -2226,7 +2258,7 @@ main {
     min-width: 25px;
     padding: 3px 8px;
     border-radius: var(--radius-pill);
-    background: #F0F3F5;
+    background: var(--surface-muted);
     color: var(--text-secondary);
     font-size: 12px;
     font-weight: 600;
@@ -2256,22 +2288,12 @@ main {
 
 
 /* Profile identity in Home recent activity. */
-/* Floated so the title/subtitle lines below stay indented next to the icon. */
-.recent-item .task-name {
-    display: block;
-}
-
-.recent-item .recent-info {
-    overflow: hidden;
-}
-
 .recent-person-icon {
     display: grid;
     place-items: center;
-    float: left;
     width: 36px;
     height: 36px;
-    margin-right: 10px;
+    flex: 0 0 36px;
     border-radius: var(--radius-sm);
     font-size: 19px;
 }

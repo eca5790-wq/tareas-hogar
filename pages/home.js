@@ -530,14 +530,12 @@ function renderRecentItems() {
     const personClass = item.usuario === "Elena" ? "elena" : "tomas";
     return `
       <div class="recent-item" data-id="${item.id}">
+        <span class="material-symbols-rounded recent-person-icon recent-person-icon--${personClass}" aria-hidden="true">${icon}</span>
         <div class="recent-info">
-          <div class="task-name">
-            <span class="material-symbols-rounded recent-person-icon recent-person-icon--${personClass}" aria-hidden="true">${icon}</span>
-            ${item.nombre}
-          </div>
+          <div class="task-name">${item.nombre}</div>
           <div class="task-subtitle"><span class="recent-person recent-person--${personClass}">${item.usuario}</span> · ${relativeDate(item.fecha)}</div>
-          <div class="task-subtitle">${item.puntos} pts</div>
         </div>
+        <div class="task-points">${item.puntos} pts</div>
         <div class="recent-actions">
           <button class="delete-btn" type="button" aria-label="Eliminar registro">
             <span class="material-symbols-rounded" aria-hidden="true">close</span>
