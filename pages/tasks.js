@@ -2,32 +2,36 @@ import UI from "../js/ui.js";
 
 import { renderNavbar } from "../components/navbar.js";
 import { taskItem } from "../components/taskItem.js";
+import { showToast } from "../components/toast.js";
 
 import { getTasks } from "../js/api.js";
+import { CATEGORY_ICONS } from "../js/constants.js";
 
 import { loadTaskDetail } from "./task-detail.js";
-
-/* ICONOS POR CATEGORÍA (ID) */
-const CATEGORY_ICONS = {
-    1: "restaurant",              // Cocina
-    2: "weekend",                 // Salón
-    3: "bed",                     // Dormitorio
-    4: "bathtub",                 // Baño
-    5: "local_laundry_service",   // Ropa
-    6: "cleaning_services",       // Limpieza
-    7: "shopping_cart",           // Compra
-    8: "pets"                     // Mascotas
-};
 
 let tasks = [];
 
 export async function loadTasks() {
 
-    tasks = await getTasks();
+    try {
 
-    render();
+        tasks = await getTasks();
 
-    initEvents();
+        render();
+
+        initEvents();
+
+    } catch (error) {
+
+        console.error("No se pudieron cargar las tareas:", error);
+
+        showToast("No se pudieron cargar las tareas");
+
+        render();
+
+        initEvents();
+
+    }
 
 }
 

@@ -1,4 +1,5 @@
 import { navigate } from "../js/router.js";
+import { showToast } from "./toast.js";
 
 export function renderNavbar(activePage) {
     document.getElementById("navbar").innerHTML = `
@@ -10,7 +11,10 @@ export function renderNavbar(activePage) {
 
     document.querySelectorAll(".nav-item").forEach(navItem => {
         navItem.addEventListener("click", () => {
-            navigate(navItem.dataset.page);
+            navigate(navItem.dataset.page).catch(error => {
+                console.error(error);
+                showToast("No se pudo cambiar de pantalla");
+            });
         });
     });
 }

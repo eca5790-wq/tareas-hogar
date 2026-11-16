@@ -1,6 +1,7 @@
 import { getHistoryPage } from "../js/api.js";
 import { navigate } from "../js/router.js";
 import { renderNavbar } from "../components/navbar.js";
+import { CATEGORY_ICONS } from "../js/constants.js";
 
 const PAGE_SIZE = 20;
 const HISTORY_CACHE_KEY = "tareas-hogar-history:two-weeks:v2";
@@ -220,16 +221,7 @@ function renderContent() {
 }
 
 function historyItem(item) {
-  const icon = {
-    1: "restaurant",
-    2: "weekend",
-    3: "bed",
-    4: "bathtub",
-    5: "local_laundry_service",
-    6: "cleaning_services",
-    7: "shopping_cart",
-    8: "pets"
-  }[String(item.categoriaId)] || "category";
+  const icon = CATEGORY_ICONS[item.categoriaId] || "category";
   const personClass = item.usuario === "Elena" ? "elena" : "tomas";
 
   return `

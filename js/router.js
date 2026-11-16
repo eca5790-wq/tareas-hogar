@@ -41,9 +41,22 @@ export async function navigate(page, force = false) {
 
     }
 
-    currentPage = page;
+    const previousPage = currentPage;
 
-    await handler();
+    // Solo confirmamos la navegación si el handler termina bien; si falla, se puede reintentar.
+    try {
+
+        await handler();
+
+        currentPage = page;
+
+    } catch (error) {
+
+        currentPage = previousPage;
+
+        throw error;
+
+    }
 
 }
 

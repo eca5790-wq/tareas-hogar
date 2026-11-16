@@ -2,17 +2,7 @@ import { renderNavbar } from "../components/navbar.js";
 import { registerTask, getRegisterScreen } from "../js/api.js";
 import { APP } from "../js/config.js";
 import { showToast } from "../components/toast.js";
-
-const CATEGORY_ICONS = {
-  1: "restaurant",
-  2: "weekend",
-  3: "bed",
-  4: "bathtub",
-  5: "local_laundry_service",
-  6: "cleaning_services",
-  7: "shopping_cart",
-  8: "pets"
-};
+import { CATEGORY_ICONS } from "../js/constants.js";
 
 function categoryColorClass(categoryId) {
   const id = Number(categoryId);

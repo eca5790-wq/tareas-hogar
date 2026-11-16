@@ -4,17 +4,7 @@ import { renderNavbar } from "../components/navbar.js";
 import { navigate } from "../js/router.js";
 import { showToast } from "../components/toast.js";
 import { openConfirmDialog } from "../components/dialog.js";
-
-const CATEGORY_ICONS = {
-  1: "restaurant",
-  2: "weekend",
-  3: "bed",
-  4: "bathtub",
-  5: "local_laundry_service",
-  6: "cleaning_services",
-  7: "shopping_cart",
-  8: "pets"
-};
+import { CATEGORY_ICONS } from "../js/constants.js";
 
 
 const HOME_CACHE_PREFIX = "tareas-hogar-home-v1:";
@@ -422,11 +412,18 @@ function handleTodayClick(event) {
     updateRenderedHome();
   }, 300);
 
-  registerTask(id, APP.currentUser).catch(error => {
+  registerTask(id, APP.currentUser, formatLocalDate(new Date())).catch(error => {
     console.error(error);
     showToast("Error al guardar");
     loadHome();
   });
+}
+
+function formatLocalDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function todaySection() {

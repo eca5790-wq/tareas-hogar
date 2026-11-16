@@ -1,11 +1,17 @@
 import { APP } from "../js/config.js";
 import { getHomeData } from "../js/api.js";
 import { renderNavbar } from "../components/navbar.js";
+import { showToast } from "../components/toast.js";
 
 let stats = {};
 
 export async function loadStats() {
-  stats = await getHomeData(APP.currentUser);
+  try {
+    stats = await getHomeData(APP.currentUser);
+  } catch (error) {
+    console.error("No se pudieron cargar las estadísticas:", error);
+    showToast("No se pudieron cargar las estadísticas");
+  }
   render();
 }
 

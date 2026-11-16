@@ -39,12 +39,12 @@ export function loadCategorySelector(list){
                 <div
                     class="setting-row selectable category-row"
                     data-id="${category.id}"
-                    data-name="${category.nombre}"
+                    data-name="${escapeHTML(category.nombre)}"
                 >
 
                     <span>
 
-                        ${category.nombre}
+                        ${escapeHTML(category.nombre)}
 
                     </span>
 
@@ -104,4 +104,14 @@ function initEvents(){
 
         });
 
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
 }

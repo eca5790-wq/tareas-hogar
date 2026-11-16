@@ -88,9 +88,13 @@ async function request(action, params = {}) {
     if (cachedData !== null) return cachedData;
   }
 
+  const cleanParams = Object.fromEntries(
+    Object.entries(params).filter(([, value]) => value !== undefined && value !== null)
+  );
+
   const query = new URLSearchParams({
     action,
-    ...params,
+    ...cleanParams,
     t: Date.now()
   });
 
