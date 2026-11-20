@@ -1,5 +1,5 @@
 import { renderNavbar } from "../components/navbar.js";
-import { registerTask, getRegisterScreen } from "../js/api.js";
+import { registerTask, getRegisterScreen, deleteHistory } from "../js/api.js";
 import { APP } from "../js/config.js";
 import { showToast } from "../components/toast.js";
 import { CATEGORY_ICONS } from "../js/constants.js";
@@ -281,7 +281,14 @@ async function handleTaskClick(event) {
     showToast(
       Number.isFinite(points)
         ? `Tarea registrada · +${points} pts`
-        : "Tarea registrada"
+        : "Tarea registrada",
+      {
+        actionLabel: result.historyId ? "Deshacer" : "",
+        duration: 5000,
+        onAction: result.historyId
+          ? () => undoRegistration(result.historyId)
+          : null
+      }
     );
   } catch (error) {
     console.error(error);
@@ -291,5 +298,15 @@ async function handleTaskClick(event) {
     item.style.pointerEvents = "";
     item.style.transform = "";
     item.style.opacity = "";
+  }
+}
+
+async function undoRegistration(historyId) {
+  try {
+    await deleteHistory(historyId);
+    showToast("Registro deshecho");
+  } catch (error) {
+    console.error("No se pudo deshacer el registro:", error);
+    showToast("No se pudo deshacer.");
   }
 }

@@ -187,6 +187,19 @@ function homeGetLatestDueDate({
       return homeAddDays(todayDate, -daysBack);
     }
 
+    case "CADA_X_DIAS": {
+      if (!startDate || interval <= 0) return null;
+
+      const start = homeParseDate(startDate);
+      const daysSinceStart = homeDaysBetween(start, todayDate);
+
+      if (daysSinceStart < 0) return null;
+
+      const periodIndex = Math.floor(daysSinceStart / interval);
+
+      return homeAddDays(start, periodIndex * interval);
+    }
+
     case "CADA_X_SEMANAS": {
       if (!startDate || interval <= 0) return null;
 
@@ -445,7 +458,7 @@ function homeGetRecentTasks(historyRows, tasksById) {
       return {
         id: row[0],
         tareaId: row[3],
-        nombre: task ? task.nombre : row[3],
+        nombre: task ? task.nombre : "Tarea eliminada",
         categoriaId: task ? task.categoriaId : undefined,
         usuario: row[2],
         fecha: row[1],
@@ -501,7 +514,7 @@ function homeGetTopTasks(historyRows, tasksById) {
 
   return Object.keys(usage)
     .map(id => ({
-      nombre: tasksById[id] ? tasksById[id].nombre : id,
+      nombre: tasksById[id] ? tasksById[id].nombre : "Tarea eliminada",
       count: usage[id]
     }))
     .sort((a, b) => b.count - a.count)
@@ -531,7 +544,7 @@ function homeGetTopTasksByUser(historyRows, tasksById) {
   Object.keys(usageByUser).forEach(user => {
     result[user] = Object.entries(usageByUser[user])
       .map(([id, count]) => ({
-        nombre: tasksById[id] ? tasksById[id].nombre : id,
+        nombre: tasksById[id] ? tasksById[id].nombre : "Tarea eliminada",
         count
       }))
       .sort((a, b) => b.count - a.count)

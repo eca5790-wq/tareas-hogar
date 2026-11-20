@@ -1,6 +1,16 @@
 let timer = null;
 
-export function showToast(message, duration = 2500) {
+export function showToast(message, options = {}) {
+
+    const config = typeof options === "number"
+        ? { duration: options }
+        : options;
+
+    const {
+        duration = 2500,
+        actionLabel = "",
+        onAction = null
+    } = config;
 
     let toast = document.getElementById("toast");
 
@@ -16,7 +26,31 @@ export function showToast(message, duration = 2500) {
 
     }
 
-    toast.textContent = message;
+    toast.innerHTML = `<span class="toast-message"></span>`;
+
+    toast.querySelector(".toast-message").textContent = message;
+
+    if (actionLabel && onAction) {
+
+        const action = document.createElement("button");
+
+        action.type = "button";
+        action.className = "toast-action";
+        action.textContent = actionLabel;
+
+        action.onclick = () => {
+
+            clearTimeout(timer);
+
+            toast.classList.remove("show");
+
+            onAction();
+
+        };
+
+        toast.appendChild(action);
+
+    }
 
     toast.classList.add("show");
 

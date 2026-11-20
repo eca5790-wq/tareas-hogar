@@ -56,7 +56,7 @@ function getHistoryPage(offset, limit) {
         fecha: row[1],
         usuario: row[2],
         tareaId: row[3],
-        nombre: task ? task.nombre : String(row[3]),
+        nombre: task ? task.nombre : "Tarea eliminada",
         categoriaId: categoryId,
         categoria: categoriesById[String(categoryId)] || "General",
         puntos: Number(row[7]) || 0
@@ -161,4 +161,6 @@ function saveHistory(record) {
   ]);
 
   CacheService.getScriptCache().remove("history");
+
+  return id;
 }

@@ -397,8 +397,6 @@ function handleTodayClick(event) {
     card.style.opacity = "0";
   }, 120);
 
-  showToast("Tarea registrada");
-
   setTimeout(() => {
     home.today = home.today.filter(task => String(task.id) !== id);
 
@@ -428,11 +426,43 @@ function handleTodayClick(event) {
     updateRenderedHome();
   }, 300);
 
-  registerTask(id, APP.currentUser, formatLocalDate(new Date())).catch(error => {
+  const registration = registerTask(id, APP.currentUser, formatLocalDate(new Date()));
+
+  showToast("Tarea registrada", {
+    actionLabel: "Deshacer",
+    duration: 5000,
+    onAction: () => undoRegistration(registration)
+  });
+
+  registration.catch(error => {
     console.error(error);
     showToast("Error al guardar");
     loadHome();
   });
+}
+
+async function undoRegistration(registrationPromise) {
+  try {
+
+    const result = await registrationPromise;
+
+    if (!result || result.success === false || !result.historyId) {
+      showToast("No se pudo deshacer.");
+      return;
+    }
+
+    await deleteHistory(result.historyId);
+
+    showToast("Registro deshecho");
+
+    loadHome();
+
+  } catch (error) {
+
+    console.error("No se pudo deshacer el registro:", error);
+    showToast("No se pudo deshacer.");
+
+  }
 }
 
 function formatLocalDate(date) {

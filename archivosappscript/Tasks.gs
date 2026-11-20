@@ -141,7 +141,7 @@ function registerTask(data) {
 
   const points = calculateFinalPoints(data.taskId);
 
-  saveHistory({
+  const historyId = saveHistory({
     fecha: taskDate,
     usuarioId: data.user,
     tareaId: row[0],
@@ -156,6 +156,7 @@ function registerTask(data) {
   return {
     success: true,
     taskId: row[0],
+    historyId,
     points: points.finalPoints,
     bonus: points.bonus
   };
@@ -191,4 +192,155 @@ function registerValidateDate(value) {
 
   // Mediodía evita que la fecha cambie al guardarse en la hoja por diferencias de zona horaria.
   return new Date(year, month - 1, day, 12, 0, 0);
+}
+
+const TASK_SCHEDULE_TYPES = [
+  "DIARIA",
+  "SEMANAL",
+  "CADA_X_DIAS",
+  "CADA_X_SEMANAS",
+  "MENSUAL"
+];
+
+function getTaskSchedule(taskId) {
+  const row = getProgrammingTable()
+    .slice(1)
+    .find(row => String(row[0]) === String(taskId));
+
+  if (!row) {
+    return {
+      taskId: Number(taskId),
+      tipo: "",
+      intervalo: null,
+      diasSemana: "",
+      diaMes: null,
+      fechaInicio: "",
+      activa: true
+    };
+  }
+
+  return {
+    taskId: Number(taskId),
+    tipo: row[1] || "",
+    intervalo: row[2] !== "" && row[2] !== null ? Number(row[2]) : null,
+    diasSemana: row[3] || "",
+    diaMes: row[4] !== "" && row[4] !== null ? Number(row[4]) : null,
+    fechaInicio: row[5] ? homeFormatDate(homeParseDate(row[5])) : "",
+    activa: row[6] !== false
+  };
+}
+
+function updateTaskSchedule(data) {
+  const taskId = String(data.taskId || "");
+  if (!taskId) {
+    return { success: false, error: "Falta la tarea" };
+  }
+
+  const type = String(data.tipo || "");
+  if (TASK_SCHEDULE_TYPES.indexOf(type) === -1) {
+    return { success: false, error: "Tipo de programación no válido" };
+  }
+
+  const interval = Number(data.intervalo) || 0;
+  if ((type === "CADA_X_DIAS" || type === "CADA_X_SEMANAS") && interval <= 0) {
+    return {
+      success: false,
+      error: "Indica cada cuántos días/semanas se repite"
+    };
+  }
+
+  const weekDays = String(data.diasSemana || "");
+  if (type === "SEMANAL" && !weekDays) {
+    return { success: false, error: "Selecciona al menos un día de la semana" };
+  }
+
+  const monthDay = Number(data.diaMes) || 0;
+  if (type === "MENSUAL" && (monthDay < 1 || monthDay > 31)) {
+    return { success: false, error: "Indica un día del mes válido (1-31)" };
+  }
+
+  const startDate = String(data.fechaInicio || "");
+  if (
+    (type === "CADA_X_DIAS" || type === "CADA_X_SEMANAS") &&
+    !/^\d{4}-\d{2}-\d{2}$/.test(startDate)
+  ) {
+    return { success: false, error: "Indica una fecha de inicio válida" };
+  }
+
+  const active = String(data.activa) !== "false";
+
+  const rowValues = [
+    Number(taskId),
+    type,
+    (type === "CADA_X_DIAS" || type === "CADA_X_SEMANAS") ? interval : "",
+    type === "SEMANAL" ? weekDays : "",
+    type === "MENSUAL" ? monthDay : "",
+    (type === "CADA_X_DIAS" || type === "CADA_X_SEMANAS") ? startDate : "",
+    active
+  ];
+
+  const sheet = getSheet().getSheetByName("Programación");
+  const lastRow = sheet.getLastRow();
+  const ids = lastRow > 1
+    ? sheet.getRange(2, 1, lastRow - 1, 1).getValues()
+    : [];
+
+  for (let i = 0; i < ids.length; i++) {
+    if (String(ids[i][0]) !== taskId) continue;
+
+    sheet.getRange(i + 2, 1, 1, rowValues.length).setValues([rowValues]);
+    invalidateTableCache("Programación");
+    return { success: true };
+  }
+
+  sheet.appendRow(rowValues);
+  invalidateTableCache("Programación");
+  return { success: true };
+}
+
+// No borra el histórico: RB-013 solo lo exige para tareas sin uso, pero aquí
+// se permite siempre y se conserva el histórico (las tareas eliminadas se
+// siguen mostrando con su nombre original gracias al registro guardado).
+function deleteTask(data) {
+  const taskId = String(data.id || "");
+  if (!taskId) {
+    return { success: false, error: "Falta la tarea" };
+  }
+
+  const sheet = getSheet().getSheetByName("Tareas");
+  const lastRow = sheet.getLastRow();
+  if (lastRow <= 1) {
+    return { success: false, error: "Task not found" };
+  }
+
+  const ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+
+  for (let i = 0; i < ids.length; i++) {
+    if (String(ids[i][0]) !== taskId) continue;
+
+    sheet.deleteRow(i + 2);
+    invalidateTableCache("Tareas");
+    removeTaskSchedule(taskId);
+    return { success: true };
+  }
+
+  return { success: false, error: "Task not found" };
+}
+
+function removeTaskSchedule(taskId) {
+  const sheet = getSheet().getSheetByName("Programación");
+  if (!sheet) return;
+
+  const lastRow = sheet.getLastRow();
+  if (lastRow <= 1) return;
+
+  const ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+
+  for (let i = 0; i < ids.length; i++) {
+    if (String(ids[i][0]) !== taskId) continue;
+
+    sheet.deleteRow(i + 2);
+    invalidateTableCache("Programación");
+    return;
+  }
 }

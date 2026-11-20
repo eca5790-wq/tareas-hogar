@@ -1,6 +1,7 @@
 import { renderNavbar } from "../components/navbar.js";
 import { loadTasks } from "./tasks.js";
 import { loadCategorySelector } from "./category-selector.js";
+import { loadScheduleEditor } from "./schedule-editor.js";
 
 import {
     setCurrentTask,
@@ -11,11 +12,18 @@ import {
 import {
     getCategories,
     updateTask,
-    createTask
+    createTask,
+    getTaskSchedule,
+    deleteTask
 } from "../js/api.js";
 
-import { openDialog } from "../components/dialog.js";
+import { openDialog, openConfirmDialog } from "../components/dialog.js";
 import { showToast } from "../components/toast.js";
+
+const WEEKDAY_LABELS = [
+    "domingo", "lunes", "martes", "miércoles",
+    "jueves", "viernes", "sábado"
+];
 
 export async function loadTaskDetail(task = null) {
 
@@ -42,6 +50,83 @@ export async function loadTaskDetail(task = null) {
     }
 
     render();
+
+    if (getCurrentTask().id) {
+
+        await loadScheduleSummary(getCurrentTask().id);
+
+    }
+
+}
+
+async function loadScheduleSummary(taskId) {
+
+    try {
+
+        const schedule = await getTaskSchedule(taskId);
+
+        // Evita pisar la pantalla si mientras tanto se abrió otra tarea.
+        if (getCurrentTask().id !== taskId) return;
+
+        updateCurrentTask("programacion", formatScheduleSummary(schedule));
+
+        render();
+
+    } catch (error) {
+
+        console.error("No se pudo cargar la programación:", error);
+
+    }
+
+}
+
+function formatScheduleSummary(schedule) {
+
+    if (!schedule || !schedule.tipo) return "Sin programación";
+
+    let base;
+
+    switch (schedule.tipo) {
+
+        case "DIARIA":
+            base = "Cada día";
+            break;
+
+        case "SEMANAL": {
+
+            const days = String(schedule.diasSemana || "")
+                .split(",")
+                .map(value => Number(value.trim()))
+                .filter(value => Number.isInteger(value) && value >= 0 && value <= 6)
+                .sort((a, b) => a - b)
+                .map(value => WEEKDAY_LABELS[value]);
+
+            base = days.length
+                ? `Cada semana (${days.join(", ")})`
+                : "Cada semana";
+
+            break;
+
+        }
+
+        case "CADA_X_DIAS":
+            base = `Cada ${schedule.intervalo || "?"} días`;
+            break;
+
+        case "CADA_X_SEMANAS":
+            base = `Cada ${schedule.intervalo || "?"} semanas`;
+            break;
+
+        case "MENSUAL":
+            base = `Mensual (día ${schedule.diaMes || "?"})`;
+            break;
+
+        default:
+            return "Sin programación";
+
+    }
+
+    return schedule.activa === false ? `${base} · pausada` : base;
 
 }
 
@@ -104,6 +189,12 @@ function render() {
         <button id="cancelTask" class="secondary-button">
             Cancelar
         </button>
+
+        ${task.id ? `
+            <button id="deleteTask" class="secondary-button danger-button">
+                Eliminar tarea
+            </button>
+        ` : ""}
 
     `;
 
@@ -200,7 +291,7 @@ function initEvents() {
                         break;
 
                     case "schedule":
-                        showToast("Editor de programación pendiente.");
+                        openScheduleEditor();
                         break;
 
                 }
@@ -212,6 +303,10 @@ function initEvents() {
     document
         .getElementById("saveTask")
         .addEventListener("click", save);
+
+    document
+        .getElementById("deleteTask")
+        ?.addEventListener("click", confirmDeleteTask);
 
 }
 
@@ -304,6 +399,26 @@ async function openCategorySelector() {
 }
 
 /* ===========================
+   SCHEDULE
+=========================== */
+
+function openScheduleEditor() {
+
+    const task = getCurrentTask();
+
+    if (!task.id) {
+
+        showToast("Guarda la tarea antes de configurar su programación.");
+
+        return;
+
+    }
+
+    loadScheduleEditor(task);
+
+}
+
+/* ===========================
    SAVE
 =========================== */
 
@@ -348,6 +463,46 @@ async function save() {
         console.error(error);
 
         showToast(error?.message || "No se han podido guardar los cambios.");
+
+    }
+
+}
+
+/* ===========================
+   DELETE
+=========================== */
+
+function confirmDeleteTask() {
+
+    const task = getCurrentTask();
+
+    openConfirmDialog({
+
+        title: "¿Eliminar esta tarea?",
+        message: "Dejará de aparecer en Registrar, Hoy y la lista de tareas. Su histórico no se borra.",
+        confirmText: "Eliminar tarea",
+
+        onConfirm: () => removeTask(task.id)
+
+    });
+
+}
+
+async function removeTask(taskId) {
+
+    try {
+
+        await deleteTask(taskId);
+
+        showToast("Tarea eliminada.");
+
+        await loadTasks();
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast(error?.message || "No se ha podido eliminar la tarea.");
 
     }
 

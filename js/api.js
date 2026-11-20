@@ -238,6 +238,32 @@ export async function updateTask(task) {
   return result;
 }
 
+export function getTaskSchedule(taskId) {
+  return request("taskSchedule", { taskId });
+}
+
+export async function updateTaskSchedule(schedule) {
+  const result = await request("updateTaskSchedule", {
+    taskId: schedule.taskId,
+    tipo: schedule.tipo,
+    intervalo: schedule.intervalo,
+    diasSemana: schedule.diasSemana,
+    diaMes: schedule.diaMes,
+    fechaInicio: schedule.fechaInicio,
+    activa: schedule.activa
+  });
+
+  clearCache();
+  return result;
+}
+
+export async function deleteTask(id) {
+  const result = await request("deleteTask", { id });
+
+  clearCache();
+  return result;
+}
+
 export async function createCategory(category) {
   const result = await request("createCategory", {
     nombre: category.nombre,

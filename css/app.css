@@ -759,6 +759,52 @@ p{
     font-size:15px;
 }
 
+.weekday-selector{
+
+    display:flex;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+
+}
+
+.weekday-chip{
+
+    width:40px;
+
+    height:40px;
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius-pill);
+
+    background:var(--surface);
+
+    color:var(--text-primary);
+
+    font:inherit;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.15s;
+
+}
+
+.weekday-chip.active{
+
+    background:var(--primary);
+
+    border-color:var(--primary);
+
+    color:#fff;
+
+}
+
 .settings-help,
 .settings-export p,
 .settings-loading{
@@ -1000,6 +1046,36 @@ p{
     transition:.25s;
 
     z-index:2000;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+}
+
+.toast-action{
+
+    border:none;
+
+    background:none;
+
+    padding:0;
+
+    color:var(--primary-light,#8FC1D1);
+
+    font:inherit;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:.02em;
+
+    cursor:pointer;
+
+    flex-shrink:0;
 
 }
 
@@ -1579,6 +1655,21 @@ p{
 .secondary-button:hover{
     background:var(--hover-bg);
 }
+
+.danger-button{
+
+    color:var(--danger);
+
+    border-color:var(--danger-soft);
+
+}
+
+.danger-button:hover{
+
+    background:var(--danger-soft);
+
+}
+
 /* ===========================
    COMPETITION
 =========================== */

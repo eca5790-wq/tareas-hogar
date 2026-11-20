@@ -38,6 +38,15 @@ function doGet(e) {
     case "updateTask":
       return json(updateTask(e.parameter));
 
+    case "taskSchedule":
+      return json(getTaskSchedule(e.parameter.taskId));
+
+    case "updateTaskSchedule":
+      return json(updateTaskSchedule(e.parameter));
+
+    case "deleteTask":
+      return json(deleteTask(e.parameter));
+
     default:
       return json({
         success: false,
