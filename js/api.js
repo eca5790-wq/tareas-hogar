@@ -108,6 +108,12 @@ async function request(action, params = {}) {
 
   const data = await response.json();
 
+  // El backend puede responder success:false con HTTP 200; sin esto, errores
+  // de validación (fecha inválida, tarea no encontrada...) se tratan como éxito.
+  if (data && typeof data === "object" && !Array.isArray(data) && data.success === false) {
+    throw new Error(data.error || `No se pudo completar la acción "${action}"`);
+  }
+
   if (canCache) {
     writeCache(cacheKey, data);
   }

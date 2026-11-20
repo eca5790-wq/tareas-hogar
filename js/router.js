@@ -43,12 +43,14 @@ export async function navigate(page, force = false) {
 
     const previousPage = currentPage;
 
-    // Solo confirmamos la navegación si el handler termina bien; si falla, se puede reintentar.
+    // Se marca como actual antes de esperar: cada handler ya pinta la pantalla
+    // de forma síncrona (con caché o vacía) antes de refrescar datos en segundo
+    // plano, así que esa espera no debe dejar los botones de navegación "pillados".
+    currentPage = page;
+
     try {
 
         await handler();
-
-        currentPage = page;
 
     } catch (error) {
 

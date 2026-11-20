@@ -1,7 +1,7 @@
 import { APP } from "../js/config.js";
-import { getHomeData, registerTask, deleteHistory } from "../js/api.js";
+import { getHomeData, getRegisterScreen, registerTask, deleteHistory } from "../js/api.js";
 import { renderNavbar } from "../components/navbar.js";
-import { navigate } from "../js/router.js";
+import { navigate, getCurrentPage } from "../js/router.js";
 import { showToast } from "../components/toast.js";
 import { openConfirmDialog } from "../components/dialog.js";
 import { CATEGORY_ICONS } from "../js/constants.js";
@@ -123,7 +123,7 @@ export async function loadHome() {
   try {
     const freshData = await getHomeData(user);
 
-    if (requestId !== homeLoadRequest || user !== APP.currentUser) {
+    if (requestId !== homeLoadRequest || user !== APP.currentUser || getCurrentPage() !== "home") {
       return;
     }
 
@@ -146,7 +146,7 @@ export async function loadHome() {
   } catch (error) {
     console.error("No se pudo cargar Inicio:", error);
 
-    if (requestId !== homeLoadRequest || user !== APP.currentUser) {
+    if (requestId !== homeLoadRequest || user !== APP.currentUser || getCurrentPage() !== "home") {
       return;
     }
 
@@ -156,6 +156,22 @@ export async function loadHome() {
       initEvents();
       showToast("No se pudo cargar Inicio");
     }
+  }
+
+  prefetchRegisterScreen(user);
+}
+
+// Registrar es la acción más frecuente: adelantamos su carga para que, al
+// pulsar el botón, los datos ya estén en caché en vez de esperar al backend.
+function prefetchRegisterScreen(user) {
+  const run = () => {
+    getRegisterScreen(user).catch(() => {});
+  };
+
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(run, { timeout: 2000 });
+  } else {
+    setTimeout(run, 300);
   }
 }
 

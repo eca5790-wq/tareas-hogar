@@ -1,5 +1,5 @@
 import { getHistoryPage } from "../js/api.js";
-import { navigate } from "../js/router.js";
+import { navigate, getCurrentPage } from "../js/router.js";
 import { renderNavbar } from "../components/navbar.js";
 import { CATEGORY_ICONS } from "../js/constants.js";
 
@@ -53,7 +53,7 @@ async function fetchPage(
   try {
     const result = await getHistoryPage(offset, PAGE_SIZE);
 
-    if (activeRequestId !== requestId) return;
+    if (activeRequestId !== requestId || getCurrentPage() !== "history") return;
     if (!result || !Array.isArray(result.items)) {
       throw new Error(result?.error || "Respuesta del historial no válida");
     }
@@ -72,13 +72,13 @@ async function fetchPage(
     hasMore = Boolean(result.hasMore);
     failedOffset = nextOffset;
   } catch (error) {
-    if (activeRequestId !== requestId) return;
+    if (activeRequestId !== requestId || getCurrentPage() !== "history") return;
 
     console.error("No se pudo cargar el historial:", error);
     failedOffset = offset;
     errorMessage = "No se pudo cargar el historial. Comprueba la conexión y vuelve a intentarlo.";
   } finally {
-    if (activeRequestId === requestId) {
+    if (activeRequestId === requestId && getCurrentPage() === "history") {
       loading = false;
       refreshingFirstPage = false;
       renderContent();

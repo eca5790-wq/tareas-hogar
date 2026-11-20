@@ -1,6 +1,6 @@
 import { renderNavbar } from "../components/navbar.js";
 import { showToast } from "../components/toast.js";
-import { navigate } from "../js/router.js";
+import { navigate, getCurrentPage } from "../js/router.js";
 import {
     getPointsConfiguration,
     updatePointsConfiguration
@@ -27,7 +27,7 @@ export async function loadSettings() {
         const points = await getPointsConfiguration();
         if (
             requestId !== settingsLoadRequest ||
-            document.querySelector("#header h2")?.textContent !== "Ajustes"
+            getCurrentPage() !== "settings"
         ) return;
 
         writeCachedPoints(points);
@@ -43,7 +43,7 @@ export async function loadSettings() {
         console.error("No se pudieron cargar los ajustes:", error);
         if (
             requestId !== settingsLoadRequest ||
-            document.querySelector("#header h2")?.textContent !== "Ajustes"
+            getCurrentPage() !== "settings"
         ) return;
 
         if (document.getElementById("pointsForm")) {

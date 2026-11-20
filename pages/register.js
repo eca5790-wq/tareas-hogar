@@ -3,6 +3,7 @@ import { registerTask, getRegisterScreen } from "../js/api.js";
 import { APP } from "../js/config.js";
 import { showToast } from "../components/toast.js";
 import { CATEGORY_ICONS } from "../js/constants.js";
+import { getCurrentPage } from "../js/router.js";
 
 function categoryColorClass(categoryId) {
   const id = Number(categoryId);
@@ -83,7 +84,7 @@ export async function loadRegister() {
   try {
     const response = await getRegisterScreen(user);
 
-    if (requestId !== registerLoadRequest || user !== APP.currentUser) {
+    if (requestId !== registerLoadRequest || user !== APP.currentUser || getCurrentPage() !== "register") {
       return;
     }
 
@@ -94,7 +95,7 @@ export async function loadRegister() {
   } catch (error) {
     console.error("No se pudo cargar Registro:", error);
 
-    if (requestId !== registerLoadRequest || user !== APP.currentUser) {
+    if (requestId !== registerLoadRequest || user !== APP.currentUser || getCurrentPage() !== "register") {
       return;
     }
 

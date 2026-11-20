@@ -33,7 +33,9 @@ export async function loadTaskDetail(task = null) {
             categoria: "",
             programacion: "",
             puntos: 10,
-            activa: true
+            activa: true,
+            uso: 0,
+            ultimaRealizacion: null
 
         });
 
@@ -64,6 +66,8 @@ function render() {
     `;
 
     document.getElementById("content").innerHTML = `
+
+        ${task.id ? taskStats(task) : ""}
 
         <section class="settings-group">
 
@@ -134,6 +138,34 @@ function row(title, value, action) {
         </div>
 
     `;
+
+}
+
+function taskStats(task) {
+
+    const count = Number(task.uso) || 0;
+    const countText = count === 1 ? "Hecha 1 vez" : `Hecha ${count} veces`;
+    const lastText = task.ultimaRealizacion
+        ? ` · última vez ${formatRelativeDate(task.ultimaRealizacion)}`
+        : "";
+
+    return `<p class="settings-help">${countText}${lastText}</p>`;
+
+}
+
+function formatRelativeDate(value) {
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+
+    const today = new Date();
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const diffDays = Math.round((startOfToday - startOfDate) / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) return "hoy";
+    if (diffDays === 1) return "ayer";
+    return `hace ${diffDays} días`;
 
 }
 
@@ -315,7 +347,7 @@ async function save() {
 
         console.error(error);
 
-        showToast("No se han podido guardar los cambios.");
+        showToast(error?.message || "No se han podido guardar los cambios.");
 
     }
 
